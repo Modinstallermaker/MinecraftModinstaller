@@ -123,14 +123,22 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 			if(new OP().optionReader("design").equals("default"))
 			{
 				setUndecorated(true);
-				setSize(breite, hoehe);				
-				try 
+				setSize(breite, hoehe);
+				try
 				{
 					utils = Class.forName("com.sun.awt.AWTUtilities");
 					shapeMethod = utils.getMethod("setWindowShape", Window.class,Shape.class);
 					shapeMethod.invoke(null, this, new RoundRectangle2D.Double(0, 0,breite, hoehe, 20, 20));
-					transparencyMethod = utils.getMethod("setWindowOpacity",Window.class, float.class);
-					transparencyMethod.invoke(null, this, .95f);
+					
+					try
+					{
+						transparencyMethod = utils.getMethod("setWindowOpacity",Window.class, float.class);
+						transparencyMethod.invoke(null, this, .95f);
+					}
+					catch (Exception e)
+					{
+						System.out.println("Warnung: Konnte Transparenzen nicht initialisieren!");
+					}
 				} 
 				catch (Exception ex) 
 				{
