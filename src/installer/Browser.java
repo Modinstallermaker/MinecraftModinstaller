@@ -18,7 +18,7 @@ public class Browser
 	public Browser(String url)
 	{
 		try 
-		
+		{
 			Desktop.getDesktop().browse(new URI(url));
 		} 
 		catch (IOException e) 
