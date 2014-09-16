@@ -197,7 +197,7 @@ public class Start extends JFrame
 		File versionendat = new File(stamm+"/Modinstaller/versionen.txt");
 		try 
 		{
-			new Download().downloadFile(webplace+"quellen.txt", new FileOutputStream(versionendat));						
+			new Download().downloadFile(webplace+"quellen.txt", new FileOutputStream(versionendat));
 			OnlineList = new OP().Textreadera(versionendat);
 			
 			AvialableList = new LinkedList<String>(OnlineList);					
