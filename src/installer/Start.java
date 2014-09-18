@@ -238,7 +238,7 @@ public class Start extends JFrame
 		} 
 		catch (Exception e) 
 		{						
-			e.printStackTrace();
+			Offline();
 		} 
 	}
 	
@@ -487,6 +487,7 @@ public class Start extends JFrame
 			e1.printStackTrace();
 		} 
 	    File texte = new File(stamm+"/Modinstaller/Texte.zip");
+	    if(online)
 	    try 
 	    {
 			new Download().downloadFile("http://www.minecraft-installer.de/Dateien/zipper.php?lang="+new OP().optionReader("language"), new FileOutputStream(texte));

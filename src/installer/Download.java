@@ -41,8 +41,8 @@ public class Download
 	    conn.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
 	    conn.setRequestProperty("Expires", "0");
 	    conn.setRequestProperty("Pragma", "no-cache");
-	    conn.setConnectTimeout(20000);
-	    conn.setReadTimeout(20000);	    
+	    conn.setConnectTimeout(10000);
+	    conn.setReadTimeout(10000);	    
 	    conn.connect();	  
 	   	    
 		int responseCode = conn.getResponseCode() / 100;
@@ -131,8 +131,8 @@ public class Download
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setRequestMethod( "POST" );
 		connection.setDoInput( true );
-		connection.setConnectTimeout(20000);
-		connection.setReadTimeout(20000);
+		connection.setConnectTimeout(2000);
+		connection.setReadTimeout(2000);
 		connection.setDoOutput( true );
 		connection.setUseCaches( false );
 		connection.setRequestProperty( "Content-Type", "application/x-www-form-urlencoded");
