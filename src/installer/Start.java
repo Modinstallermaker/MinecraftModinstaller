@@ -111,7 +111,7 @@ public class Start extends JFrame
 				
 		setSize(499, 290);
 		setUndecorated(true);
-		setTitle("Minecraft Modinstaller");
+		setTitle("Minecraft Modinstaller 4");
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setIconImage(new ImageIcon(this.getClass().getResource("src/icon.png")).getImage());
