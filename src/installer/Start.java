@@ -330,11 +330,12 @@ public class Start extends JFrame
 		}
 		try // Update testen
 		{
-			File updatetxt = new File(stamm + "/Modinstaller/update.txt");
+			File updatetxt = new File(stamm + "/Modinstaller/update.txt");		
 			new Download().downloadFile("http://www.minecraft-installer.de/request.php?target=update&lang="+Read.getTextwith("installer", "lang"), new FileOutputStream(updatetxt)); // update_de.txt herunterladen
 			BufferedReader in2 = new BufferedReader(new FileReader(stamm + "/Modinstaller/update.txt")); // Datei einlesen
 			String zeile3 = null;
 			int zahl = 0;
+			
 			String meld = "";
 			String textz = "";
 			boolean antw = false;
@@ -400,6 +401,7 @@ public class Start extends JFrame
 		    	
 			}
 			online=true;
+			
 		}		 
 		catch (Exception ex) 
 		{
@@ -475,8 +477,21 @@ public class Start extends JFrame
 	
 	public void hauptmStarten()
 	{
-		 prog.setText(Read.getTextwith("seite1", "prog12"));
-		 
+		prog.setText(Read.getTextwith("seite1", "prog12"));
+		File texte = new File(stamm+"/Modinstaller/Texte.zip");
+	    
+		if(online)
+	    try 
+	    {
+	    	
+			new Download().downloadFile("http://www.minecraft-installer.de/Dateien/zipper.php?lang="+new OP().optionReader("language"), new FileOutputStream(texte));
+			new Extrahieren(texte, new File(stamm+"/Modinstaller/"));
+		} 
+	    catch (Exception e1) 
+		{				
+			e1.printStackTrace();
+		} 
+		    
 	    try 
 	    {
 			Thread.sleep(100);
@@ -486,17 +501,7 @@ public class Start extends JFrame
 	    {				
 			e1.printStackTrace();
 		} 
-	    File texte = new File(stamm+"/Modinstaller/Texte.zip");
-	    if(online)
-	    try 
-	    {
-			new Download().downloadFile("http://www.minecraft-installer.de/Dateien/zipper.php?lang="+new OP().optionReader("language"), new FileOutputStream(texte));
-			new Extrahieren(texte, new File(stamm+"/Modinstaller/"));
-		} 
-	    catch (Exception e1) 
-		{				
-			e1.printStackTrace();
-		} 
+	   
 	    try 
 	    {
 			if(new OP().optionReader("lizenz").equals("false"))

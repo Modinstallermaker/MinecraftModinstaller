@@ -2,8 +2,6 @@ package installer;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,8 +31,12 @@ public class Download
 	
 	public float[] downloadFile(String url_str, OutputStream outstr)throws IllegalStateException, MalformedURLException,ProtocolException, IOException
 	{		
+		
+		
+        
 		System.setProperty("http.proxyPort", "443");		
 	    URL url = new URL(url_str.replace(" ", "%20"));
+	
 	    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 	    conn.setUseCaches(false);
 	    conn.setDefaultUseCaches(false);
@@ -42,7 +44,7 @@ public class Download
 	    conn.setRequestProperty("Expires", "0");
 	    conn.setRequestProperty("Pragma", "no-cache");
 	    conn.setConnectTimeout(10000);
-	    conn.setReadTimeout(10000);	    
+	    conn.setReadTimeout(15000);	    
 	    conn.connect();	  
 	   	    
 		int responseCode = conn.getResponseCode() / 100;
@@ -80,13 +82,6 @@ public class Download
 		}		
 		conn.disconnect();
 		return rue;
-	}
-	
-	public void smartDonwload(String URL, File target) throws IllegalStateException, MalformedURLException, ProtocolException, FileNotFoundException, IOException
-	{
-		
-		new Download().downloadFile(URL, new FileOutputStream(target));
-		
 	}
 	
 	public boolean ident (String url_str, File copy) throws IllegalStateException, MalformedURLException,ProtocolException, IOException

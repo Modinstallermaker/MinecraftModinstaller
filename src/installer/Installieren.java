@@ -238,22 +238,24 @@ public class Installieren extends JFrame
 					}
 					new OP().optionWriter("lastmods", modn.substring(0, modn.length()-2));
 					    
-					status(value += 3);	//10				
+					status(value += 3);	//10	
+					
+					File json = new File(mineord + "/versions/Modinstaller/Modinstaller.json");
+					if(json.exists())
+					{
+						String[] lines = new OP().Textreader(json);
+						for (int i=0; i<lines.length; i++)
+						{
+							lines[i] = lines[i].replaceAll("\"id\": \""+Version, "\"id\": \"Modinstaller");  // z.B. 1.7.4 in JSON Datei durch Modinstaller ersetzen
+						}
+						new OP().Textwriter(json, lines, false);
+					}
 								
 					if (Modloader==true) //Modloader Modus
 					{
 						new OP().copy(new File(mineord + "/versions/"+Version+"/"+Version+".jar"), new File(stamm + "/Modinstaller/minecraft.jar"));
 						
-						File json = new File(mineord + "/versions/Modinstaller/Modinstaller.json");
-						if(json.exists())
-						{
-							String[] lines = new OP().Textreader(json);
-							for (int i=0; i<lines.length; i++)
-							{
-								lines[i] = lines[i].replaceAll("\"id\": \""+Version, "\"id\": \"Modinstaller");  // z.B. 1.7.4 in JSON Datei durch Modinstaller ersetzen
-							}
-							new OP().Textwriter(json, lines, false);
-						}
+						
 						
 						stat.setText(Read.getTextwith("seite3", "extra"));
 						iconf.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));

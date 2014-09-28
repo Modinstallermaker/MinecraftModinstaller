@@ -411,27 +411,28 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		   {				      
 				 public void run() 
 				 { 	
-					 Download(webplace + Version + "/quellen.txt", new File(stamm +"/Modinstaller/Modloader.txt"));		
-							
+					 File Modloaderlist = new File(stamm +"/Modinstaller/Modloader.txt");
+					 File ForgeList = new File(stamm +"/Modinstaller/Forge.txt");
 					 
-					 try 
+					 Download(webplace + Version + "/quellen.txt", Modloaderlist);									
+					 Download(webplace + Version + "/Forge_Mods/quellen.txt", ForgeList);	
+					
+					 if(ForgeList.length()!=0) //keine Forge Mods vorhanden
 					 {
-						if(new Download().size(webplace + Version + "/Forge_Mods/quellen.txt")!=0)
-						{		
-							Download(webplace + Version + "/Forge_Mods/quellen.txt", new File(stamm +"/Modinstaller/Forge.txt"));	
-							tabbedPane.setEnabled(true);		
-							tabbedPane.setSelectedIndex(1);
-							ForgeMode();	
-						}	
-						else
-						{
-							ModloaderMode();
-						}
-					} 
-					catch (Exception e) 
-					{
-						 ModloaderMode();	
-					}
+							tabbedPane.setEnabled(true);	
+							
+							if(Modloaderlist.length()<ForgeList.length()) //die größerere Modl
+							{
+								tabbedPane.setSelectedIndex(1);
+								ForgeMode();	
+							}
+							else							
+								ModloaderMode();							
+					 }
+					 else
+					 {
+						 ModloaderMode();
+					 }
 				 }
 		   });			   
 		}
@@ -594,7 +595,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		} 
 		catch (Exception ex) 
 		{
-			offline(true);
+			
 		}		
 	}
 	
@@ -630,8 +631,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 						else
 						{
 							JOptionPane.showMessageDialog(null, Read.getTextwith("seite1", "inco"), Read.getTextwith("seite1", "incoh"), JOptionPane.INFORMATION_MESSAGE); //�ndern					
-							online = false;					
-							new OP().del(new File(stamm + "/Modinstaller/modlist.txt"));					
+							online = false;		
 						}
 						
 				 } 
@@ -846,7 +846,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 							new Error(Read.getTextwith("seite2", "error2") + String.valueOf(e)+ "\n\nErrorcode: S2x06", Version);
 						}
 						
-						try 
+						try //???
 						{
 							new OP().Textwriter(zus, neutext.split(";;"), false);
 						} 
