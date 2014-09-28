@@ -7,13 +7,10 @@ import static argo.jdom.JsonNodeFactories.string;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Insets;
-import java.awt.Shape;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.geom.RoundRectangle2D;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,7 +19,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,9 +58,9 @@ public class Installieren extends JFrame
 	private double value = 0.00;
 	private String quelle;
 	private JPanel cp;
-	private Cursor c = new Cursor(Cursor.HAND_CURSOR);
-	private Method shapeMethod, transparencyMethod;
-	private Class<?> utils;		
+	private Cursor c = new Cursor(Cursor.HAND_CURSOR);	
+	private Thread t1, t2, t3;
+	private Download dow, dowf;
 	
 	private String webplace = Start.webplace, mineord = Start.mineord, stamm = Start.stamm, Version = Start.Version;	
 	private boolean online = Start.online;
@@ -78,31 +74,21 @@ public class Installieren extends JFrame
 			if(new OP().optionReader("design").equals("default"))
 			{
 				setUndecorated(true);
-				setSize(550, 235);
-				try 
-				{
-					utils = Class.forName("com.sun.awt.AWTUtilities");
-					shapeMethod = utils.getMethod("setWindowShape", Window.class,Shape.class);
-					shapeMethod.invoke(null, this, new RoundRectangle2D.Double(0, 0,550, 235, 20, 20));
-					transparencyMethod = utils.getMethod("setWindowOpacity",Window.class, float.class);
-					transparencyMethod.invoke(null, this, .95f);
-				} 
-				catch (Exception ex) 
-				{
-					ex.printStackTrace();
-				}
+				setSize(550, 250);				
 				cp = new GraphicsPanel(false, "src/page-bg.jpg");
 			}
 			else
 			{			
-				setSize(555, 270);
+				setSize(555, 280);
 				cp = new JPanel();
 				cp.setBackground(Color.decode("#b0b4b7"));
 			}
 		} 
 		catch (Exception e) 
 		{			
-			e.printStackTrace();
+			setSize(555, 280);
+			cp = new JPanel();
+			cp.setBackground(Color.decode("#b0b4b7"));
 		} 
 
 		setTitle(Read.getTextwith("installer", "name"));		
@@ -158,7 +144,7 @@ public class Installieren extends JFrame
 		stat.setBounds (105, 113, 425, 17);
 		cp.add(stat);
 		
-		b1.setBounds(10, 190, 100, 35);
+		b1.setBounds(10, 200, 100, 35);
 		b1.setBackground(null);
 		b1.setText(Read.getTextwith("seite3", "text1"));
 		b1.setMargin(new Insets(2, 2, 2, 2));
@@ -170,7 +156,7 @@ public class Installieren extends JFrame
 		b1.setCursor(c);
 		cp.add(b1);
 		
-		b2.setBounds(430, 190, 110, 35);
+		b2.setBounds(430, 200, 110, 35);
 		b2.setBackground(null);
 		b2.setText(Read.getTextwith("seite3", "text2"));
 		b2.setMargin(new Insets(2, 2, 2, 2));
@@ -185,7 +171,7 @@ public class Installieren extends JFrame
 		
 		setVisible(true);		
 
-		new Thread() {			
+		t1 = new Thread() {			
 			private JsonRootNode versionData;
 			@Override
 			public void run() 
@@ -194,7 +180,7 @@ public class Installieren extends JFrame
 				{
 					status(value += 1); //1
 					
-					stat.setText(Read.getTextwith("seite3", "prog1") + " (Backup)");			//Löschen		
+					stat.setText(Read.getTextwith("seite3", "prog1") + " (Backup)");	//Löschen		
 					new OP().del(new File(stamm + "/Modinstaller/Backup"));
 					stat.setText(Read.getTextwith("seite3", "prog1") + " (Result)");
 					File Reso = new File(stamm + "/Modinstaller/Result");
@@ -299,9 +285,9 @@ public class Installieren extends JFrame
 								final File Temporar= new File(stamm+"/Modinstaller/temp.zip");
 								File Zeilverzeichnis = new File(stamm+"/Modinstaller/Mods/"+ namen[k]+"/");
 								
-								final Download dow = new Download();
+								dow = new Download();
 								
-								Thread t = new Thread()
+								t2 = new Thread()
 								{			
 									public void run() 
 									{	
@@ -331,11 +317,11 @@ public class Installieren extends JFrame
 										}
 									}
 								};								
-								t.start();
+								t2.start();
 								
 								dow.downloadFile(Downloadort, new FileOutputStream(Temporar));	//ZIP Datei herunterladen
 								
-								t.interrupt();	//Downloadgrößen-Thread beenden
+								t2.interrupt();	//Downloadgrößen-Thread beenden
 								status(value+= hinzu*0.75);
 								
 								stat.setText(Read.getTextwith("seite3", "extra2")+namen[k]+"...");
@@ -391,10 +377,10 @@ public class Installieren extends JFrame
 							iconf.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));	
 							final File libr = new File(stamm+"/Modinstaller/forge_"+Version+".zip");
 							
-							if(libr.exists()&&libr.length()>1)
+							if((!libr.exists())||libr.length()<100)
 							{
-								final Download dowf = new Download();								
-								Thread t2 = new Thread()
+								dowf = new Download();								
+								t3 = new Thread()
 								{			
 									public void run() 
 									{																	
@@ -409,7 +395,7 @@ public class Installieren extends JFrame
 													if(soll>1)
 													{	
 														double proz2 = Math.round(((double)ist/(double)soll)*1000.)/10.;
-														stat.setText("Forge installation - "+String.valueOf(proz2)+"%");		       //Downloadstatus anzeigen															
+														stat.setText(Read.getTextwith("seite3", "forge") +" - "+String.valueOf(proz2)+"%");		       //Downloadstatus anzeigen															
 													}																					
 												}												
 												Thread.sleep(50);
@@ -421,8 +407,9 @@ public class Installieren extends JFrame
 										}
 									}
 								};								
-								t2.start();								
-								dowf.downloadFile(webplace + Version +"/"+ "forge.zip", new FileOutputStream(libr));	//ZIP Datei herunterladen								
+								t3.start();								
+								dowf.downloadFile(webplace + Version +"/"+ "forge2.zip", new FileOutputStream(libr));	//ZIP Datei herunterladen
+								t3.interrupt();
 							}
 							status(value += 4);	
 							new Extrahieren(libr, new File(mineord));
@@ -581,7 +568,8 @@ public class Installieren extends JFrame
 					}
 				}
 			}
-		}.start();
+		};
+		t1.start();
 	}
 
 	public void status(double zahl) // Statusbar einstellen
@@ -589,14 +577,19 @@ public class Installieren extends JFrame
 		bar.setValue((int) zahl);
 	}
 
+	@SuppressWarnings("deprecation")
 	public void b1_ActionPerformed(ActionEvent evt) // Vorgang abbrechen
 	{
 		if (JOptionPane.showConfirmDialog(this,	Read.getTextwith("seite3", "cancel"), Read.getTextwith("seite3", "cancelh"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) 
 		{
 			try 
-			{						
-				new Download().exit();					
-				new Komprimieren().exit();				
+			{	
+				t1.stop();
+				t2.stop();
+				t3.stop();
+				dow.exit();	
+				dowf.exit();
+				
 			} 
 			catch (Exception ex) 
 			{
@@ -632,7 +625,7 @@ public class Installieren extends JFrame
 			catch (Exception ex)
 			{				
 			}
-			dispose();
+			dispose();			
 			new Menu(); // beenden
 		}
 	}

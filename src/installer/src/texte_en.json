@@ -97,7 +97,8 @@
     "error6":"<html><body>Java cannot open the file 'modlist.txt'<br>and store it in an array.<br><br>Java reported...<br><br>",
     "error6h":"File cannot be read!",   
     "cancel":"Do you really want to cancel the process?",
-    "cancelh":"Cancel the operation?",      
+    "cancelh":"Cancel the operation?",  
+    "forge":"Installing the Minecraft Forge",      
     "komp1":"<html><body>JarOutputStream could not be opened<br><br>Java reported...<br><br>",
     "komp2":"<html><body>JarOutputStream could not be closed<br><br>Java reported...<br><br>",
     "komph":"JarOutputStream error"     

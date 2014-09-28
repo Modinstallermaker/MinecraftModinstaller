@@ -27,13 +27,11 @@ public class Download
 	private HttpURLConnection conn;
 	private InputStream instr; 
 	private int groesse=0;
+	boolean laufen =true;
 	
 	
-	public float[] downloadFile(String url_str, OutputStream outstr)throws IllegalStateException, MalformedURLException,ProtocolException, IOException
-	{		
-		
-		
-        
+	public float[] downloadFile(String url_str, OutputStream outstr) throws IllegalStateException, MalformedURLException,ProtocolException, IOException
+	{			
 		System.setProperty("http.proxyPort", "443");		
 	    URL url = new URL(url_str.replace(" ", "%20"));
 	
@@ -56,14 +54,18 @@ public class Download
 			long start = System.nanoTime();			
 			long bytesRead = 0L;
 	        byte[] buffer = new byte[65536];
+	        if(laufen)
 			try 
 			{
 	            int read = instr.read(buffer);
 	            while (read >= 1) 
 	            {
-	              bytesRead += read;	         
-	              outstr.write(buffer, 0, read);
-	              read = instr.read(buffer);
+	            	if(laufen)
+	            	{
+		              bytesRead += read;	         
+		              outstr.write(buffer, 0, read);
+		              read = instr.read(buffer);
+	            	}
 	            }
 	        } 
 			finally 
@@ -154,6 +156,7 @@ public class Download
 	public void exit()
 	{
 		conn.disconnect();
+		laufen=false;
 		try 
 		{
 			instr.close();

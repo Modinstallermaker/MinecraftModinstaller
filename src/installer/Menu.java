@@ -4,20 +4,15 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
-import java.awt.Insets;
-import java.awt.Shape;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.geom.RoundRectangle2D;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.util.Arrays;
 
@@ -25,7 +20,6 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
@@ -71,8 +65,6 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	
 	JTabbedPane tabbedPane = new JTabbedPane();
 		
-	public static JButton weiter = new JButton();
-	
 	private JEditorPane pane;  
 	private JScrollPane scroller;
 	
@@ -91,14 +83,13 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	private JLabel hilfe = new JLabel();
 	private JLabel link = new JLabel();
 	private JLabel beenden = new JLabel();
+	public static JLabel weiter = new JLabel();
 	
 	private JCheckBox check = new JCheckBox();
 	private JCheckBox check2 = new JCheckBox();	
 	
 	private JComboBox ChVers;
 
-	private Method shapeMethod, transparencyMethod;
-	private Class<?> utils;	
 	private JPanel cp;		
 	
 	private Cursor c = new Cursor(Cursor.HAND_CURSOR);
@@ -123,27 +114,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 			if(new OP().optionReader("design").equals("default"))
 			{
 				setUndecorated(true);
-				setSize(breite, hoehe);
-				try
-				{
-					utils = Class.forName("com.sun.awt.AWTUtilities");
-					shapeMethod = utils.getMethod("setWindowShape", Window.class,Shape.class);
-					shapeMethod.invoke(null, this, new RoundRectangle2D.Double(0, 0,breite, hoehe, 20, 20));
-					
-					try
-					{
-						transparencyMethod = utils.getMethod("setWindowOpacity",Window.class, float.class);
-						transparencyMethod.invoke(null, this, .95f);
-					}
-					catch (Exception e)
-					{
-						System.out.println("Warnung: Konnte Transparenzen nicht initialisieren!");
-					}
-				} 
-				catch (Exception ex) 
-				{
-					ex.printStackTrace();
-				}
+				setSize(breite, hoehe);				
 				cp = new GraphicsPanel(false, "src/page-bg.jpg");
 				cp.setBackground(Color.decode("#b0b4b7"));
 			}
@@ -156,8 +127,11 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		} 
 		catch (Exception e1) 
 		{			
-			e1.printStackTrace();
+			setSize(breite+5, hoehe+30);		
+			cp = new JPanel();				
+			cp.setBackground(Color.decode("#b0b4b7"));
 		} 
+		
 		setTitle(Read.getTextwith("installer", "name"));		
 		setLocationRelativeTo(null);
 		setResizable(false);
@@ -308,14 +282,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		cp.add(popu);
 		
 		HTMLEditorKit kit = new HTMLEditorKit();
-		try 
-		{				
-			
-				
-		} 
-		
-		catch (Exception e) {}		
-		
+	
 		pane = new JTextPane(); //Beschreibungsfenster
 		pane.setEditable(false);
 	    pane.setContentType("text/html");
@@ -386,12 +353,14 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		beenden.setCursor(c);		
 		cp.add(beenden);
 
-		weiter.setBounds((int)(breite-200), (int)(hoehe*0.92), 180, 40); // Installieren		
+		weiter.setBounds((int)(breite-220), (int)(hoehe*0.885), 200, 70); // Installieren		
 		weiter.setText(Read.getTextwith("seite2", "text10"));
 		weiter.setFont(weiter.getFont().deriveFont((float) 15));
-		weiter.setMargin(new Insets(2, 2, 2, 2));
-		weiter.addActionListener(this);
+		weiter.addMouseListener(this);
 		weiter.setCursor(c);
+		weiter.setForeground(Color.decode("#346BbD"));
+		weiter.setFont(new Font(weiter.getFont().getFamily(), Font.BOLD, 20)); 
+		weiter.setIcon(new ImageIcon(this.getClass().getResource("src/install_s.png")));	
 		weiter.setEnabled(false);
 		cp.add(weiter);			
 	    
@@ -533,8 +502,27 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 				}
 				Arrays.sort(modnamen);
 				for (int l=0; l<ModList.length; l++)
-				{		
-					jListModel.addElement(modnamen[l]);
+				{					
+					boolean gefunden =false;
+					
+					String Mode = "Modloader"; //bereits installierte Mods anzeigen
+					if(!Modloader) Mode = "Forge";
+					if(new OP().optionReader("lastmc").equals(Version)&&new OP().optionReader("lastmode").equals(Mode))
+					{
+						String alastm = new OP().optionReader("lastmods");
+						String[] lastm = alastm.split(";;");					
+						for (int r=0; r<lastm.length; r++)
+						{
+							if(lastm[r].equals(modnamen[l]))
+							{
+								jList2Model.addElement(modnamen[l]);
+								gefunden=true;
+							}
+						}
+					}
+					
+					if(!gefunden)
+						jListModel.addElement(modnamen[l]);
 					if(aktual)				
 						Info[l] = new Modinfo(modnamen[l]);					
 				}
@@ -900,7 +888,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		}
 	}
 
-	public void weiter_ActionPerformed(ActionEvent evt) // Installieren Knopf
+	public void weiter_ActionPerformed(MouseEvent e2) // Installieren Knopf
 	{		
 		
 		String[] zeilen = new String[jList2Model.getSize()];
@@ -1141,11 +1129,17 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		 else if(s==importbutton)					
 			ModsImportieren();
 		 else if(s==restore)
-			 Restore();
+		 {
+			 if(restore.isEnabled())
+				 Restore();
+		 }
 		 else if(s==hilfe)
 			 new Browser(Read.getTextwith("seite2", "web")+"/faq.php");
 		 else if(s==link)
-			 new Browser(hyperlink);	
+		 {
+			 if(link.isEnabled())
+			 new Browser(hyperlink);
+		 }
 		 else if(s==beenden)
 			 System.exit(0);
 		 else if(s==tabbedPane)
@@ -1355,6 +1349,9 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	    	   {	    		  
 	    	   }	
 		 }
+		 else if(s==weiter)
+			 if(weiter.isEnabled())
+				 weiter_ActionPerformed(e);	
 	}
 
 	@Override
@@ -1376,7 +1373,6 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 			 versioneinstellen();
 		 }
 		 
-		 else if(s==weiter)
-			 weiter_ActionPerformed(e);		 
+		 
 	}  
 }
