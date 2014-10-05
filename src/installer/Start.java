@@ -593,8 +593,19 @@ public class Start extends JFrame
 		
 		
 		try 
-	    {			
+	    {	
+			Color red = Color.decode("#9C2717");
+			Color white = Color.decode("#FFF0D9");
+			//Color white = Color.decode("#FFF9E9");
+			
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");			 
+			UIManager.put("nimbusBase", white);
+			UIManager.put("text", red);		    
+			UIManager.put("nimbusSelectionBackground", red);
+			UIManager.put("nimbusSelectedText", white);
+			UIManager.put("nimbusFocus", white);
+			UIManager.put("nimbusLightBackground", Color.decode("#FFF9E9"));
+			UIManager.put("control", white);		
 	    } 
 	    catch (Exception e) 
 	    {

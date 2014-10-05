@@ -113,7 +113,7 @@ public class Modimport extends JFrame
 	
 		setIconImage(new ImageIcon(this.getClass().getResource("src/icon.png"))	.getImage());
 	
-		JPanel cp = new GraphicsPanel(false, "src/page-bg.jpg");
+		JPanel cp = new JPanel();	
 		cp.setLayout(null);
 		add(cp);
 	

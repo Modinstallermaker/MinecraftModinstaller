@@ -7,7 +7,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
@@ -20,7 +19,6 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
@@ -70,8 +68,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	
 	private JLabel uberschrift = new JLabel();
 	private JLabel versionstext = new JLabel();
-	private JLabel modtext = new JLabel();
-	private JLabel popu = new JLabel();
+	private JLabel modtext = new JLabel();	
 	private JLabel[] bew = new JLabel[5];	
 	private JLabel banner = new JLabel();
 	private JLabel listleft = new JLabel();
@@ -83,10 +80,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	private JLabel hilfe = new JLabel();
 	private JLabel link = new JLabel();
 	private JLabel beenden = new JLabel();
-	public static JLabel weiter = new JLabel();
-	
-	private JCheckBox check = new JCheckBox();
-	private JCheckBox check2 = new JCheckBox();	
+	public static JLabel weiter = new JLabel();	
 	
 	private JComboBox ChVers;
 
@@ -109,29 +103,11 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	
 	public Menu() 
 	{
-		try 
-		{
-			if(new OP().optionReader("design").equals("default"))
-			{
-				setUndecorated(true);
-				setSize(breite, hoehe);				
-				cp = new GraphicsPanel(false, "src/page-bg.jpg");
-				cp.setBackground(Color.decode("#b0b4b7"));
-			}
-			else
-			{
-				setSize(breite+5, hoehe+30);		
-				cp = new JPanel();				
-				cp.setBackground(Color.decode("#b0b4b7"));
-			}
-		} 
-		catch (Exception e1) 
-		{			
-			setSize(breite+5, hoehe+30);		
-			cp = new JPanel();				
-			cp.setBackground(Color.decode("#b0b4b7"));
-		} 
-		
+		setUndecorated(true);
+		setSize(breite, hoehe);		
+		cp = new JPanel();	
+		cp.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
+				
 		setTitle(Read.getTextwith("installer", "name"));		
 		setLocationRelativeTo(null);
 		setResizable(false);
@@ -173,7 +149,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		int listenb = (int)(breite*0.2);
 		int listenh = (int)(hoehe*0.7);
 		int textb = (int)(breite*0.4);
-		int texth = (int)(hoehe*0.5);
+		int texth = (int)(hoehe*0.5-3);
 				
 		
 		listleft.setBounds(rand, rand+uber, listenb, 20);  //Liste1 Überschrift
@@ -191,14 +167,17 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		jList1b.setCellRenderer(new CellRenderer());				
 		jList1b.addMouseListener(this);
 		
+		jList1ScrollPane.setBorder(BorderFactory.createEmptyBorder());
+		jList1bScrollPane.setBorder(BorderFactory.createEmptyBorder());
 		tabbedPane.addTab( "Modloader", jList1ScrollPane);
 		tabbedPane.addTab( "Forge", jList1bScrollPane);
 		tabbedPane.setEnabled(false);
 		tabbedPane.addMouseListener(this);
 		tabbedPane.setBounds(rand, rand+uber+20, listenb, listenh);
-		cp.add(tabbedPane);
+							
+        cp.add(tabbedPane);
 		
-		listright.setBounds(breite-rand-listenb, (int)(hoehe*0.32), listenb, 20); //Liste2 Überschrift
+		listright.setBounds(breite-rand-listenb, (int)(hoehe*0.315), listenb, 20); //Liste2 Überschrift
 		listright.setHorizontalAlignment(SwingConstants.CENTER);
 		listright.setText(Read.getTextwith("seite2", "modi"));		
 		cp.add(listright);
@@ -208,34 +187,35 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		jList2.setCellRenderer(new CellRenderer());  
 		jList2.addMouseListener(this);
 		jList2ScrollPane.setBounds(breite-rand-listenb,  (int)(hoehe*0.35), listenb, (int)(hoehe*0.5));
+		jList2ScrollPane.setBorder(BorderFactory.createEmptyBorder());
 		cp.add(jList2ScrollPane);
 		
-		pfeilrechts.setBounds(rand+listenb+10+textb+20, 300, 100, 83); // Pfeil nach rechts		
-		pfeilrechts.setIcon(new ImageIcon(this.getClass().getResource("src/pfeil_rechts.png")));		
+		pfeilrechts.setBounds(rand+listenb+10+textb+20+25, 300, 100, 83); // Pfeil nach rechts		
+		pfeilrechts.setIcon(new ImageIcon(this.getClass().getResource("src/hinzufügen.png")));		
 		pfeilrechts.setToolTipText(Read.getTextwith("seite2", "text1"));
 		pfeilrechts.addMouseListener(this);
 		pfeilrechts.setCursor(c);
 		cp.add(pfeilrechts);
 
-		pfeillinks.setBounds(rand+listenb+10+textb+20, 390, 100, 83); // Pfeil nach links		
-		pfeillinks.setIcon(new ImageIcon(this.getClass().getResource("src/pfeil_links.png")));	
+		pfeillinks.setBounds(rand+listenb+10+textb+20-5, 390, 100, 83); // Pfeil nach links		
+		pfeillinks.setIcon(new ImageIcon(this.getClass().getResource("src/löschen.png")));	
 		pfeillinks.setToolTipText(Read.getTextwith("seite2", "text2"));	
 		pfeillinks.addMouseListener(this);
 		pfeillinks.setCursor(c);
 		cp.add(pfeillinks);	
 		
-		importbutton.setBounds(breite-rand-listenb+10, (int)(hoehe*0.25), 180, 40); // Mods importieren				
+		importbutton.setBounds(breite-rand-listenb+10, (int)(hoehe*0.23), 180, 40); // Mods importieren				
 		importbutton.setText(Read.getTextwith("seite2", "text3"));
 		importbutton.setFont(importbutton.getFont().deriveFont(Font.BOLD));
-		importbutton.setIcon(new ImageIcon(this.getClass().getResource("src/import.png")));	
+		importbutton.setIcon(new ImageIcon(this.getClass().getResource("src/importkl.png")));	
 		importbutton.addMouseListener(this); 
 		importbutton.setCursor(c);		
 		cp.add(importbutton);
 		
-		restore.setBounds(breite-rand-listenb+10, (int)(hoehe*0.17), 180, 40); // Restore druchführen	
+		restore.setBounds(breite-rand-listenb+10, (int)(hoehe*0.15), 180, 40); // Restore druchführen	
 		restore.setText(Read.getTextwith("seite2", "text5"));	
 		restore.setFont(restore.getFont().deriveFont(Font.BOLD));
-		restore.setIcon(new ImageIcon(this.getClass().getResource("src/restore.png")));		
+		restore.setIcon(new ImageIcon(this.getClass().getResource("src/zurücksetzen.png")));		
 		restore.addMouseListener(this); 
 		restore.setCursor(c);			
 		File backupfile = new File(stamm +"/Modinstaller/Backup/");
@@ -259,7 +239,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		
 		link.setBounds(rand+listenb+280, (int)(hoehe*0.28), 160, 40); // Link zur Modwebseiten		
 		link.setFont(link.getFont().deriveFont(Font.BOLD));
-		link.setIcon(new ImageIcon(this.getClass().getResource("src/link_n.png")));
+		link.setIcon(new ImageIcon(this.getClass().getResource("src/infokl.png")));
 		link.setText(Read.getTextwith("seite2", "text8"));	
 		link.addMouseListener(this); 
 		link.setCursor(c);
@@ -275,11 +255,6 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 			cp.add(bew[i]);
 		}
 		
-		popu.setBounds(rand+listenb+130, (int)(hoehe*0.31), 100, 40);                                //Prozent der Moddownloads
-		popu.setText(Read.getTextwith("seite2", "wait2"));
-		popu.setHorizontalAlignment(SwingConstants.LEFT);
-		popu.setFont(new Font("Dialog", Font.PLAIN, 10));
-		cp.add(popu);
 		
 		HTMLEditorKit kit = new HTMLEditorKit();
 	
@@ -288,78 +263,28 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	    pane.setContentType("text/html");
 	    pane.setEditorKit(kit);  	    
 	    pane.setText(Read.getTextwith("seite2", "wait"));	  
+	
 	    
 	    scroller = new JScrollPane(pane);
 	    scroller.setBounds(rand+listenb+15, (int)(hoehe*0.35), textb, texth);
+	    scroller.setBorder(BorderFactory.createEmptyBorder());
 	    cp.add(scroller);
 	    
-	    check.setBounds(rand+listenb+40, (int)(hoehe*0.36) +texth, 150, 25);                        //Texte laden?
-		check.setText(Read.getTextwith("seite2", "text11"));
-		check.setOpaque(false);
-		check.setSelected(true);
-	
-		try 
-		{
-			if(new OP().optionReader("loadtexts").equals("false"))			
-			{
-				aktual = false;
-				link.setEnabled(false);
-				check.setSelected(false);
-				for(int i=0; i<5; i++)
-					bew[i].setEnabled(false);
-				popu.setEnabled(false);
-			}
-		} 
-		catch (Exception e2) 
-		{			
-			e2.printStackTrace();
-		}	
-		
-		check.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent evt) {
-				check_ItemStateChanged(evt);
-			}
-		});
-		if(!online) check.setEnabled(false);
-		cp.add(check);		
-		
-		check2.setBounds(rand+listenb+200, (int)(hoehe*0.36) +texth, 200, 25);                             //Design?
-		check2.setText(Read.getTextwith("seite2", "text11a"));
-		check2.setOpaque(false);
-		check2.setSelected(true);		
-		try 
-		{
-			if(new OP().optionReader("design").equals("simple"))			
-				check2.setSelected(false);
-		} 
-		catch (Exception e1) 
-		{
-			
-			e1.printStackTrace();
-		}
-		check2.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent evt) {
-				check2_ItemStateChanged(evt);
-			}
-		});				
-		cp.add(check2); 
-		
-		beenden.setBounds(rand, (int)(hoehe*0.92), 150, 40); //Beenden	
+		beenden.setBounds(rand, (int)(hoehe*0.917), 150, 40); //Beenden	
 		beenden.setText(Read.getTextwith("seite2", "text9"));		
-		beenden.setIcon(new ImageIcon(this.getClass().getResource("src/exit.png")));	
-		beenden.setForeground(Color.DARK_GRAY);
+		beenden.setIcon(new ImageIcon(this.getClass().getResource("src/power.png")));			
 		beenden.setFont(beenden.getFont().deriveFont(Font.BOLD));	
 		beenden.addMouseListener(this);
 		beenden.setCursor(c);		
 		cp.add(beenden);
 
-		weiter.setBounds((int)(breite-220), (int)(hoehe*0.885), 200, 70); // Installieren		
+		weiter.setBounds((int)(breite-160), (int)(hoehe*0.885), 200, 70); // Installieren		
 		weiter.setText(Read.getTextwith("seite2", "text10"));
 		weiter.setFont(weiter.getFont().deriveFont((float) 15));
 		weiter.addMouseListener(this);
-		weiter.setCursor(c);
-		weiter.setForeground(Color.decode("#346BbD"));
-		weiter.setFont(new Font(weiter.getFont().getFamily(), Font.BOLD, 20)); 
+		weiter.setCursor(c);		
+		weiter.setHorizontalTextPosition(SwingConstants.LEFT);
+		weiter.setFont(weiter.getFont().deriveFont(Font.BOLD));
 		weiter.setIcon(new ImageIcon(this.getClass().getResource("src/install_s.png")));	
 		weiter.setEnabled(false);
 		cp.add(weiter);			
@@ -419,8 +344,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 			jList1Model.removeAllElements();
 			jList2Model.removeAllElements();		
 			for(int i=0; i<5; i++)
-				bew[i].setEnabled(false);
-			popu.setEnabled(false);
+				bew[i].setEnabled(false);		
 			importbutton.setEnabled(true);
 			try
 			{
@@ -652,8 +576,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	private void setInfoText(String modname) //Modbeschreibung anzeigen
 	{			
 		modtext.setText(modname);
-					
-		popu.setText(Read.getTextwith("seite2", "wait2"));
+		
 		Sterne(0, false);	
 		anders=false;
 		
@@ -731,10 +654,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 						  {	
 							 try
 						     {
-					        	proz = Info[i].getRating();        	
-								popu.setText(String.valueOf(proz)+"%");
-								if(proz==-1)
-									popu.setText("Not available");
+					        	proz = Info[i].getRating();     
 								Sterne(proz, false);
 								interrupt();
 						     }
@@ -953,8 +873,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		pane.setCaretPosition(0);
 		modtext.setText(Read.getTextwith("seite2", "text3"));
 		hyperlink="http://www.minecraft-installer.de/faq.php";
-		Sterne(0, false);
-		popu.setText("n/a");
+		Sterne(0, false);		
 		new Modimport(Modloader);			
 	}
 	
@@ -1007,8 +926,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 					aktual = true;
 					link.setEnabled(true);											
 					for(int i=0; i<5; i++)
-						bew[i].setEnabled(true);
-					popu.setEnabled(true);
+						bew[i].setEnabled(true);					
 					change();
 				 }
 			 });				
@@ -1022,8 +940,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 				e.printStackTrace();
 			}
 			for(int i=0; i<5; i++)
-				bew[i].setEnabled(false);
-			popu.setEnabled(false);
+				bew[i].setEnabled(false);			
 			aktual = false;
 			link.setEnabled(false);
 		}	
@@ -1097,15 +1014,13 @@ public class Menu extends JFrame implements ActionListener, MouseListener
            
            if(isSelected) 
            {
-        	   setBackground(new Color(0xebebeb));   
-               setForeground(Color.black);            
+        	          
                setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 0));
            }
            
            if(cellHasFocus) 
            {
-        	   setBackground(new Color(0xe0e0e0));   
-               setForeground(Color.black);            
+        	             
                setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
            }
         
@@ -1174,28 +1089,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	public void mouseEntered(MouseEvent e) 
 	{
 		Object s = e.getSource();
-		if(s==pfeilrechts)
-			pfeilrechts.setIcon(new ImageIcon(this.getClass().getResource("src/pfeil_rechts_over.png")));
-		else if(s==pfeillinks)
-			pfeillinks.setIcon(new ImageIcon(this.getClass().getResource("src/pfeil_links_over.png")));
-		else if(s==importbutton)
-		{
-			importbutton.setIcon(new ImageIcon(this.getClass().getResource("src/import_hover.png")));
-			importbutton.setForeground(Color.decode("#3333ff"));
-		}
-		else if(s==restore)
-		{
-			 if(restore.isEnabled())
-	    	  {
-		    	  restore.setIcon(new ImageIcon(this.getClass().getResource("src/restore_hover.png")));
-		    	  restore.setForeground(Color.decode("#006000"));
-	    	  }
-		}
-		else if (s==beenden)
-		{
-			 beenden.setIcon(new ImageIcon(this.getClass().getResource("src/exit_hover.png")));
-	    	 beenden.setForeground(Color.RED);
-		}
+		
 		
 		for(int i=0; i<bew.length; i++)
 		{
@@ -1210,28 +1104,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	public void mouseExited(MouseEvent e) 
 	{
 		Object s = e.getSource();
-		if(s==pfeilrechts)
-			pfeilrechts.setIcon(new ImageIcon(this.getClass().getResource("src/pfeil_rechts.png")));
-		else if(s==pfeillinks)
-			pfeillinks.setIcon(new ImageIcon(this.getClass().getResource("src/pfeil_links.png")));
-		else if(s==importbutton)
-		{
-			importbutton.setIcon(new ImageIcon(this.getClass().getResource("src/import.png")));
-			importbutton.setForeground(Color.BLACK);
-		}
-		else if(s==restore)
-		{
-			if(restore.isEnabled())
-	    	  {
-		    	  restore.setIcon(new ImageIcon(this.getClass().getResource("src/restore.png")));
-		    	  restore.setForeground(Color.BLACK);
-	    	  }
-		}
-		else if(s==beenden)
-		{
-			 beenden.setIcon(new ImageIcon(this.getClass().getResource("src/exit.png")));
-			 beenden.setForeground(Color.DARK_GRAY);
-		}
+		
 		
 		for(int i=0; i<bew.length; i++)
 		{
@@ -1314,8 +1187,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 							pane.setCaretPosition(0);
 							modtext.setText(Read.getTextwith("seite2", "text3"));
 							hyperlink="http://www.minecraft-installer.de/faq.php";
-							Sterne(0, true);
-							popu.setText("n/a");
+							Sterne(0, true);						
 							if(e.getClickCount()==2)
 							{
 								new Modimport(Auswahl.substring(2), mineord, Modloader, stamm);

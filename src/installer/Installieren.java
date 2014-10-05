@@ -6,6 +6,7 @@ import static argo.jdom.JsonNodeFactories.string;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +23,7 @@ import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -29,8 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
+import javax.swing.SwingConstants;
 
 import argo.format.PrettyJsonFormatter;
 import argo.jdom.JdomParser;
@@ -49,9 +50,12 @@ import argo.jdom.JsonStringNode;
 public class Installieren extends JFrame 
 {
 	private static final long serialVersionUID = 1L;
-	private JButton b1 = new JButton();
-	private JButton b2 = new JButton();
+	private JButton back = new JButton();
+	private JButton exit = new JButton();
+	private JButton start = new JButton();
 	private JLabel banner = new JLabel();
+	private JLabel uberschrift = new JLabel();
+	private JLabel info = new JLabel();
 	private JLabel iconf = new JLabel();
 	private JProgressBar bar = new JProgressBar();
 	private JLabel stat = new JLabel();	
@@ -61,6 +65,7 @@ public class Installieren extends JFrame
 	private Cursor c = new Cursor(Cursor.HAND_CURSOR);	
 	private Thread t1, t2, t3;
 	private Download dow, dowf;
+	private int breite = 600, hoehe=350;
 	
 	private String webplace = Start.webplace, mineord = Start.mineord, stamm = Start.stamm, Version = Start.Version;	
 	private boolean online = Start.online;
@@ -69,27 +74,11 @@ public class Installieren extends JFrame
 	
 	public Installieren(final String[] namen, final String[] downloadlist, final int[] anzahl, final boolean Modloader) 
 	{
-		try 
-		{
-			if(new OP().optionReader("design").equals("default"))
-			{
-				setUndecorated(true);
-				setSize(550, 250);				
-				cp = new GraphicsPanel(false, "src/page-bg.jpg");
-			}
-			else
-			{			
-				setSize(555, 280);
-				cp = new JPanel();
-				cp.setBackground(Color.decode("#b0b4b7"));
-			}
-		} 
-		catch (Exception e) 
-		{			
-			setSize(555, 280);
-			cp = new JPanel();
-			cp.setBackground(Color.decode("#b0b4b7"));
-		} 
+		
+		setUndecorated(true);			
+		setSize(breite, hoehe);
+		cp = new JPanel();
+		cp.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 
 		setTitle(Read.getTextwith("installer", "name"));		
 		setLocationRelativeTo(null);	
@@ -99,35 +88,35 @@ public class Installieren extends JFrame
 		cp.setLayout(null);
 		add(cp);
 		
+		uberschrift.setBounds(0, 20, (int)(breite), (int)(hoehe*0.1));                              //Überschrift
+		uberschrift.setText("Minecraft Modinstaller");
+		uberschrift.setHorizontalAlignment(SwingConstants.CENTER);
+		uberschrift.setVerticalAlignment(SwingConstants.CENTER);
+		uberschrift.setFont(Start.lcd.deriveFont(Font.PLAIN,40));
+		cp.add(uberschrift);
+		
 		banner.setBackground(null);
 		banner.setForeground(null);
 		banner.setIcon(new ImageIcon(this.getClass().getResource("src/banner_gross.png")));
-		banner.setBounds(41, 20, 468, 60);
+		banner.setBounds(0, (int)(hoehe*0.11), (int)(breite), (int)(hoehe*0.3));
 		banner.setCursor(c);
+		banner.setHorizontalAlignment(SwingConstants.CENTER);
 		banner.addMouseListener(new MouseListener() { // Internetlink
 			public void mouseClicked(MouseEvent e) 
 			{
 				new Browser("http://server.nitrado.net/deu/gameserver-mieten?pk_campaign=MinecraftInstaller");
 			}
 
-			public void mouseExited(MouseEvent e) {
-				Border thickBorder = new LineBorder(Color.WHITE, 0);
-				banner.setBorder(thickBorder);
-				banner.setBounds(41, 20, 468, 60);
+			public void mouseExited(MouseEvent e) {			
 			}
 
-			public void mouseEntered(MouseEvent e) {
-				Border thickBorder = new LineBorder(Color.WHITE, 1);
-				banner.setBorder(thickBorder);
-				banner.setBounds(40, 19, 470, 62);
+			public void mouseEntered(MouseEvent e) {			
 			}
 
-			public void mouseReleased(MouseEvent e) {
-				banner.setBorder(new LineBorder(Color.magenta, 1));
+			public void mouseReleased(MouseEvent e) {				
 			}
 
-			public void mousePressed(MouseEvent e) {
-				banner.setBorder(new LineBorder(Color.blue, 1));
+			public void mousePressed(MouseEvent e) {				
 			}
 		});
 		cp.add(banner);
@@ -135,39 +124,54 @@ public class Installieren extends JFrame
 		iconf.setBackground(null);
 		iconf.setForeground(null);
 		iconf.setIcon(new ImageIcon(this.getClass().getResource("src/install.png")));
-		iconf.setBounds(15, 105, 80, 80);
+		iconf.setBounds(15, 150, 80, 80);
 		cp.add(iconf);		
 
-		bar.setBounds(100, 133, 425, 33);
+		bar.setBounds(100, 180, 425, 33);
 		cp.add(bar);
 		
-		stat.setBounds (105, 113, 425, 17);
+		stat.setBounds(105, 160, 425, 17);
 		cp.add(stat);
 		
-		b1.setBounds(10, 200, 100, 35);
-		b1.setBackground(null);
-		b1.setText(Read.getTextwith("seite3", "text1"));
-		b1.setMargin(new Insets(2, 2, 2, 2));
-		b1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				b1_ActionPerformed(evt);
-			}
-		});
-		b1.setCursor(c);
-		cp.add(b1);
+		info.setBounds(105, 210, (int)(breite)-100, (int)(hoehe*0.2));                             //Info
+		cp.add(info);
 		
-		b2.setBounds(430, 200, 110, 35);
-		b2.setBackground(null);
-		b2.setText(Read.getTextwith("seite3", "text2"));
-		b2.setMargin(new Insets(2, 2, 2, 2));
-		b2.addActionListener(new ActionListener() {
+		back.setBounds(20, 300, 110, 35);  //Zurück
+		back.setBackground(null);
+		back.setText(Read.getTextwith("seite3", "text1"));
+		back.setMargin(new Insets(2, 2, 2, 2));
+		back.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				b2_ActionPerformed(evt);
+				back_ActionPerformed(evt);
 			}
 		});
-		b2.setEnabled(false);
-		b2.setCursor(c);
-		cp.add(b2);
+		back.setCursor(c);
+		cp.add(back);
+		
+		exit.setBounds((int)(breite)-130, 300, 110, 35); //Programm beenden
+		exit.setBackground(null);
+		exit.setText(Read.getTextwith("seite3", "text2"));
+		exit.setMargin(new Insets(2, 2, 2, 2));
+		exit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				System.exit(0);
+			}
+		});		
+		exit.setCursor(c);
+		cp.add(exit);
+		
+		start.setBounds((int)(breite)-130-130, 300, 120, 35); //Minecraft starten
+		start.setBackground(null);
+		start.setText("Starte Minecraft");
+		start.setMargin(new Insets(2, 2, 2, 2));
+		start.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				new startLauncher(webplace, mineord, online, stamm);	
+			}
+		});
+		start.setCursor(c);
+		start.setEnabled(false);
+		cp.add(start);
 		
 		setVisible(true);		
 
@@ -543,8 +547,8 @@ public class Installieren extends JFrame
 					}
 				}
 
-				b2.setEnabled(true);
-				b1.setEnabled(false);
+				start.setEnabled(true);
+				back.setEnabled(false);
 				bar.setValue(100);
 				
 
@@ -557,15 +561,8 @@ public class Installieren extends JFrame
 				{
 					iconf.setIcon(new ImageIcon(this.getClass().getResource("src/play.png")));
 					stat.setText(Read.getTextwith("seite3", "prog13"));	
-					int eingabe = JOptionPane.showConfirmDialog(null, Read.getTextwith("seite3", "prog14"), Read.getTextwith("seite3", "prog14h"), JOptionPane.YES_NO_OPTION);
-					if(eingabe==0)
-					{
-						new startLauncher(webplace, mineord, online, stamm);						
-					}
-					else
-					{
-						System.exit(0);
-					}
+					info.setText(Read.getTextwith("seite3", "prog14"));
+					
 				}
 			}
 		};
@@ -578,7 +575,7 @@ public class Installieren extends JFrame
 	}
 
 	@SuppressWarnings("deprecation")
-	public void b1_ActionPerformed(ActionEvent evt) // Vorgang abbrechen
+	public void back_ActionPerformed(ActionEvent evt) // Vorgang abbrechen
 	{
 		if (JOptionPane.showConfirmDialog(this,	Read.getTextwith("seite3", "cancel"), Read.getTextwith("seite3", "cancelh"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) 
 		{
@@ -628,10 +625,5 @@ public class Installieren extends JFrame
 			dispose();			
 			new Menu(); // beenden
 		}
-	}
-
-	public void b2_ActionPerformed(ActionEvent evt) 
-	{
-		System.exit(0);
 	}
 }
