@@ -77,7 +77,7 @@ public class Installieren extends JFrame
 		
 		setUndecorated(true);			
 		setSize(breite, hoehe);
-		cp = new JPanel();
+		cp = new GraphicsPanel(false, "src/bild.png");
 		cp.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 
 		setTitle(Read.getTextwith("installer", "name"));		

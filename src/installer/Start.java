@@ -595,7 +595,7 @@ public class Start extends JFrame
 		try 
 	    {	
 			Color red = Color.decode("#9C2717");
-			Color white = Color.decode("#FFF0D9");
+			Color white = Color.decode("#E0D4BA");
 			//Color white = Color.decode("#FFF9E9");
 			
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");			 

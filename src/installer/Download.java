@@ -42,7 +42,7 @@ public class Download
 	    conn.setRequestProperty("Expires", "0");
 	    conn.setRequestProperty("Pragma", "no-cache");
 	    conn.setConnectTimeout(10000);
-	    conn.setReadTimeout(15000);	    
+	    conn.setReadTimeout(25000);	    
 	    conn.connect();	  
 	   	    
 		int responseCode = conn.getResponseCode() / 100;

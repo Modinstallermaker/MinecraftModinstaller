@@ -105,7 +105,8 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	{
 		setUndecorated(true);
 		setSize(breite, hoehe);		
-		cp = new JPanel();	
+		cp = new GraphicsPanel(false, "src/bild.png");
+
 		cp.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 				
 		setTitle(Read.getTextwith("installer", "name"));		
@@ -278,14 +279,14 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		beenden.setCursor(c);		
 		cp.add(beenden);
 
-		weiter.setBounds((int)(breite-160), (int)(hoehe*0.885), 200, 70); // Installieren		
+		weiter.setBounds((int)(breite-170), (int)(hoehe*0.885), 220, 70); // Installieren		
 		weiter.setText(Read.getTextwith("seite2", "text10"));
 		weiter.setFont(weiter.getFont().deriveFont((float) 15));
 		weiter.addMouseListener(this);
 		weiter.setCursor(c);		
 		weiter.setHorizontalTextPosition(SwingConstants.LEFT);
 		weiter.setFont(weiter.getFont().deriveFont(Font.BOLD));
-		weiter.setIcon(new ImageIcon(this.getClass().getResource("src/install_s.png")));	
+		weiter.setIcon(new ImageIcon(this.getClass().getResource("src/installkl.png")));	
 		weiter.setEnabled(false);
 		cp.add(weiter);			
 	    
