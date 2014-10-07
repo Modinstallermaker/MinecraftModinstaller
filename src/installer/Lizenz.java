@@ -1,22 +1,18 @@
 package installer;
 
+import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.Shape;
-import java.awt.Toolkit;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.Scanner;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -42,49 +38,25 @@ public class Lizenz extends JFrame
 	private JButton wei = new JButton();
 	private JCheckBox check = new JCheckBox();
 	private JLabel head = new JLabel();	
-	private Method shapeMethod, transparencyMethod;
-	private Class<?> utils;
 	private Cursor c = new Cursor(Cursor.HAND_CURSOR);
 	private String Lizenztext = "";
 	private JEditorPane tp = new JEditorPane();
 	private Scanner scan;
+	private int hoehe = 345, breite=550;
 
 	public Lizenz() 
 	{
-		setUndecorated(true);
+		setUndecorated(true);			
+		setSize(breite, hoehe);
+		JPanel cp = new GraphicsPanel(false, "src/bild.png");
+		cp.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 
-		try 
-		{
-			utils = Class.forName("com.sun.awt.AWTUtilities");
-			shapeMethod = utils.getMethod("setWindowShape", Window.class,Shape.class);
-			shapeMethod.invoke(null, this, new RoundRectangle2D.Double(0, 0,550, 336, 20, 20));
-			
-			try
-			{
-				transparencyMethod = utils.getMethod("setWindowOpacity",Window.class, float.class);
-				transparencyMethod.invoke(null, this, .95f);
-			}
-			catch (Exception e)
-			{
-				System.out.println("Warnung: Konnte Transparenzen nicht initialisieren!");
-			}
-		} 
-		catch (Exception ex) 
-		{
-			ex.printStackTrace();
-		}
-		setTitle(Read.getTextwith("installer", "name"));
-		int frameWidth = 560;
-		int frameHeight = 375;
-		setSize(frameWidth, frameHeight);
-		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-		int x = (d.width - getSize().width) / 2;
-		int y = (d.height - getSize().height) / 2;
-		setLocation(x, y);
-
-		setIconImage(new ImageIcon(this.getClass().getResource("src/icon.png"))	.getImage());
-
-		JPanel cp = new GraphicsPanel(false, "src/page-bg.jpg");
+		
+		setTitle(Read.getTextwith("installer", "name"));		
+		setLocationRelativeTo(null);	
+		setResizable(false);
+		setIconImage(new ImageIcon(this.getClass().getResource("src/icon.png")).getImage());
+		
 		cp.setLayout(null);
 		add(cp);
 		

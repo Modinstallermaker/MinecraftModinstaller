@@ -162,7 +162,7 @@ public class Installieren extends JFrame
 		
 		start.setBounds((int)(breite)-130-130, 300, 120, 35); //Minecraft starten
 		start.setBackground(null);
-		start.setText("Starte Minecraft");
+		start.setText(Read.getTextwith("seite3", "text3"));
 		start.setMargin(new Insets(2, 2, 2, 2));
 		start.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -278,7 +278,7 @@ public class Installieren extends JFrame
 							quelle = String.valueOf(downloadlist[k]); // Downloadpfad für genauere Downloadliste speichern
 							if(!quelle.equals("null")) 
 							{	
-								final String statt = Read.getTextwith("seite3", "prog8a") + namen[k] + Read.getTextwith("seite3", "prog8b");
+								final String statt = Read.getTextwith("seite3", "prog8a") + namen[k] + "</b>"+Read.getTextwith("seite3", "prog8b");
 								stat.setText(statt);
 								iconf.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));
 								
