@@ -226,8 +226,8 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		}
 		cp.add(restore);
 		
-		hilfe.setBounds(10, 5, 50, 50); // FAQ anzeigen			
-		hilfe.setIcon(new ImageIcon(this.getClass().getResource("src/hilfe_n.png")));
+		hilfe.setBounds(2, 5, 50, 50); // FAQ anzeigen			
+		hilfe.setIcon(new ImageIcon(this.getClass().getResource("src/help.png")));
 		hilfe.setToolTipText(Read.getTextwith("seite2", "text6"));	
 		hilfe.addMouseListener(this); 		
 		cp.add(hilfe);
@@ -286,7 +286,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		weiter.setCursor(c);		
 		weiter.setHorizontalTextPosition(SwingConstants.LEFT);
 		weiter.setFont(weiter.getFont().deriveFont(Font.BOLD));
-		weiter.setIcon(new ImageIcon(this.getClass().getResource("src/installkl.png")));	
+		weiter.setIcon(new ImageIcon(this.getClass().getResource("src/install.png")));	
 		weiter.setEnabled(false);
 		cp.add(weiter);			
 	    

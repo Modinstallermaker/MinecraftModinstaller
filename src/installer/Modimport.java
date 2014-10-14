@@ -123,7 +123,7 @@ public class Modimport extends JFrame
 		hinzu.setHorizontalAlignment(SwingConstants.LEFT);
 		hinzu.setText(Read.getTextwith("modimport", "text5"));
 		hinzu.setMargin(new Insets(2, 2, 2, 2));
-		hinzu.setIcon(new ImageIcon(this.getClass().getResource("src/add.png")));
+		hinzu.setIcon(new ImageIcon(this.getClass().getResource("src/hinzufügenn.png")));
 		hinzu.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent evt) {
 			hinzu_ActionPerformed(evt);
@@ -137,7 +137,7 @@ public class Modimport extends JFrame
 		entf.setHorizontalAlignment(SwingConstants.LEFT);
 		entf.setFont(entf.getFont().deriveFont(Font.BOLD));
 		entf.setText(Read.getTextwith("modimport", "text6"));
-		entf.setIcon(new ImageIcon(this.getClass().getResource("src/delete.png")));
+		entf.setIcon(new ImageIcon(this.getClass().getResource("src/löschenn.png")));
 		entf.setMargin(new Insets(2, 2, 2, 2));
 		entf.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent evt) {

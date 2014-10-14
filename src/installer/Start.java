@@ -141,7 +141,7 @@ public class Start extends JFrame
 			{					
 				try 
 				{
-					lcd = Font.createFont(Font.TRUETYPE_FONT, this.getClass().getResource("src/Font.TTF").openStream());
+					lcd = Font.createFont(Font.TRUETYPE_FONT, this.getClass().getResource("src/FreeSansBold.ttf").openStream());
 				} catch (FontFormatException e2) {
 					// TODO Auto-generated catch block
 					e2.printStackTrace();
@@ -601,6 +601,7 @@ public class Start extends JFrame
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");			 
 			UIManager.put("nimbusBase", white);
 			UIManager.put("text", red);		    
+			UIManager.put("info", white);	
 			UIManager.put("nimbusSelectionBackground", red);
 			UIManager.put("nimbusSelectedText", white);
 			UIManager.put("nimbusFocus", white);
