@@ -119,7 +119,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		setIconImage(new ImageIcon(this.getClass().getResource("src/icon.png")).getImage());
 
 		uberschrift.setBounds(0, 0, (int)(breite), (int)(hoehe*0.1));                              //Überschrift
-		uberschrift.setText("Minecraft Modinstaller");
+		uberschrift.setText(Read.getTextwith("installer", "name"));
 		uberschrift.setHorizontalAlignment(SwingConstants.CENTER);
 		uberschrift.setVerticalAlignment(SwingConstants.CENTER);
 		uberschrift.setFont(Start.lcd.deriveFont(Font.PLAIN,40));
@@ -1058,7 +1058,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		 }
 		 else if(s==beenden)
 			 System.exit(0);
-		 else if(s==tabbedPane)
+		 else if(s==tabbedPane && tabbedPane.isEnabled())
 		 {
 			 if(tabbedPane.getSelectedIndex()==0)
 				ModloaderMode();
@@ -1067,23 +1067,29 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		 }
 		
 		 for(int i=0; i<bew.length; i++)
-			{
-				 if(e.getSource()==this.bew[i])
-				 {											
-					if(bewertung==i)
+		 {
+			 if(e.getSource()==this.bew[i])
+			 {											
+				if(bewertung==i)
+				{
+					Sterne(proz, false);
+					anders=false;
+					bewertung=-1;
+				}
+				else
+				{
+					Sterne(i+1, true);	
+					anders=true;
+					bewertung=i;
+					try
 					{
-						Sterne(proz, false);
-						anders=false;
-						bewertung=-1;
-					}
-					else
-					{
-						Sterne(i+1, true);	
-						anders=true;
-						bewertung=i;	
-					}					
-				 }
-			}
+						String body = "Mod=" + jList.getSelectedValue().toString() + "&Version=" + Version +"&Rating=" +  String.valueOf((i+1));
+						new Download().post("http://www.minecraft-installer.de/ratemod.php", body);							
+					} 
+					catch (IOException e1) {}					
+				}					
+			 }
+		 }
 	}
 
 	@Override

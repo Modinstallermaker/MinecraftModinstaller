@@ -1,9 +1,9 @@
 {
   "installer": { 
-    "name":"The Minecraft Modinstaller",
+    "name":"Minecraft Modinstaller",
     "desc":"... makes modding easier!",
    	"lang":"en",
-   	"version":"3.1",
+   	"version":"4.0",
     "zusatz":" ",
     "webplace":"http://files.minecraft-mods.de/installer/"   
   },   
@@ -23,7 +23,7 @@
     "prog10":"Downloading the current modlist",
     "prog11":"Internet connection not established",
     "prog12":"Starting the main window",    
-    "error2":"Please check, whether a file (e.g. \"1.6.2\") is located in the following file",
+    "error2":"Please check, whether a file (e.g. \"1.7.10\") is located in the following file",
     "error2h":"Minecraft not found!", 
     "error3":"<html><body>You are currently using a modified Minecraft version!<br>Please click in the Minecraft launcher on \"Options\" and then click \"Force Update\".<br>Sign in and wait until Minecraft has started.<br>Now close the program and install your mods.</body></html>",
     "error3h":"Modified Minecraft version",
@@ -99,7 +99,7 @@
     "error6h":"File cannot be read!",   
     "cancel":"Do you really want to cancel the process?",
     "cancelh":"Cancel the operation?",  
-    "forge":"<html><body>Donwloading the <b>Minecraft Forge</b>",      
+    "forge":"<html><body>Installing the <b>Minecraft Forge</b>",      
     "komp1":"<html><body>JarOutputStream could not be opened<br><br>Java reported...<br><br>",
     "komp2":"<html><body>JarOutputStream could not be closed<br><br>Java reported...<br><br>",
     "komph":"JarOutputStream error"     
@@ -132,7 +132,7 @@
     "modver":"Which Minecraft version do you want to modify?",
     "modverh":"Version?",    
    	"prog2":"Choose the Minecraft Launcher...", 
-   	"error":"Please check if the there is a folder (e.g. \"1.6.2\") in the following directory",
+   	"error":"Please check if the there is a folder (e.g. \"1.7.10\") in the following directory",
     "errorh":"Minecraft installation not correct!"  
   },
    "Error": { 

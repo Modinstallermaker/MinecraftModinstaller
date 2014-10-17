@@ -13,7 +13,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -111,7 +110,7 @@ public class Start extends JFrame
 				
 		setSize(499, 290);
 		setUndecorated(true);
-		setTitle("Minecraft Modinstaller 4");
+		setTitle(Read.getTextwith("installer", "name"));
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setIconImage(new ImageIcon(this.getClass().getResource("src/icon.png")).getImage());
@@ -201,8 +200,7 @@ public class Start extends JFrame
 			OnlineList = new OP().Textreadera(versionendat);
 			
 			AvialableList = new LinkedList<String>(OnlineList);					
-			AvialableList.retainAll(OfflineList);						
-			Collections.sort(AvialableList);
+			AvialableList.retainAll(OfflineList);	
 			
 			Versionen = AvialableList.toArray( new String[]{} );
 			
@@ -410,10 +408,7 @@ public class Start extends JFrame
 				String body = "Text=" + String.valueOf(ex) + "; Errorcode: S1x04&MCVers=" + Version + "&InstallerVers=" + Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString()+ "&EMail=unkn";
 				new Download().post("http://www.minecraft-installer.de/error.php", body);
 			} 
-			catch (Exception e) 
-			{					
-				e.printStackTrace();
-			}
+			catch (Exception e) {}
 
 			Object[] options2 = {Read.getTextwith("seite1", "inter1"), Read.getTextwith("seite1", "inter2"), Read.getTextwith("seite1", "inter3")};
 			int selected2 = JOptionPane.showOptionDialog(null, Read.getTextwith("seite1", "inter4")+ex.toString(), Read.getTextwith("seite1", "inter4h"), JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null, options2, options2[0]);

@@ -89,7 +89,7 @@ public class Installieren extends JFrame
 		add(cp);
 		
 		uberschrift.setBounds(0, 20, (int)(breite), (int)(hoehe*0.1));                              //Überschrift
-		uberschrift.setText("Minecraft Modinstaller");
+		uberschrift.setText(Read.getTextwith("installer", "name"));
 		uberschrift.setHorizontalAlignment(SwingConstants.CENTER);
 		uberschrift.setVerticalAlignment(SwingConstants.CENTER);
 		uberschrift.setFont(Start.lcd.deriveFont(Font.PLAIN,40));
@@ -98,7 +98,7 @@ public class Installieren extends JFrame
 		banner.setBackground(null);
 		banner.setForeground(null);
 		banner.setIcon(new ImageIcon(this.getClass().getResource("src/banner_gross.png")));
-		banner.setBounds(0, (int)(hoehe*0.11), (int)(breite), (int)(hoehe*0.3));
+		banner.setBounds(0, (int)(hoehe*0.12), (int)(breite), (int)(hoehe*0.3));
 		banner.setCursor(c);
 		banner.setHorizontalAlignment(SwingConstants.CENTER);
 		banner.addMouseListener(new MouseListener() { // Internetlink
@@ -381,9 +381,10 @@ public class Installieren extends JFrame
 							iconf.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));	
 							final File libr = new File(stamm+"/Modinstaller/forge_"+Version+".zip");
 							
-							if((!libr.exists())||libr.length()<100)
+							dowf = new Download();	
+							
+							if(!dowf.ident(webplace + Version +"/"+ "forge2.zip", libr))
 							{
-								dowf = new Download();								
 								t3 = new Thread()
 								{			
 									public void run() 
@@ -415,7 +416,9 @@ public class Installieren extends JFrame
 								dowf.downloadFile(webplace + Version +"/"+ "forge2.zip", new FileOutputStream(libr));	//ZIP Datei herunterladen
 								t3.interrupt();
 							}
+							
 							status(value += 4);	
+							iconf.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));
 							new Extrahieren(libr, new File(mineord));
 						}					
 					}					 

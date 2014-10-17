@@ -86,12 +86,12 @@ public class Download
 		return rue;
 	}
 	
-	public boolean ident (String url_str, File copy) throws IllegalStateException, MalformedURLException,ProtocolException, IOException
+	public boolean ident (String url_str, File copy) throws IllegalStateException, MalformedURLException,ProtocolException, IOException //Wenn nicht gleich false zurück
 	{	    
 	    int groe = size(url_str);
 	    int ist = (int) copy.length();
 	    boolean identisch = true;
-	    if(groe==ist)
+	    if(groe!=ist)
 	    {
 	    	identisch = false;
 	    }

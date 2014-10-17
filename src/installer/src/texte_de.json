@@ -1,9 +1,9 @@
 {
   "installer": { 
-    "name":"Der Minecraft Modinstaller",
+    "name":"Minecraft Modinstaller",
     "desc":"... makes modding easier!",
    	"lang":"de",
-   	"version":"3.1",
+   	"version":"4.0",
     "zusatz": " ",
     "webplace":"http://files.minecraft-mods.de/installer/"   
   },   
@@ -99,8 +99,8 @@
     "error6h":"Datei kann nicht eingelesen werden!",   
     "cancel":"Möchtest Du den Vorgang wirklich abbrechen?",
     "cancelh":"Vorgang abbrechen?",
-    "forge":"Die Minecraft Forge wird installiert",      
-    "komp1":"<html><body>JarOutputStream konnte nicht ge�ffnet werden!<br><br>Java meldete...<br><br>",
+    "forge":"<html><body>Die <b>Minecraft Forge</b> wird installiert",      
+    "komp1":"<html><body>JarOutputStream konnte nicht geöffnet werden!<br><br>Java meldete...<br><br>",
     "komp2":"<html><body>JarOutputStream konnte nicht geschlossen werden!<br><br>Java meldete...<br><br>",
     "komph":"JarOutputStream Fehler"     
   }, 
