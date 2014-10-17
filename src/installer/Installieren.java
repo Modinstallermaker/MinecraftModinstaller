@@ -557,7 +557,7 @@ public class Installieren extends JFrame
 
 				if (!Fehler.equals("")) // alle Fehler anzeigen
 				{
-					new Error(Fehler, Version);
+					new Error(Fehler);
 					stat.setText(Read.getTextwith("seite3", "error2"));				
 				} 
 				else 

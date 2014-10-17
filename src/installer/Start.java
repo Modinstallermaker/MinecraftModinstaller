@@ -131,7 +131,7 @@ public class Start extends JFrame
 		prog.setForeground(Color.decode("#e0dbc7"));
 		cp.add(prog);
 		
-		setVisible(true);
+		setVisible(true);	
 		
 		new Thread() 
 		{			
@@ -140,7 +140,7 @@ public class Start extends JFrame
 			{					
 				try 
 				{
-					lcd = Font.createFont(Font.TRUETYPE_FONT, this.getClass().getResource("src/FreeSansBold.ttf").openStream());
+					lcd = Font.createFont(Font.TRUETYPE_FONT, this.getClass().getResource("src/Comfortaa.ttf").openStream());
 				} catch (FontFormatException e2) {
 					// TODO Auto-generated catch block
 					e2.printStackTrace();
@@ -466,7 +466,7 @@ public class Start extends JFrame
 		} 
 		catch (Exception ex) 
 		{
-			new Error(String.valueOf(ex) +"\n\nErrorcode: S1x03", Version);
+			new Error(String.valueOf(ex) +"\n\nErrorcode: S1x03");
 		}		
 	}
 	
@@ -499,7 +499,7 @@ public class Start extends JFrame
 	   
 	    try 
 	    {
-			if(new OP().optionReader("lizenz").equals("false"))
+			if(new OP().optionReader("lizenz").equals("n/a"))
 			{
 				new Lizenz();
 			}

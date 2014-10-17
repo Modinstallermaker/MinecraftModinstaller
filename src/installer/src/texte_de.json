@@ -51,7 +51,7 @@
     "text10":"Installieren",
     "text11":"Texte laden",
     "text11a":"Design anspruchsvoll",
-    "modv":"Modvorschläge",   
+    "modv":"Wir empfehlen...",   
     "modi":"zu installierende Mods",    
     "texts":"http://www.minecraft-installer.de/Dateien/Texte/",
     "text12":"Die Modbeschreibungen werden zurzeit nicht heruntergeladen...<br>Wenn Du die Beschreibungen wieder lesen möchtest,<br>klicke bitte rechts unten auf \"Texte laden\".",
@@ -65,6 +65,7 @@
     "wait":"<font size=+1><b>Einen Augenblick bitte...</b></font><br><br>Der Modinstaller lädt gerade die Modbeschreibungen und deren Bewertungen passend zu Deiner ausgewählten Minecraft Version herunter.",
     "wait2":"Bitte warten...",
     "web":"http://www.minecraft-installer.de",
+    "web2":"www.Minecraft-Installer.de",
     "import":"<html><body><h2>Was muss ich beim Importieren von Mods beachten?</h2>Zuerst musst Du die zu installierenden Moddateien vom Internet herunterladen und Dich darüber informieren, ob der Mod die Minecraft Forge benötigt bzw. andere Modloader (z.B. Risugnamis Modloader).<br><br><b>Nur für Mods mit oder ohne Modloader (z.B. Risugnamis Modloader):</b><br><b>Entpacke</b> die heruntergeladenen Dateien in einen <b>leeren, neu angelegten Ordner</b> Deiner Wahl. Dann klicke im <b>Modloader Modus</b> auf \"Mods importieren\", gib dem neuen Mod einen Namen und wähle mit einem Klick auf \"Hinzufügen\" den <b>Ordner</b> mit den extrahierten Dateien aus (KEINE einzelnen Dateien auswählen!). Tipp: Wenn Du auf den hinzugefügten Listeneintrag doppelklickst, öffnet sich der Ordner (mit dem Windows Explorer) mit alle Dateien, welche in die minecraft.jar gepackt werden sollen.<br><br><b>Nur für Forge Mods:</b><br>Informiere Dich zuerst, wohin die Dateien kopiert werden sollen (meistens hilft die readme.txt Datei in der ZIP Datei). Bitte wechsle in den <b>Forge Modus</b> und klicke auf \"Mods importieren\". Gib dem neuen Mod einen Namen und klicke dann auf \"Hinzufügen\". Du wirst vorher gefragt, wohin die Dateien kopiert werden sollen (meistens ist es der mods Ordner). Füge nun die JAR oder ZIP Dateien hinzu (im Gegensatz zum Modloaderimportvorgang bitte nur dann Ordner hinzufügen, wenn ein Unterordner [z.B. .minecraft/mods/meinOrdner] erstellt werden muss).<br><br>Klicke nun, wenn Du alle Dateien und/oder Ordner hinzugefügt hast auf Schließen. Du kannst die importierten Mod wieder editieren, wenn Du auf den Listeneitrag, der mit dem Pluszeichen + gekennzeichnet ist, doppelklickst. Klicke abschließend, wenn alle Fenster des Modinstallers geschlossen sind, auf \"Installieren\". Fertig!</body></html>",
     "restore":"<html><body>Minecraft wurde erfolgreich zum Zeitpunkt<br>der letzten Installation wiederhergestellt!</body></html>",
     "restoreh":"Restore erfolgreich!"  

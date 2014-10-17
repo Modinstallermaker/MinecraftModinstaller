@@ -51,7 +51,7 @@
     "text10":"Install Mods",
     "text11":"Load texts",
     "text11a":"Advanced design",
-    "modv":"Mod advice", 
+    "modv":"We recommend...", 
     "modi":"Mods to install",    
     "text12":"The mod descriptions are currently not downloaded ...<br>If you want to read the descriptions again,<br>please click the bottom right on \"Load texts\".",
     "texts":"http://www.minecraft-installer.de/Dateien/Texte_en/",
@@ -65,6 +65,7 @@
     "wait":"<font size=+1><b>One moment, please...</b></font><br><br>The Modinstaller is loading the mod descriptions and their ratings fitting to your selected Minecraft version.",
     "wait2":"Please wait...",    
     "web":"http://www.minecraft-installer.com",
+    "web2":"www.Minecraft-Installer.com",
     "import":"<html><body><h2>What should I consider when importing mods?</h2><i>Here you can easily install mods without an internet connection.</i><br><br>First you have to download the mod files from the Internet and to inform you whether the mod requires Forge or other Modloaders (e.g. Risugnamis Modloader).<br><br><b>Only for mods with or without Modloader (e.g. Risugnamis Modloader):</b><br><b>Unzip</b> the downloaded files into an <b>empty, newly created folder</b> of your choice. Then click in the <b>Modloader mode</b> at the button \"Import mods\", enter the name of the mod and choose by clicking on \"Add\" the folder with the extracted files (DO NOT choose single files!).<br><i>Tip: If you double click on the added list item you will open the folder (using Windows Explorer) with all the files that are to be packed into the minecraft.jar.</i><br><br><b>Only for Forge mods:</b><br>First inform yourself, where the files have to be copied (the readme.txt in the zip file often helps you). Please switch to the <b>Forge mode</b> and click on \"Import mods\". Enter the name of the mod and click on \"Add\". You will be asked beforehand where the files are to be copied (mostly it is the mods folder). Now add the JAR or ZIP files (in contact to the Modloader import progress, please add only folders, if a subfolder [e.g. .minecraft/mods/myFolder] must be created).<br><br>Click on \"Close\", if you have added all of the files and/or folders. You can edit an imported mod again by clicking double on the + sign. Then click, when all the windows are closed, on \"Install\". Ready!</body></html>",
     "restore":"<html><body>Minecraft was successfully restored at the time of the last installation!</body></html>",
     "restoreh":"Restore successfully!"   

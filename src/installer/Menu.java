@@ -31,6 +31,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.text.html.HTMLEditorKit;
 
 /**
@@ -79,6 +81,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	private JLabel restore = new JLabel();
 	private JLabel hilfe = new JLabel();
 	private JLabel link = new JLabel();
+	private JLabel web = new JLabel();
 	private JLabel beenden = new JLabel();
 	public static JLabel weiter = new JLabel();	
 	
@@ -122,7 +125,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		uberschrift.setText(Read.getTextwith("installer", "name"));
 		uberschrift.setHorizontalAlignment(SwingConstants.CENTER);
 		uberschrift.setVerticalAlignment(SwingConstants.CENTER);
-		uberschrift.setFont(Start.lcd.deriveFont(Font.PLAIN,40));
+		uberschrift.setFont(Start.lcd.deriveFont(Font.BOLD,48));
 		cp.add(uberschrift);
 	
 		if(Start.Versionen!=null&&Start.Versionen.length>0)  //MC Version ändern
@@ -150,11 +153,12 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		int listenb = (int)(breite*0.2);
 		int listenh = (int)(hoehe*0.7);
 		int textb = (int)(breite*0.4);
-		int texth = (int)(hoehe*0.5-3);
+		int texth = (int)(hoehe*0.5-2);
 				
 		
-		listleft.setBounds(rand, rand+uber, listenb, 20);  //Liste1 Überschrift
+		listleft.setBounds(rand, rand+uber-5, listenb, 20);  //Liste1 Überschrift
 		listleft.setHorizontalAlignment(SwingConstants.CENTER);
+		listleft.setFont(importbutton.getFont().deriveFont(Font.BOLD,14));
 		listleft.setText(Read.getTextwith("seite2", "modv"));		
 		cp.add(listleft);
 		
@@ -162,7 +166,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		jList1.setModel(jList1Model);
 		jList1.setCellRenderer(new CellRenderer());				
 		jList1.addMouseListener(this);
-		
+				
 		jList1bModel.addElement(Read.getTextwith("seite2", "wait2")); //Liste1 Forge
 		jList1b.setModel(jList1bModel);
 		jList1b.setCellRenderer(new CellRenderer());				
@@ -173,7 +177,19 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		tabbedPane.addTab( "Modloader", jList1ScrollPane);
 		tabbedPane.addTab( "Forge", jList1bScrollPane);
 		tabbedPane.setEnabled(false);
-		tabbedPane.addMouseListener(this);
+		tabbedPane.addChangeListener(new ChangeListener() 
+		{
+	        public void stateChanged(ChangeEvent e) 
+	        {
+	        	 if(tabbedPane.isEnabled())
+	    		 {
+	    			 if(tabbedPane.getSelectedIndex()==0)
+	    				ModloaderMode();
+	    			 else
+	    				ForgeMode();
+	    		 }
+	        }
+	    });
 		tabbedPane.setBounds(rand, rand+uber+20, listenb, listenh);
 							
         cp.add(tabbedPane);
@@ -271,21 +287,31 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	    scroller.setBorder(BorderFactory.createEmptyBorder());
 	    cp.add(scroller);
 	    
-		beenden.setBounds(rand, (int)(hoehe*0.917), 150, 40); //Beenden	
+	    web.setBounds((int)(breite/2-180), (int)(hoehe*0.94), 300, 20); //Beenden	
+	    web.setText(Read.getTextwith("seite2", "web2"));
+	    web.setFont(web.getFont().deriveFont(Font.PLAIN, 16));	
+	    web.addMouseListener(this);
+	    web.setHorizontalAlignment(SwingConstants.CENTER);	 
+	    web.setCursor(c);		
+		cp.add(web);
+	    
+		beenden.setBounds(rand, hoehe-40-rand, 150, 40); //Beenden	
 		beenden.setText(Read.getTextwith("seite2", "text9"));		
 		beenden.setIcon(new ImageIcon(this.getClass().getResource("src/power.png")));			
-		beenden.setFont(beenden.getFont().deriveFont(Font.BOLD));	
+		beenden.setFont(beenden.getFont().deriveFont(Font.BOLD, 16));	
 		beenden.addMouseListener(this);
 		beenden.setCursor(c);		
 		cp.add(beenden);
 
-		weiter.setBounds((int)(breite-170), (int)(hoehe*0.885), 220, 70); // Installieren		
+		weiter.setBounds((int)(breite-220-rand+5), hoehe-70-rand+10, 220, 70); // Installieren		
 		weiter.setText(Read.getTextwith("seite2", "text10"));
 		weiter.setFont(weiter.getFont().deriveFont((float) 15));
 		weiter.addMouseListener(this);
 		weiter.setCursor(c);		
 		weiter.setHorizontalTextPosition(SwingConstants.LEFT);
-		weiter.setFont(weiter.getFont().deriveFont(Font.BOLD));
+		weiter.setFont(weiter.getFont().deriveFont(Font.BOLD, 22));
+		weiter.setHorizontalAlignment(SwingConstants.RIGHT);	
+		weiter.setVerticalAlignment(SwingConstants.CENTER);
 		weiter.setIcon(new ImageIcon(this.getClass().getResource("src/install.png")));	
 		weiter.setEnabled(false);
 		cp.add(weiter);			
@@ -550,7 +576,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 				 } 
 				 catch (Exception ex) 
 				 {
-					new Error(Read.getTextwith("seite2", "error1")+ String.valueOf(ex)+ "\n\nErrorcode: S2x03", Version);	
+					new Error(Read.getTextwith("seite2", "error1")+ String.valueOf(ex)+ "\n\nErrorcode: S2x03");	
 					new Browser("http://www.minecraft-installer.de/verbindung.htm");
 				 }
 				 
@@ -568,7 +594,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 					} 
 					catch (Exception ex) 
 					{
-						new Error(String.valueOf(ex) +"\n\nErrorcode: S2xak", Version);
+						new Error(String.valueOf(ex) +"\n\nErrorcode: S2xak");
 					}	
 			 }
 		 });	
@@ -752,7 +778,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 						} 
 						catch (Exception e) 
 						{					
-							new Error(Read.getTextwith("seite2", "error2") + String.valueOf(e)+ "\n\nErrorcode: S2x06", Version);
+							new Error(Read.getTextwith("seite2", "error2") + String.valueOf(e)+ "\n\nErrorcode: S2x06");
 						}
 						
 						try //???
@@ -761,7 +787,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 						} 
 						catch (Exception e) 
 						{
-							new Error(Read.getTextwith("seite2", "error2") + String.valueOf(e)+ "\n\nErrorcode: S2x07", Version);
+							new Error(Read.getTextwith("seite2", "error2") + String.valueOf(e)+ "\n\nErrorcode: S2x07");
 						}
 								       
 						if (test == false) 
@@ -864,7 +890,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		} 
 		catch (Exception ex) 
 		{	
-			new Error(new OP().getStackTrace(ex) + "\n\nErrorcode: S2x09", Version);	
+			new Error(new OP().getStackTrace(ex) + "\n\nErrorcode: S2x09");	
 		}		
 	}
 
@@ -1056,15 +1082,13 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 			 if(link.isEnabled())
 			 new Browser(hyperlink);
 		 }
+		 else if(s==web)
+		 {			
+			 new Browser(Read.getTextwith("seite2", "web"));
+		 }
 		 else if(s==beenden)
 			 System.exit(0);
-		 else if(s==tabbedPane && tabbedPane.isEnabled())
-		 {
-			 if(tabbedPane.getSelectedIndex()==0)
-				ModloaderMode();
-			 else
-				ForgeMode();
-		 }
+		 
 		
 		 for(int i=0; i<bew.length; i++)
 		 {
@@ -1250,8 +1274,6 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 			 jList1Model.addElement(Read.getTextwith("seite2", "wait2"));
 			 pane.setText(Read.getTextwith("seite2", "wait"));
 			 versioneinstellen();
-		 }
-		 
-		 
-	}  
+		 } 
+	} 
 }

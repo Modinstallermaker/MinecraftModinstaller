@@ -33,12 +33,12 @@ public class Error extends JFrame
 	  private JButton Send = new JButton();
 	  private JButton Forum = new JButton();
 	  private JButton Copy = new JButton();
-	  private String Version="";
+	  private String Version = Start.Version;
+
 	  private Cursor c = new Cursor(Cursor.HAND_CURSOR);
 	  
-	  public Error(String fehler, String Version) 
-	  { 
-		this.Version = Version;
+	  public Error(String fehler) 
+	  { 		
 	    setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	    int frameWidth = 615; 
 	    int frameHeight = 380;
@@ -50,7 +50,8 @@ public class Error extends JFrame
 	    int y = (d.height - getSize().height) / 2;
 	    setLocation(x, y);
 	    setResizable(false);
-		JPanel cp = new GraphicsPanel(false, "src/page-bg.jpg");
+	    
+		JPanel cp = new JPanel();	
 		cp.setLayout(null);
 		add(cp);		
 	
