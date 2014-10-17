@@ -432,7 +432,7 @@ public class Installieren extends JFrame
 				File zusatz = new File(stamm + "/Modinstaller/zusatz.txt");  // Importiertes kopieren
 				if (zusatz.exists())  
 				{
-					iconf.setIcon(new ImageIcon(this.getClass().getResource("src/importieren.png")));
+					iconf.setIcon(new ImageIcon(this.getClass().getResource("src/import.png")));
 					try 
 					{
 						String[] read1 = new OP().Textreader(zusatz);

@@ -216,7 +216,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		restore.setBounds(breite-rand-listenb+10, (int)(hoehe*0.15), 180, 40); // Restore druchführen	
 		restore.setText(Read.getTextwith("seite2", "text5"));	
 		restore.setFont(restore.getFont().deriveFont(Font.BOLD));
-		restore.setIcon(new ImageIcon(this.getClass().getResource("src/zurücksetzen.png")));		
+		restore.setIcon(new ImageIcon(this.getClass().getResource("src/restore.png")));		
 		restore.addMouseListener(this); 
 		restore.setCursor(c);			
 		File backupfile = new File(stamm +"/Modinstaller/Backup/");
