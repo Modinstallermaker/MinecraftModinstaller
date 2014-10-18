@@ -53,7 +53,7 @@
     "text11a":"Advanced design",
     "modv":"We recommend...", 
     "modi":"Mods to install",    
-    "text12":"The mod descriptions are currently not downloaded ...<br>If you want to read the descriptions again,<br>please click the bottom right on \"Load texts\".",
+    "text12":"Currently no mod descriptions are downloaded...<br>If you like to read the descriptions again,<br>please click the bottom right on \"Load texts\".",
     "texts":"http://www.minecraft-installer.de/Dateien/Texte_en/",
     "offline":"<html><body><h1>Offline mode</h1><i>Here you can easily install mods without an internet connection.</i><br><br>First you have to download the mod files from the Internet and inform you whether the mod requires Forge or other Modloaders (e.g. Risugnamis Modloader).<br><br><b>Only for mods with or without Modloader (e.g. Risugnamis Modloader):</b><br><b>Unzip</b> the downloaded files into an <b>empty, newly created folder</b> of your choice. Then click in the <b>Modloader mode</b> at the button \"Import mods\", enter the name of the mod and choose by clicking on \"Add\" the folder with the extracted files (DO NOT choose single files!).<br><i>Tip: If you double click on the added list item you will open the folder (using Windows Explorer) with all the files that are to be packed into the minecraft.jar.</i><br><br><b>Only for Forge mods:</b><br>First inform yourself, where the files are to be copied (the readme.txt in the zip file often helps you). Please switch to the <b>Forge mode</b> and click on \"Import mods\". Enter the name of the mod and click on \"Add\". You will be asked beforehand where the files are to be copied (mostly it is the mods folder). Now add the JAR or ZIP files (in contact to the Modloader import progress, please add folders only, if a subfolder [e.g. .minecraft/mods/myFolder] must be created).<br><br>Click of Close, if you have added all the files and/or folders. You can edit the imported mod again by double clicking on the + sign. Then click, when all the windows are closed, on \"Install\". Ready!</body></html>",	
 	"error1":"The list of current mods could not be downloaded.\nPlease ensure that you are connected to the Internet.\nYou should also check if an antivirus program is blocking the network traffic of Java (Oracle)!\n\nJava reported...\n\n",
@@ -130,7 +130,7 @@
     "errorh":"Minecraft not found!"
   },
   "OP": { 
-    "modver":"Which Minecraft version do you want to modify?",
+    "modver":"Which Minecraft version would you like to modify?",
     "modverh":"Version?",    
    	"prog2":"Choose the Minecraft Launcher...", 
    	"error":"Please check if the there is a folder (e.g. \"1.7.10\") in the following directory",
@@ -142,13 +142,13 @@
    	"call":"Send report", 
    	"forum":"Open forum",
     "copy":"Copy report",
-    "email1":"Want to leave your e-mail address for an answer?",
+    "email1":"Would you like to leave your e-mail address for an answer?",
     "email1h":"E-mail?",
     "email2":"Enter your email address:",
     "email2h":"Enter E-mail"
   },
   "startLauncher": { 
-    "prog1":"Do you want to choose the Launcher in order to start Minecraft?",
+    "prog1":"Would you like to choose a Launcher in order to start Minecraft?",
     "prog1h":"Choose Launcher?",
    	"prog2":"Please choose the Minecraft Launcher"  
   }

@@ -19,12 +19,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
 import org.spout.nbt.CompoundMap;
@@ -49,6 +51,7 @@ public class Start extends JFrame
 
 	private JLabel programmtext = new JLabel();
 	private JLabel prog = new JLabel();	
+	private JLabel logo = new JLabel();	
 	private JPanel cp;	
 	
 	public static String Version;
@@ -63,6 +66,8 @@ public class Start extends JFrame
 	List<String> OnlineList = new ArrayList<String>();
 	List<String> OfflineList = new ArrayList<String>();
 	List<String> AvialableList;
+	
+	private int hoehe =300, breite=500;
 	
 
 	public Start()
@@ -108,27 +113,32 @@ public class Start extends JFrame
 		Zusatz = Read.getTextwith("installer", "zusatz");
 		webplace = Read.getTextwith("installer", "webplace");
 				
-		setSize(499, 290);
+		setSize(breite, hoehe);
 		setUndecorated(true);
 		setTitle(Read.getTextwith("installer", "name"));
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setIconImage(new ImageIcon(this.getClass().getResource("src/icon.png")).getImage());
 		
-		cp = new GraphicsPanel(false, "src/mm.png");
+		cp = new GraphicsPanel(false, "src/bild.png");
+		cp.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 		cp.setLayout(null);			
 		add(cp);
 		
-		programmtext.setBounds(150, 15, 100, 20);
+		programmtext.setBounds(breite-100-15, 15, 100, 20);
 		programmtext.setText("Version " + Programmnummer + " " + Zusatz);
-		programmtext.setFont(new Font("Arial", Font.PLAIN, 14));
-		programmtext.setForeground(Color.decode("#6666ff"));
+		programmtext.setFont(new Font("Arial", Font.PLAIN, 14));	
+		programmtext.setHorizontalAlignment(SwingConstants.RIGHT);
 		cp.add(programmtext);
 		
-		prog.setBounds(160, 240, 350, 20);
+		logo.setBounds(0, 0, breite, hoehe-50);
+		logo.setIcon(new ImageIcon(this.getClass().getResource("src/logo.png")));
+		logo.setHorizontalAlignment(SwingConstants.CENTER);
+		cp.add(logo);
+		
+		prog.setBounds(220, 250, 350, 20);
 		prog.setText(Read.getTextwith("seite1", "prog1"));
-		prog.setFont(new Font("Dialog", Font.BOLD, 16));
-		prog.setForeground(Color.decode("#e0dbc7"));
+		prog.setFont(new Font("Dialog", Font.BOLD, 16));		
 		cp.add(prog);
 		
 		setVisible(true);	

@@ -107,15 +107,13 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	public Menu() 
 	{
 		setUndecorated(true);
-		setSize(breite, hoehe);		
-		cp = new GraphicsPanel(false, "src/bild.png");
-
-		cp.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
-				
+		setSize(breite, hoehe);
 		setTitle(Read.getTextwith("installer", "name"));		
 		setLocationRelativeTo(null);
 		setResizable(false);
 		
+		cp = new GraphicsPanel(false, "src/bild.png");
+		cp.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 		cp.setLayout(null);
 		add(cp);
 
@@ -622,10 +620,14 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 						  boolean ende=false;
 						  do
 						  {
+							  try
+							  {
 							  if(Info[i]!=null&&Info[i].fertig())
 							  {	
 							    ende=true;    							   
-							  }								  
+							  }	
+							  }
+							  catch (Exception e){}
 						  }
 						  while(!ende);	
 						  if(ende)
