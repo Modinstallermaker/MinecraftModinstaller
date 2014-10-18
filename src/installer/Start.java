@@ -509,7 +509,8 @@ public class Start extends JFrame
 	   
 	    try 
 	    {
-			if(new OP().optionReader("lizenz").equals("n/a"))
+	    	String lizenz = new OP().optionReader("lizenz");
+			if(lizenz.equals("n/a")||lizenz.equals("false"))
 			{
 				new Lizenz();
 			}

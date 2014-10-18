@@ -485,23 +485,24 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 							{
 								File rating = new File(stamm +"/Modinstaller/bewertungen.txt");
 								Download("http://minecraft-installer.de/proz3.php?MC="+Version, rating);
-								String[] Bew = new OP().Textreaders(rating).split(";");
-								
+								String[] Bew = new OP().Textreaders(rating).split(";");								
 								
 								for (int k=0; k<ModList.length; k++)	
-								{
-									boolean gefunden =false;
-									loop1 : for(int i=0; i<Bew.length; i++)
-										if(Bew[i].split(":")[0].equals(Info[k].getModname()))
+								{									
+									loop1 : for(int i=0; i<Bew.length; i++)	
+									{
+										if(Info[k]!=null&&Bew[i]!=null)
 										{
-											Info[k].setRating(Bew[i].split(":")[1]);	
-											gefunden=true;
-											continue loop1;
-										}
-									if(!gefunden)
-										Info[k].setRating("error");
-								}
-								
+											String downloadmodname = Bew[i].split(":")[0];
+											String listenmodname = Info[k].getModname();
+											if(downloadmodname.equals(listenmodname))
+											{
+												Info[k].setRating(Bew[i].split(":")[1]);													
+												continue loop1;
+											}
+										}										
+									}									
+								}								
 							} 
 							catch (IOException e) 
 							{
