@@ -322,7 +322,15 @@ public class Installieren extends JFrame
 								};								
 								t2.start();
 								
-								dow.downloadFile(Downloadort, new FileOutputStream(Temporar));	//ZIP Datei herunterladen
+								try
+								{								
+									dow.downloadFile(Downloadort, new FileOutputStream(Temporar));	//ZIP Datei herunterladen
+								}
+								catch (Exception ex)
+								{
+									stat.setText("Errorocde: S3x04a: " + String.valueOf(ex));
+									Fehler += "Mod: "+namen[k] + " " + Version+"\nTo: "+Temporar.toString()+"\nException:\n"+ new OP().getStackTrace(ex) + "\nErrorcode: S3x04a\n\n";
+								}
 								
 								t2.interrupt();	//Downloadgrößen-Thread beenden
 								status(value+= hinzu*0.75);
@@ -336,7 +344,8 @@ public class Installieren extends JFrame
 								}
 								catch(Exception ex)
 								{
-									stat.setText(Read.getTextwith("seite3", "prog9") + "<br><br>"+namen[k]);
+									stat.setText(namen[k] + ": " + Read.getTextwith("seite3", "prog9"));
+									Fehler += "Mod: "+namen[k] + " " + Version +"\nSource: "+Downloadort+"\nFrom: "+Temporar.toString()+"\nTo: "+Zeilverzeichnis.toString()+"\nException:\n"+ new OP().getStackTrace(ex) + "\nErrorcode: S3x04b\n\n";
 								}
 								
 								if(Modloader) //Modloader
@@ -347,12 +356,14 @@ public class Installieren extends JFrame
 								{
 									new OP().copy(Zeilverzeichnis, new File(mineord)); //in .mincraft Ordner
 								}
-								
-								
-								stat.setText(Read.getTextwith("seite3", "prog8"));	 //nicht für Modloader oder Forge vorgesehene Dateien kopieren							
+																
+								stat.setText(Read.getTextwith("seite3", "prog8"));	 //nicht für Modloader oder Forge vorgesehene Dateien kopieren	
+								String dwo = "Unknown";
+								File g =null;
 								try		
 								{
 									File extradatei = new File(stamm + "/Modinstaller/Mods/"+ namen[k] + "/extra.txt");
+									
 									
 									if(extradatei.exists())
 									{
@@ -361,15 +372,17 @@ public class Installieren extends JFrame
 										for (int r=0; r<extrai.length; r++)
 										{	
 											String[]spl3 = extrai[r].split(";;");
-											File g = new File(stamm+"/"+ spl3[1]);									
+											g = new File(stamm+"/"+ spl3[1]);									
 											new OP().makedirs(g.getParentFile());
-											new Download().downloadFile(quelle+spl3[0],new FileOutputStream(g));
+											dwo = quelle+spl3[0];
+											new Download().downloadFile(dwo,new FileOutputStream(g));
 										}		
 									}
 								}
 								catch(Exception ex)
 								{
 									stat.setText(Read.getTextwith("seite3", "prog9") + "/n/n"+namen[k]);
+									Fehler += "Mod: "+namen[k] + " " + Version +" (Extrafiles)\nSource: "+dwo+"\nTo: "+g.toString()+"\nException:\n"+ new OP().getStackTrace(ex) + "\nErrorcode: S3x04c\n\n";
 								}
 								status(value += hinzu*0.25);
 							} 							 
@@ -381,8 +394,9 @@ public class Installieren extends JFrame
 							final File libr = new File(stamm+"/Modinstaller/forge_"+Version+".zip");
 							
 							dowf = new Download();	
+							String forgeort = webplace + Version +"/"+ "forge2.zip";
 							
-							if(!dowf.ident(webplace + Version +"/"+ "forge2.zip", libr))
+							if(!dowf.ident(forgeort, libr))
 							{
 								t3 = new Thread()
 								{			
@@ -411,14 +425,29 @@ public class Installieren extends JFrame
 										}
 									}
 								};								
-								t3.start();								
-								dowf.downloadFile(webplace + Version +"/"+ "forge2.zip", new FileOutputStream(libr));	//ZIP Datei herunterladen
+								t3.start();									
+								try
+								{
+									dowf.downloadFile(forgeort, new FileOutputStream(libr));	//ZIP Datei herunterladen
+								}
+								catch (Exception ex)
+								{
+									stat.setText("Errorocde: S3x04a: " + String.valueOf(ex));
+									Fehler += "Forge "+Version +"\nTo: "+libr+"\nException:\n"+ new OP().getStackTrace(ex) + "\nErrorcode: S3x04d\n\n";
+								}								
 								t3.interrupt();
 							}
 							
 							status(value += 4);	
 							iconf.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));
-							new Extrahieren(libr, new File(mineord));
+							try
+							{
+								new Extrahieren(libr, new File(mineord));
+							}
+							catch(Exception ex)
+							{								
+								Fehler += "Forge "+Version +"\nSource: "+forgeort+"\nFrom: "+libr.toString()+"\nTo: "+mineord.toString()+"\nException:\n"+ new OP().getStackTrace(ex) + "\nErrorcode: S3x04e\n\n";
+							}							
 						}					
 					}					 
 					catch (Exception ex) 
