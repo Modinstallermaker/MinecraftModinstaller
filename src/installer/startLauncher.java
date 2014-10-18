@@ -39,7 +39,7 @@ public class startLauncher
 		new OP().makedirs(speicherort.getParentFile());	
 		try 
 		{
-			if(new Download().ident(downloadort, speicherort)||speicherort.length()>0)						
+			if(!new Download().ident(downloadort, speicherort)||speicherort.length()>0)						
 			{		
 				new Download().downloadFile(downloadort, new FileOutputStream(speicherort));		
 				ausf =true;				

@@ -43,7 +43,7 @@ public class Modimport extends JFrame
 	private JButton hinzu = new JButton();
 	private JButton entf = new JButton();
 	private JButton bend = new JButton();
-	private Cursor c = new Cursor(Cursor.HAND_CURSOR);
+	private Cursor c = new Cursor(Cursor.HAND_CURSOR); 
 	private boolean erstellen = false;
 	private boolean Modloader;
 	private String mineord = Start.mineord, stamm = Start.stamm;	
@@ -98,6 +98,7 @@ public class Modimport extends JFrame
 		this.stamm = stamm;
 		make();
 	}
+	
 
 	public void make()
 	{
@@ -220,7 +221,7 @@ public class Modimport extends JFrame
 									{
 										ex.printStackTrace();
 									} 	
-								} // end of if		
+								}		
 							}
 						} 
 						catch (IOException e1) 
@@ -234,7 +235,7 @@ public class Modimport extends JFrame
 		setVisible(true);	
 	}
 
-	public void hinzu_ActionPerformed(ActionEvent evt) // Ausw�hlen von Mods
+	public void hinzu_ActionPerformed(ActionEvent evt) // Auswählen von Mods
 	{
 		new OP().makedirs(new File(stamm+"/Modinstaller/Import/"));		
 		if(Modloader==false)
@@ -263,7 +264,7 @@ public class Modimport extends JFrame
 		FC.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		FC.setMultiSelectionEnabled(true);
 		FC.setDialogTitle(Read.getTextwith("modimport", "text9"));
-		if (FC.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) // Ordner �ffnen
+		if (FC.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) // Ordner öffnen
 		{
 			File[] files = FC.getSelectedFiles();
 			String lines[] = new String[files.length];
@@ -292,7 +293,7 @@ public class Modimport extends JFrame
 		}
 	}
 
-	public void entf_ActionPerformed(ActionEvent evt) // Ausw�hlen von Mods
+	public void entf_ActionPerformed(ActionEvent evt) // Auswählen von Mods
 	{
 		if(jList1Model.getSize()>0&&jList1.isSelectionEmpty()==false)
 		{
@@ -349,7 +350,7 @@ public class Modimport extends JFrame
 		}
 	}
 	
-	public void bend_ActionPerformed(ActionEvent evt) // Ausw�hlen von Mods
+	public void bend_ActionPerformed(ActionEvent evt) // Auswählen von Mods
 	{
 		if(jList1Model.getSize()>0)
 		{
