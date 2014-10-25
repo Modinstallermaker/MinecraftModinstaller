@@ -33,7 +33,7 @@ import javax.swing.SwingConstants;
  * @author Dirk Lippke
  */
 
-public class Modimport extends JFrame 
+public class Import extends JFrame 
 {
 	private static final long serialVersionUID = 1L;
 	private String eingabe, Ordner;
@@ -48,7 +48,7 @@ public class Modimport extends JFrame
 	private boolean Modloader;
 	private String mineord = Start.mineord, stamm = Start.stamm;	
 	
-	public Modimport(final boolean Modloader)
+	public Import(final boolean Modloader)
 	{
 		this.Modloader = Modloader;		
 		this.eingabe = JOptionPane.showInputDialog(null, Read.getTextwith("modimport", "text1"), Read.getTextwith("modimport", "text1h"), JOptionPane.PLAIN_MESSAGE);
@@ -85,12 +85,12 @@ public class Modimport extends JFrame
 			else
 			{
 				JOptionPane.showMessageDialog(null, Read.getTextwith("modimport", "text3"), Read.getTextwith("modimport", "text3h"), JOptionPane.WARNING_MESSAGE);
-				new Modimport(Modloader);
+				new Import(Modloader);
 			}
 		}
 	}
 
-	public Modimport (final String ein, final String mineord, final boolean Modloader, final String stamm)
+	public Import (final String ein, final String mineord, final boolean Modloader, final String stamm)
 	{
 		this.mineord = mineord;
 		this.eingabe=ein;

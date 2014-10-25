@@ -904,7 +904,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		modtext.setText(Read.getTextwith("seite2", "text3"));
 		hyperlink="http://www.minecraft-installer.de/faq.php";
 		Sterne(0, false);		
-		new Modimport(Modloader);			
+		new Import(Modloader);			
 	}
 	
 	public void Restore() //Letzte Modinstallation wiederherstellen
@@ -1224,7 +1224,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 							Sterne(0, true);						
 							if(e.getClickCount()==2)
 							{
-								new Modimport(Auswahl.substring(2), mineord, Modloader, stamm);
+								new Import(Auswahl.substring(2), mineord, Modloader, stamm);
 							}						
 						}
 						else

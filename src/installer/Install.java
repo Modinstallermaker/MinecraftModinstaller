@@ -212,23 +212,39 @@ public class Install extends JFrame
 					
 					status(value += 3); //7
 					
-					String mode="Forge";
-					if(Modloader==true) mode="Modloader";
-					
-					new OP().optionWriter("slastmc", new OP().optionReader("lastmc"));
-					new OP().optionWriter("lastmc", Version);					
-					new OP().optionWriter("slastmode", new OP().optionReader("lastmode"));
-					new OP().optionWriter("lastmode", mode);					
-					new OP().optionWriter("slastmods", new OP().optionReader("lastmods"));
-					String modn="";
-					for (int e=0; e<namen.length; e++)
+					try
 					{
-						modn+=namen[e]+";;";
+						String mode="Forge";
+						if(Modloader==true) mode="Modloader";
+					
+						new OP().optionWriter("slastmc", new OP().optionReader("lastmc"));
+						new OP().optionWriter("lastmc", Version);					
+						new OP().optionWriter("slastmode", new OP().optionReader("lastmode"));
+						new OP().optionWriter("lastmode", mode);	
+											
+						if(downloadlist.length!=0)
+						{
+							new OP().optionWriter("slastmods", new OP().optionReader("lastmods"));
+							String modn="";
+							for (int e=0; e<namen.length; e++)
+							{
+								modn+=namen[e]+";;";
+							}
+							if(modn.endsWith(";;"))
+								modn = modn.substring(0, modn.length()-2);
+							new OP().optionWriter("lastmods", modn);
+						}
+						else
+						{
+							new OP().optionWriter("slastmods", "n/a");
+							new OP().optionWriter("lastmods", "n/a");
+						}
+						
 					}
-					if(modn.endsWith(";;"))
-						modn = modn.substring(0, modn.length()-2);
-					new OP().optionWriter("lastmods", modn);
-					    
+					catch (Exception e)
+					{						
+					}
+					
 					status(value += 3);	//10	
 					
 					File json = new File(mineord + "/versions/Modinstaller/Modinstaller.json");
@@ -246,8 +262,6 @@ public class Install extends JFrame
 					{
 						new OP().copy(new File(mineord + "/versions/"+Version+"/"+Version+".jar"), new File(stamm + "/Modinstaller/minecraft.jar"));
 						
-						
-						
 						stat.setText(Read.getTextwith("seite3", "extra"));
 						iconf.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));
 						new Extract(new File(stamm + "/Modinstaller/minecraft.jar"), new File(stamm + "/Modinstaller/Original/"));    // Entpacken						
@@ -256,9 +270,8 @@ public class Install extends JFrame
 					{						
 						new OP().copy(new File(mineord + "/versions/"+Version+"/"+Version+".jar"), new File(stamm + "/Modinstaller/Modinstaller.jar"));
 					}					
-					new OP().copy(new File(stamm + "/Modinstaller/Original"),new File(stamm + "/Modinstaller/Result")); // Orginal in Ergebnisordner
+					new OP().copy(new File(stamm + "/Modinstaller/Original"),new File(stamm + "/Modinstaller/Result")); // Orginal in Ergebnisordner					
 					
-					status(value += 5);
 				} 
 				catch (Exception ex) 
 				{
@@ -270,10 +283,35 @@ public class Install extends JFrame
 				if (online==true)																//Dateien herunterladen
 				{			
 					try 
-					{						
+					{	
 						new OP().makedirs(new File(stamm + "/Modinstaller/Mods")); // Ordner anlegen	
-					
-						double hinzu = 70/downloadlist.length;				//Fehler bei Teilen durch 0!!!		
+						
+						double hinzu = 10;
+						try
+						{
+							if(downloadlist.length>0)
+							{
+								hinzu = 75/downloadlist.length;	
+								if(!Modloader)
+								{
+									hinzu = 85/(downloadlist.length+1);
+								}
+							}
+							else
+							{								
+								if(Modloader)
+								{
+									status(value += 70);	
+								}
+								else
+								{
+									status(value += 80);	
+								}								
+							}
+						}
+						catch (Exception e)
+						{							
+						}
 						
 						for (int k = 0; k < downloadlist.length; k++) 
 						{
@@ -372,7 +410,7 @@ public class Install extends JFrame
 														
 							if(!dowf.ident(forgeort, libr))  //Minecraft Forge herunterladen
 							{
-								Thread t2 = new Thread(new Downloadstate(dowf, libr, stat, text, 13, value)); //Prozent berechnen und anzeigen
+								Thread t2 = new Thread(new Downloadstate(dowf, libr, stat, text, hinzu, value)); //Prozent berechnen und anzeigen
 								t2.start();					
 								try
 								{
@@ -385,7 +423,7 @@ public class Install extends JFrame
 								}								
 								t2.interrupt();
 							}							
-							status(value += 13);	
+							status(value += hinzu);	
 							
 							iconf.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));
 							try
@@ -453,13 +491,14 @@ public class Install extends JFrame
 				}
 				
 				iconf.setIcon(new ImageIcon(this.getClass().getResource("src/install.png")));
-				if(Modloader==true)
+				
+				if(Modloader==true)     //Dateien in Minecraft JAR bei Modloader Modus komprimieren
 				{					
 					stat.setText(Read.getTextwith("seite3", "prog12"));	
 					iconf.setIcon(new ImageIcon(this.getClass().getResource("src/Komprimieren.png")));
 					status(value += 5);
 					new Compress(new File(stamm + "/Modinstaller/Result/"), new File(mineord + "/versions/Modinstaller/Modinstaller.jar"));  // Komprimieren
-					status(value += 10);
+					status(value += 5);
 				}
 				
 				File profiles = new File(mineord + "/launcher_profiles.json");  //Minecraft Launcher: JSON Datei präparieren: Profil Modinstaller einstellen				
