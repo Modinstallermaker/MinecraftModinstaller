@@ -889,7 +889,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 				}			
 			}
 			dispose();			
-			new Installieren(namen, zeilen, anzahl, Modloader);
+			new Install(namen, zeilen, anzahl, Modloader);
 		} 
 		catch (Exception ex) 
 		{	

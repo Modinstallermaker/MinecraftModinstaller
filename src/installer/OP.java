@@ -175,7 +175,23 @@ public class OP
 	{
 		BufferedReader f;	  	  
 	    String line, alles="";
-        f = new BufferedReader(new InputStreamReader(new FileInputStream(datei), "ISO-8859-3"));
+        f = new BufferedReader(new InputStreamReader(new FileInputStream(datei)));
+        while ((line = f.readLine()) != null) 
+        {
+        	alles+=line+";;;;";
+        }        	      
+        f.close();
+        if(alles.endsWith(";;;;"))
+        	alles = alles.substring(0, alles.length()-4);
+        
+        return alles.split(";;;;");
+	}
+	
+	public String[] Textreader(File datei, String charset) throws IOException
+	{
+		BufferedReader f;	  	  
+	    String line, alles="";
+        f = new BufferedReader(new InputStreamReader(new FileInputStream(datei), charset));
         while ((line = f.readLine()) != null) 
         {
         	alles+=line+";;;;";
@@ -203,7 +219,21 @@ public class OP
 		BufferedReader f;
 		String line="";
 	    ArrayList<String> list = new ArrayList<String>();
-        f = new BufferedReader(new InputStreamReader(new FileInputStream(datei), "ISO-8859-3"));
+        f = new BufferedReader(new InputStreamReader(new FileInputStream(datei)));
+        while ((line = f.readLine()) != null) 
+        {
+        	list.add(line);
+        }        	      
+        f.close();
+        return list;
+	}
+	
+	public ArrayList<String> Textreadera(File datei, String charset) throws IOException
+	{
+		BufferedReader f;
+		String line="";
+	    ArrayList<String> list = new ArrayList<String>();
+        f = new BufferedReader(new InputStreamReader(new FileInputStream(datei), charset));
         while ((line = f.readLine()) != null) 
         {
         	list.add(line);
@@ -214,7 +244,7 @@ public class OP
 	
 	public int version (String[] options)
 	{
-		return JOptionPane.showOptionDialog(null, Read.getTextwith("OP", "modver"), Read.getTextwith("OP", "modverh"), JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null, options, options[0]);		
+		return JOptionPane.showOptionDialog(null, Read.getTextwith("OP", "modver"), Read.getTextwith("OP", "modverh"), JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);		
 	}
 	
 	public String optionReader(String attrib) throws IOException

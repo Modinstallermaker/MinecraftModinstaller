@@ -31,7 +31,7 @@ import javax.swing.text.html.HTMLEditorKit;
  * @author Dirk Lippke
  */
 
-public class Lizenz extends JFrame 
+public class License extends JFrame 
 {
 	private static final long serialVersionUID = 1L;
 	private JButton zur = new JButton();
@@ -44,7 +44,7 @@ public class Lizenz extends JFrame
 	private Scanner scan;
 	private int hoehe = 345, breite=550;
 
-	public Lizenz() 
+	public License() 
 	{
 		setUndecorated(true);			
 		setSize(breite, hoehe);

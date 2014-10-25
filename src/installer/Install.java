@@ -47,7 +47,7 @@ import argo.jdom.JsonStringNode;
  * @author Dirk Lippke
  */
 
-public class Installieren extends JFrame 
+public class Install extends JFrame 
 {
 	private static final long serialVersionUID = 1L;
 	private JButton back = new JButton();
@@ -57,7 +57,7 @@ public class Installieren extends JFrame
 	private JLabel uberschrift = new JLabel();
 	private JLabel info = new JLabel();
 	private JLabel iconf = new JLabel();
-	private JProgressBar bar = new JProgressBar();
+	private static JProgressBar bar = new JProgressBar();
 	private JLabel stat = new JLabel();	
 	private double value = 0.00;
 	private String quelle;
@@ -72,7 +72,7 @@ public class Installieren extends JFrame
 	
 	public static String Fehler="";
 	
-	public Installieren(final String[] namen, final String[] downloadlist, final int[] anzahl, final boolean Modloader) 
+	public Install(final String[] namen, final String[] downloadlist, final int[] anzahl, final boolean Modloader) 
 	{
 		
 		setUndecorated(true);			
@@ -165,7 +165,7 @@ public class Installieren extends JFrame
 		start.setMargin(new Insets(2, 2, 2, 2));
 		start.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				new startLauncher(webplace, mineord, online, stamm);	
+				new MCLauncher(webplace, mineord, online, stamm);	
 			}
 		});
 		start.setCursor(c);
@@ -225,7 +225,9 @@ public class Installieren extends JFrame
 					{
 						modn+=namen[e]+";;";
 					}
-					new OP().optionWriter("lastmods", modn.substring(0, modn.length()-2));
+					if(modn.endsWith(";;"))
+						modn = modn.substring(0, modn.length()-2);
+					new OP().optionWriter("lastmods", modn);
 					    
 					status(value += 3);	//10	
 					
@@ -248,7 +250,7 @@ public class Installieren extends JFrame
 						
 						stat.setText(Read.getTextwith("seite3", "extra"));
 						iconf.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));
-						new Extrahieren(new File(stamm + "/Modinstaller/minecraft.jar"), new File(stamm + "/Modinstaller/Original/"));    // Entpacken						
+						new Extract(new File(stamm + "/Modinstaller/minecraft.jar"), new File(stamm + "/Modinstaller/Original/"));    // Entpacken						
 					}					
 					else //Forge Modus
 					{						
@@ -270,14 +272,15 @@ public class Installieren extends JFrame
 					try 
 					{						
 						new OP().makedirs(new File(stamm + "/Modinstaller/Mods")); // Ordner anlegen	
-						final double hinzu = 70/downloadlist.length;
+					
+						double hinzu = 70/downloadlist.length;				//Fehler bei Teilen durch 0!!!		
 						
 						for (int k = 0; k < downloadlist.length; k++) 
 						{
 							quelle = String.valueOf(downloadlist[k]); // Downloadpfad für genauere Downloadliste speichern
 							if(!quelle.equals("null")) 
 							{	
-								final String statt = Read.getTextwith("seite3", "prog8a") + namen[k] + "</b>"+Read.getTextwith("seite3", "prog8b");
+								String statt = Read.getTextwith("seite3", "prog8a") + namen[k] + "</b>"+Read.getTextwith("seite3", "prog8b");
 								stat.setText(statt);
 								iconf.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));
 								
@@ -290,38 +293,9 @@ public class Installieren extends JFrame
 								
 								dow = new Download();
 								
-								t2 = new Thread()
-								{			
-									public void run() 
-									{	
-										double ges=value;										
-										while(!isInterrupted())
-										{	
-											try 
-											{
-												int ist = dow.groesse(Temporar);												
-												if(ist>1)
-												{
-													int soll = dow.getGroesse();													
-													if(soll>1)
-													{	
-														double proz = Math.round(((double)ist/(double)soll)*1000.)/10.;
-														stat.setText(statt+" - "+String.valueOf(proz)+"%");			       //Downloadstatus anzeigen	
-														status(ges + hinzu*0.75*((double)ist/(double)soll));
-													}																					
-												}
-												
-												Thread.sleep(50);
-											} 
-											catch (Exception e) 
-											{
-												interrupt();
-											} 
-										}
-									}
-								};								
-								t2.start();
-								
+								Thread t = new Thread(new Downloadstate(dow, Temporar, stat, statt, hinzu, value)); //Prozent berechnen und anzeigen
+								t.start();
+																
 								try
 								{								
 									dow.downloadFile(Downloadort, new FileOutputStream(Temporar));	//ZIP Datei herunterladen
@@ -332,7 +306,7 @@ public class Installieren extends JFrame
 									Fehler += "Mod: "+namen[k] + " " + Version+"\nTo: "+Temporar.toString()+"\nException:\n"+ new OP().getStackTrace(ex) + "\nErrorcode: S3x04a\n\n";
 								}
 								
-								t2.interrupt();	//Downloadgrößen-Thread beenden
+								t.interrupt();	//Downloadgrößen-Thread beenden
 								status(value+= hinzu*0.75);
 								
 								stat.setText(Read.getTextwith("seite3", "extra2")+namen[k]+"...");
@@ -340,7 +314,7 @@ public class Installieren extends JFrame
 								
 								try
 								{
-									new Extrahieren(Temporar, Zeilverzeichnis); //Heruntergeladene ZIP Datei entpacken
+									new Extract(Temporar, Zeilverzeichnis); //Heruntergeladene ZIP Datei entpacken
 								}
 								catch(Exception ex)
 								{
@@ -388,44 +362,18 @@ public class Installieren extends JFrame
 							} 							 
 						}
 						if (Modloader==false) //Forge Modus
-						{												
-							stat.setText(Read.getTextwith("seite3", "prog10"));  //Minecraft Forge herunterladen
+						{	
+							String text = Read.getTextwith("seite3", "forge");
+							stat.setText(text);  
 							iconf.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));	
-							final File libr = new File(stamm+"/Modinstaller/forge_"+Version+".zip");
-							
+							File libr = new File(stamm+"/Modinstaller/forge_"+Version+".zip");                //Downloadort Forge
 							dowf = new Download();	
 							String forgeort = webplace + Version +"/"+ "forge2.zip";
-							
-							if(!dowf.ident(forgeort, libr))
+														
+							if(!dowf.ident(forgeort, libr))  //Minecraft Forge herunterladen
 							{
-								t3 = new Thread()
-								{			
-									public void run() 
-									{																	
-										while(!isInterrupted())
-										{	
-											try 
-											{
-												int ist = dowf.groesse(libr);												
-												if(ist>1)
-												{
-													int soll = dowf.getGroesse();													
-													if(soll>1)
-													{	
-														double proz2 = Math.round(((double)ist/(double)soll)*1000.)/10.;
-														stat.setText(Read.getTextwith("seite3", "forge") +" - "+String.valueOf(proz2)+"%");		       //Downloadstatus anzeigen															
-													}																					
-												}												
-												Thread.sleep(50);
-											} 
-											catch (Exception e) 
-											{
-												interrupt();
-											} 
-										}
-									}
-								};								
-								t3.start();									
+								Thread t2 = new Thread(new Downloadstate(dowf, libr, stat, text, 13, value)); //Prozent berechnen und anzeigen
+								t2.start();					
 								try
 								{
 									dowf.downloadFile(forgeort, new FileOutputStream(libr));	//ZIP Datei herunterladen
@@ -435,14 +383,14 @@ public class Installieren extends JFrame
 									stat.setText("Errorocde: S3x04a: " + String.valueOf(ex));
 									Fehler += "Forge "+Version +"\nTo: "+libr+"\nException:\n"+ new OP().getStackTrace(ex) + "\nErrorcode: S3x04d\n\n";
 								}								
-								t3.interrupt();
-							}
+								t2.interrupt();
+							}							
+							status(value += 13);	
 							
-							status(value += 4);	
 							iconf.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));
 							try
 							{
-								new Extrahieren(libr, new File(mineord));
+								new Extract(libr, new File(mineord));
 							}
 							catch(Exception ex)
 							{								
@@ -510,7 +458,7 @@ public class Installieren extends JFrame
 					stat.setText(Read.getTextwith("seite3", "prog12"));	
 					iconf.setIcon(new ImageIcon(this.getClass().getResource("src/Komprimieren.png")));
 					status(value += 5);
-					new Komprimieren(new File(stamm + "/Modinstaller/Result/"), new File(mineord + "/versions/Modinstaller/Modinstaller.jar"));  // Komprimieren
+					new Compress(new File(stamm + "/Modinstaller/Result/"), new File(mineord + "/versions/Modinstaller/Modinstaller.jar"));  // Komprimieren
 					status(value += 10);
 				}
 				
@@ -600,7 +548,7 @@ public class Installieren extends JFrame
 		t1.start();
 	}
 
-	public void status(double zahl) // Statusbar einstellen
+	public static void status(double zahl) // Statusbar einstellen
 	{
 		bar.setValue((int) zahl);
 	}

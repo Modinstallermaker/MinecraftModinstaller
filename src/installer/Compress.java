@@ -7,13 +7,13 @@ import java.io.FileOutputStream;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
-public class Komprimieren 
+public class Compress 
 {
 	private File ortkop;
 	private BufferedInputStream buffinstr;
 	private JarOutputStream zipOut;
 	
-	public Komprimieren(File ort2, File ziel)
+	public Compress(File ort2, File ziel)
 	{
 		ortkop = ort2;
 		
@@ -23,7 +23,7 @@ public class Komprimieren
 		} 
 		catch (Exception ex) 
 		{
-			Installieren.Fehler+=new OP().getStackTrace(ex)+"\n\n";
+			Install.Fehler+=new OP().getStackTrace(ex)+"\n\n";
 		}
 		zip(ort2);
 		try 
@@ -32,11 +32,11 @@ public class Komprimieren
 		} 
 		catch (Exception ex) 
 		{
-			Installieren.Fehler+=new OP().getStackTrace(ex)+"\n\n";
+			Install.Fehler+=new OP().getStackTrace(ex)+"\n\n";
 		}
 		
 	}
-	public Komprimieren() 
+	public Compress() 
 	{	
 	}
 	
@@ -77,7 +77,7 @@ public class Komprimieren
 		} 
 		catch (Exception ex) 
 		{
-			Installieren.Fehler+=new OP().getStackTrace(ex)+"\n\n";
+			Install.Fehler+=new OP().getStackTrace(ex)+"\n\n";
 		} 
 		finally 
 		{
@@ -87,7 +87,7 @@ public class Komprimieren
 			} 
 			catch (Exception ex) 
 			{
-				Installieren.Fehler+=new OP().getStackTrace(ex)+"\n\n";
+				Install.Fehler+=new OP().getStackTrace(ex)+"\n\n";
 			}
 		}	
 	}

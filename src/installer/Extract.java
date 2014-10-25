@@ -8,9 +8,9 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class Extrahieren 
+public class Extract 
 {
-	public Extrahieren(File archive, File destDir) throws Exception 
+	public Extract(File archive, File destDir) throws Exception 
 	{
 	        if (!destDir.exists()) 
 	        {

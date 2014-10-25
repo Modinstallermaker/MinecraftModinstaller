@@ -14,9 +14,9 @@ import javax.swing.JOptionPane;
  * @author Dirk Lippke
  */
 
-public class startLauncher 
+public class MCLauncher 
 {	
-	public startLauncher(final String webplace, final String mineord, final boolean online, final String stamm)
+	public MCLauncher(final String webplace, final String mineord, final boolean online, final String stamm)
 	{
 		new OP().makedirs(new File(stamm +"/Modinstaller/"));
 		boolean ausf = true;

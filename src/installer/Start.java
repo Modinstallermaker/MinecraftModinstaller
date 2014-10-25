@@ -490,7 +490,7 @@ public class Start extends JFrame
 	    {
 	    	
 			new Download().downloadFile("http://www.minecraft-installer.de/Dateien/zipper.php?lang="+new OP().optionReader("language"), new FileOutputStream(texte));
-			new Extrahieren(texte, new File(stamm+"/Modinstaller/"));
+			new Extract(texte, new File(stamm+"/Modinstaller/"));
 		} 
 	    catch (Exception e1) 
 		{				
@@ -512,7 +512,7 @@ public class Start extends JFrame
 	    	String lizenz = new OP().optionReader("lizenz");
 			if(lizenz.equals("n/a")||lizenz.equals("false"))
 			{
-				new Lizenz();
+				new License();
 			}
 			else
 			{

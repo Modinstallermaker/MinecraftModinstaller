@@ -47,7 +47,15 @@ public class Modinfo
 				{			
 					try 
 					{
-						String[] modi = new OP().Textreader(speicherort);
+						String[] modi =null;
+						try
+						{
+							modi = new OP().Textreader(speicherort, "ISO-8859-1");
+						}
+						catch (Exception e)
+						{
+							modi = new OP().Textreader(speicherort);
+						}						
 						for(int o=0; o<modi.length; o++)
 						{
 							inhalt+=modi[o];
