@@ -37,8 +37,8 @@ public class Import extends JFrame
 {
 	private static final long serialVersionUID = 1L;
 	private String eingabe, Ordner;
-	private JList jList1 = new JList();
-	private DefaultListModel jList1Model = new DefaultListModel();
+	private JList<String> jList1 = new JList<String>();
+	private DefaultListModel<String> jList1Model = new DefaultListModel<String>();
 	private JScrollPane jList1ScrollPane = new JScrollPane(jList1);
 	private JButton hinzu = new JButton();
 	private JButton entf = new JButton();

@@ -47,20 +47,20 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 {
 	private static final long serialVersionUID = 1L;
 	
-	private JList jList1 = new JList();
+	private JList<String> jList1 = new JList<String>();
 	private JScrollPane jList1ScrollPane = new JScrollPane(jList1);
-	private DefaultListModel jList1Model = new DefaultListModel();
+	private DefaultListModel<String> jList1Model = new DefaultListModel<String>();
 	
-	private JList jList1b = new JList();
+	private JList<String> jList1b = new JList<String>();
 	private JScrollPane jList1bScrollPane = new JScrollPane(jList1b);
-	private DefaultListModel jList1bModel = new DefaultListModel();
+	private DefaultListModel<String> jList1bModel = new DefaultListModel<String>();
 	
-	private JList jList2 = new JList();	
+	private JList<String> jList2 = new JList<String>();	
 	private JScrollPane jList2ScrollPane = new JScrollPane(jList2);
-	public static DefaultListModel jList2Model = new DefaultListModel();
+	public static DefaultListModel<String> jList2Model = new DefaultListModel<String>();
 	
-	DefaultListModel jListModel;
-	JList jList;
+	DefaultListModel<String> jListModel;
+	JList<String> jList;
 	Modinfo[] Info;
 	
 	JTabbedPane tabbedPane = new JTabbedPane();
@@ -85,7 +85,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	private JLabel beenden = new JLabel();
 	public static JLabel weiter = new JLabel();	
 	
-	private JComboBox ChVers;
+	private JComboBox<String> ChVers;
 
 	private JPanel cp;		
 	
@@ -97,7 +97,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	private String hyperlink = Read.getTextwith("seite2", "web");
 	public static int zahl;
 	private Modinfo[] ModloaderInfo, ForgeInfo;
-	private String[] ModloaderList, ForgeList, ModList;	
+	private String[] ModloaderList, ForgeList, ModList, Bew;
 	private double proz=0;
 	private boolean anders=false;
 	private double bewertung=0;
@@ -128,7 +128,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	
 		if(Start.Versionen!=null&&Start.Versionen.length>0)  //MC Version ändern
 		{
-			ChVers = new JComboBox(Start.Versionen);
+			ChVers = new JComboBox<String>(Start.Versionen);
 			for (int ka =0; ka<Start.Versionen.length; ka++)	
 			{
 				if(Start.Versionen[ka].equals(Version))
@@ -269,7 +269,6 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 			bew[i].addMouseListener(this);
 			cp.add(bew[i]);
 		}
-		
 		
 		HTMLEditorKit kit = new HTMLEditorKit();
 	
@@ -485,7 +484,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 							{
 								File rating = new File(stamm +"/Modinstaller/bewertungen.txt");
 								Download("http://minecraft-installer.de/proz3.php?MC="+Version, rating);
-								String[] Bew = new OP().Textreaders(rating).split(";");								
+								Bew = new OP().Textreaders(rating).split(";");								
 								
 								for (int k=0; k<ModList.length; k++)	
 								{									
@@ -684,8 +683,15 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 						  {	
 							 try
 						     {
-					        	proz = Info[i].getRating();     
+					        	proz = Info[i].getRating();  
+					        	double schnitt = 100 / Bew.length;
+					        	double faktor = 2.5 / schnitt;
+					        	proz = proz * faktor; 
 								Sterne(proz, false);
+								if(proz > 6.5)
+								{									
+									modtext.setText(modtext.getText() +" - TOP!");									
+								}
 								interrupt();
 						     }
 						     catch(Exception e){}	
@@ -738,7 +744,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		weiter.setEnabled(true); // Installieren Knopf freischalten									
 	}
 	
-	public boolean searchentry(DefaultListModel model, String modname) //In ListModel einen Modeintrag finden
+	public boolean searchentry(DefaultListModel<String> model, String modname) //In ListModel einen Modeintrag finden
 	{
 		boolean gefunden = false;
 		for (int i=0; i < model.getSize(); i++) 
@@ -1036,7 +1042,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		 */
 		private static final long serialVersionUID = 1L;
 
-		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) 
+		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) 
 	    {  
            super.getListCellRendererComponent( list, value, index, isSelected, cellHasFocus );  
            list.setFixedCellHeight(25);     
