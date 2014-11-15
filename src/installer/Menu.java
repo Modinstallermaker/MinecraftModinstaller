@@ -635,7 +635,8 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 							 try
 						     {								
 							 	String inh = Info[i].getDescription();
-								hyperlink = Info[i].getHyperlink();
+							 	String modname =Info[i].getModname().replace(" ", "+");
+								hyperlink = Read.getTextwith("seite2", "web") + "/modinfo.php?modname=" + modname;
 							    
 								if(!inh.startsWith("<html>"))
 								{
@@ -684,9 +685,9 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 							 try
 						     {
 					        	proz = Info[i].getRating();  
-					        	double schnitt = 100 / Bew.length;
-					        	double faktor = 2.5 / schnitt;
-					        	proz = proz * faktor; 
+					        	double schnitt = 100.0 / Bew.length;
+					        	double faktor = 3 / schnitt;
+					        	proz = proz * faktor;					        	
 								Sterne(proz, false);
 								if(proz > 6.5)
 								{									

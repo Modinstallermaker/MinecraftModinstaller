@@ -2,6 +2,7 @@ package installer;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -84,6 +85,19 @@ public class Download
 		}		
 		conn.disconnect();
 		return rue;
+	}
+	
+	public boolean smartDownload(String url, File speicherort)
+	{
+		try
+		{
+			downloadFile(url, new FileOutputStream(speicherort));
+			return true;
+		}
+		catch (Exception e)
+		{		
+			return false;
+		}
 	}
 	
 	public boolean ident (String url_str, File copy) throws IllegalStateException, MalformedURLException,ProtocolException, IOException //Wenn nicht gleich false zurück

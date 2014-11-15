@@ -195,7 +195,8 @@ public class Start extends JFrame
 					Offline();
 				}				
 				
-				aktualisieren();				
+				aktualisieren();	
+				shortcuts();
 				hauptmStarten();
 			}
 		}.start();
@@ -266,6 +267,34 @@ public class Start extends JFrame
 		}
 	}
 	
+	public void shortcuts()
+	{
+		String str = System.getProperty("os.name").toLowerCase(); // Ordner Appdata den Betriebssystemen anpassen
+		
+		 if (str.contains("win"))
+		 {
+			 File installer = new File(stamm+"/Modinstaller/MCModinstaller.exe");
+			 if(!installer.exists())
+			 {				
+				try
+				{								
+					new Download().downloadFile("http://www.minecraft-installer.de/Dateien/Programme/MC%20Modinstaller%204.0.exe", new FileOutputStream(installer));	//ZIP Datei herunterladen
+					
+					Desktop desktop = Desktop.getDesktop();
+					File f = new File(this.getClass().getResource("src/links.vbs").getFile());
+					try 
+					{
+						desktop.open(f); //Link auf dem Desktop und im Startmenu erstellen
+					} 
+					catch (IOException e) {}
+				}
+				catch (Exception ex)
+				{					
+				}				
+			 }
+		 }		 
+	}
+	
 	
 	public void minecraftSuchen()
 	{	
@@ -274,7 +303,7 @@ public class Start extends JFrame
 		 if (str.contains("win"))
 		 {
 			 mineord = System.getenv("APPDATA").replace("\\", "/") + "/.minecraft";
-			 stamm = System.getenv("APPDATA").replace("\\", "/");
+			 stamm = System.getenv("APPDATA").replace("\\", "/");			 
 		 }
 		 else if (str.contains("mac")) 
 		 {
