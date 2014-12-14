@@ -3,8 +3,8 @@
     "name":"Minecraft Modinstaller",
     "desc":"... makes modding easier!",
    	"lang":"en",
-   	"version":"4.0",
-    "zusatz":" ",
+   	"version":"4.1",
+    "zusatz":"Beta",
     "webplace":"http://files.minecraft-mods.de/installer/"   
   },   
   "seite1": {     
@@ -34,6 +34,7 @@
     "inter3":"Exit program",
     "inter4":"Unfortunately, the program was unable to connect to the Internet to download the mod list.\nEither your PC is not connected to the Internet or\na firewall (including the operating system) is blocking the Internet access for Java.\n\nJava reported...\n\n",
     "inter4h":"Internet connection not established",
+    "intercon":"http://www.minecraft-installer.de/connection.php",    
     "inco":"A current mod list could not be downloaded because \nwe do not offer a mod list for your selected Minecraft version.\nWe only support release versions newer than Minecraft version 1.4.2.\nNevertheless you can import mods by using the Modinstallers, after you've downloaded them.",
     "incoh":"No mod list avialable"
   },
@@ -90,8 +91,8 @@
     "error1b":"Minecraft might still work with the new mods", 
     "error1h":"Faulty installation!",
     "error2":"Unfortunately, all mods could not be installed properly...", 
-    "prog13":"<html><body><b>Installation completed!</b> That's it ;)",
-    "prog14":"<html><body>Start out the set profile \"Modinstaller\"!<br><br><i>Would you like to start Minecraft?</i></body></html>", 
+    "prog13":"Installation completed!",
+    "prog14":"<html><body>Start out the set profile \"Modinstaller\"!</body></html>", 
     "prog14h":"Start Minecraft?",
     "error5h":"File cannot be read!", 
     "error6":"<html><body>Java cannot open the file 'modlist.txt'<br>and store it in an array.<br><br>Java reported...<br><br>",

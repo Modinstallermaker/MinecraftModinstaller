@@ -3,8 +3,8 @@
     "name":"Minecraft Modinstaller",
     "desc":"... makes modding easier!",
    	"lang":"de",
-   	"version":"4.0",
-    "zusatz": " ",
+   	"version":"4.1",
+    "zusatz": "Beta",
     "webplace":"http://files.minecraft-mods.de/installer/"   
   },   
   "seite1": {     
@@ -33,7 +33,8 @@
     "inter4h":"Internetverbindung konnte nicht hergestellt werden...",     
     "inter1":"Hilfe anzeigen",
     "inter2":"Offline arbeiten",
-    "inter3":"Programm beenden",    
+    "inter3":"Programm beenden",
+    "intercon":"http://www.minecraft-installer.de/connection.php",    
     "inco":"Eine aktuelle Modliste konnte nicht heruntergeladen werden, \nweil wir keine Mods für Deine ausgewählte Minecraft Version anbieten.\nWir unterstützen alle Release Versionen (ab Minecraft 1.4.2).\nDennoch kannst Du Mods mithilfe des Modinstallers importieren, nachdem Du sie heruntergelden hast.",
     "incoh":"Keine Modliste verfügbar"
   },
@@ -90,8 +91,8 @@
     "error1b":"Möglicherweise funktioniert trotzdem Minecraft mit den neuen Mods.", 
     "error1h":"Installation fehlerhaft!",
     "error2":"Leider konnten nicht alle Mods fehlerfrei installiert werden...", 
-    "prog13":"<html><body><b>Installation vollständig abgeschlossen!</b> Das war´s ;)</body></html>",
-    "prog14":"<html><body>Starte bitte das eingestellte Profil \"Modinstaller\"!<br><br><i>Möchtest Du den Minecraft Launcher jetzt starten?</i></body></html>", 
+    "prog13":"Installation abgeschlossen!",
+    "prog14":"<html><body>Starte bitte das eingestellte Profil \"Modinstaller\"!</body></html>", 
     "prog14h":"Minecraft starten?",
     "error5h":"Datei kann nicht eingelesen werden!", 
     "error6":"<html><body>Java kann die Datei 'modlist.txt' nicht öffnen<br>und in einem Array speichern!<br><br>Java meldete...<br><br>",

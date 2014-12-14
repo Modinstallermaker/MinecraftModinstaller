@@ -453,7 +453,7 @@ public class Start extends JFrame
 			int selected2 = JOptionPane.showOptionDialog(null, Read.getTextwith("seite1", "inter4")+ex.toString(), Read.getTextwith("seite1", "inter4h"), JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null, options2, options2[0]);
 			switch(selected2)
 			{
-				case 0: new Browser("http://www.minecraft-installer.de/verbindung.htm");
+				case 0: new Browser(Read.getTextwith("seite1", "intercon"));
 						break;
 				case 2: System.exit(0);
 			}

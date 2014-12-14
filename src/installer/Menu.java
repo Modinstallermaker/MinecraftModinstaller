@@ -1011,19 +1011,17 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	
 	private void Sterne(double bewe, boolean anders) //Bewertung grafisch umsetzen
 	{
-		bewe*=2;		
-		bewe = Math.round(bewe);
-		bewe/=2;		
+			
 		for(int i=0; i<5; i++)
 		{
-			if(bewe>=1)
+			if(bewe>0.75)
 			{
 				if(!anders)
 					bew[i].setIcon(new ImageIcon(this.getClass().getResource("src/star1.png")));	
 				else
 					bew[i].setIcon(new ImageIcon(this.getClass().getResource("src/star1b.png")));	
 			}
-			else if(bewe==0.5)
+			else if(bewe>0.25)
 			{
 				bew[i].setIcon(new ImageIcon(this.getClass().getResource("src/star05.png")));	
 			}
