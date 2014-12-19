@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -270,29 +271,39 @@ public class Start extends JFrame
 	public void shortcuts()
 	{
 		String str = System.getProperty("os.name").toLowerCase(); // Ordner Appdata den Betriebssystemen anpassen
-		
-		 if (str.contains("win"))
-		 {
-			 File installer = new File(stamm+"/Modinstaller/MCModinstaller.exe");
-			 if(!installer.exists())
-			 {				
-				try
-				{								
-					new Download().downloadFile("http://www.minecraft-installer.de/Dateien/Programme/MC%20Modinstaller%204.0.exe", new FileOutputStream(installer));	//ZIP Datei herunterladen
-					
-					Desktop desktop = Desktop.getDesktop();
-					File f = new File(this.getClass().getResource("src/links.vbs").getFile());
-					try 
-					{
-						desktop.open(f); //Link auf dem Desktop und im Startmenu erstellen
-					} 
-					catch (IOException e) {}
-				}
-				catch (Exception ex)
-				{					
-				}				
-			 }
-		 }		 
+		File installer = new File(stamm+"/Modinstaller/MCModinstaller.exe");
+		 
+		if (str.contains("win") && !installer.exists())
+		{
+			File dat = new java.io.File(Start.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsoluteFile();				
+			JOptionPane.showMessageDialog(null, dat.getAbsoluteFile().toString());							
+			try
+			{			
+				new OP().copy(dat, installer);
+				java.io.InputStream inputStream = this.getClass().getResourceAsStream("src/links.vbs");
+
+			    File tempOutputFile = File.createTempFile("links", ".vbs"); 
+			    tempOutputFile.deleteOnExit();
+
+			    FileOutputStream out = new FileOutputStream( tempOutputFile );
+
+			    byte buffer[] = new byte[1024];
+			    int len;
+			    while( ( len = inputStream.read( buffer ) ) > 0 ) 
+			    {
+			      out.write( buffer, 0, len );
+			    }
+
+			    out.close();
+			    inputStream.close();
+
+			    Desktop.getDesktop().open(tempOutputFile);	
+			}
+			catch (Exception ex)
+			{	
+				new Error(new OP().getStackTrace(ex));
+			}				
+		}		 		 
 	}
 	
 	
@@ -354,6 +365,20 @@ public class Start extends JFrame
 		}		
 	}
 	
+
+    public static String normalisedVersion(String version) {
+        return normalisedVersion(version, ".", 4);
+    }
+
+    public static String normalisedVersion(String version, String sep, int maxWidth) {
+        String[] split = Pattern.compile(sep, Pattern.LITERAL).split(version);
+        StringBuilder sb = new StringBuilder();
+        for (String s : split) {
+            sb.append(String.format("%" + maxWidth + 's', s));
+        }
+        return sb.toString();
+    }
+	
 	public boolean updateHerunterladen()
 	{		
 		prog.setText(Read.getTextwith("seite1", "prog4"));
@@ -380,41 +405,23 @@ public class Start extends JFrame
 			{
 				zahl++;
 				if (zahl == 1) 
-				{					
-					String[] Nrneu = zeile3.split("\\.");
-					String[] Nralt = Programmnummer.split("\\.");	
-
-					if (Integer.parseInt(Nrneu[0])>Integer.parseInt(Nralt[0])) 
+				{		
+					try
 					{						
-						antw = true;	
+						String jetzt = Programmnummer;
+						String aktuell = zeile3;
+						String s1 = normalisedVersion(jetzt);
+				        String s2 = normalisedVersion(aktuell);
+				        int cmp = s1.compareTo(s2);
+				        if(cmp<0)
+				        	antw = true;
 					}
-					else if(Integer.parseInt(Nrneu[0])==Integer.parseInt(Nralt[0]))
+					catch (Exception e)
 					{
-						if (Integer.parseInt(Nrneu[1])>Integer.parseInt(Nralt[1])) 
-						{
-							antw = true;						
-						}
-						else if(Integer.parseInt(Nrneu[1])==Integer.parseInt(Nralt[1]))
-						{
-							if(Nrneu.length==3)
-							{
-								if(Nralt.length==3)
-								{
-									if (Integer.parseInt(Nrneu[2])>Integer.parseInt(Nralt[2])) 
-									{
-										antw = true;					
-									}	
-								}
-								else
-								{	
-									if (Integer.parseInt(Nrneu[2])>0) 
-									{
-										antw = true;						
-									}
-								}								
-							}	
-						}
-					}
+						String body = "Text=" + String.valueOf(e) + "; Errorcode: S1x04a&MCVers=" + Version + "&InstallerVers=" + Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString()+ "&EMail=unkn";
+						new Download().post("http://www.minecraft-installer.de/error.php", body);
+					}					
+					
 					meld = zeile3;
 				} 
 				else // alle anderen Zeilen in text speichern
@@ -423,10 +430,10 @@ public class Start extends JFrame
 				}
 			}
 			in2.close();
-			if (antw == true) // Wenn Programmnummer nicht identisch ist
+			if (antw) // Wenn Programmnummer nicht identisch ist
 			{
 				prog.setText(Read.getTextwith("seite1", "prog5"));
-				int eingabe = JOptionPane.showConfirmDialog(null,"<html><body><span style=\"font-weight:bold\">"+Read.getTextwith("seite1", "update1")+ meld+ Read.getTextwith("seite1", "update2")+ textz+ Read.getTextwith("seite1", "update3"), Read.getTextwith("seite1", "update1") + meld, JOptionPane.YES_NO_OPTION);
+				int eingabe = JOptionPane.showConfirmDialog(null,"<html><body><span style=\"font-weight:bold\">"+Read.getTextwith("seite1", "update1")+ meld+ Read.getTextwith("seite1", "update2")+ textz+ Read.getTextwith("seite1", "update3"), Read.getTextwith("seite1", "update1"), JOptionPane.YES_NO_OPTION);
 				if (eingabe == 0) 
 				{
 					new Browser("http://www.minecraft-installer.de");
