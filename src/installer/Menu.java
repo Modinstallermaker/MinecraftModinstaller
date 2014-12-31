@@ -12,6 +12,8 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Arrays;
 
@@ -28,12 +30,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.Document;
 import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
 
 /**
  * 
@@ -73,6 +76,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	private JLabel modtext = new JLabel();	
 	private JLabel[] bew = new JLabel[5];	
 	private JLabel banner = new JLabel();
+	private JLabel bild = new JLabel();
 	private JLabel listleft = new JLabel();
 	private JLabel listright = new JLabel();
 	private JLabel pfeilrechts = new JLabel();
@@ -151,7 +155,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		int listenb = (int)(breite*0.2);
 		int listenh = (int)(hoehe*0.7);
 		int textb = (int)(breite*0.4);
-		int texth = (int)(hoehe*0.5-2);
+		int texth = (int)(hoehe*0.2-2);
 				
 		
 		listleft.setBounds(rand, rand+uber-5, listenb, 20);  //Liste1 Überschrift
@@ -245,14 +249,14 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		hilfe.setToolTipText(Read.getTextwith("seite2", "text6"));	
 		hilfe.addMouseListener(this); 		
 		cp.add(hilfe);
-			
-		modtext.setBounds(rand+listenb+10, (int)(hoehe*0.2), textb, 30);           //Modname
+		
+		modtext.setBounds(rand+listenb+10, (int)(hoehe*0.12), textb, 30);           //Modname
 		modtext.setText(Read.getTextwith("seite2", "text7"));		
 		modtext.setHorizontalAlignment(SwingConstants.CENTER);
 		modtext.setFont(new Font("Dialog", Font.BOLD, 25));
 		cp.add(modtext);
 		
-		link.setBounds(rand+listenb+280, (int)(hoehe*0.28), 160, 40); // Link zur Modwebseiten		
+		link.setBounds(rand+listenb+280, (int)(hoehe*0.2), 160, 40); // Link zur Modwebseiten		
 		link.setFont(link.getFont().deriveFont(Font.BOLD));
 		link.setIcon(new ImageIcon(this.getClass().getResource("src/infokl.png")));
 		link.setText(Read.getTextwith("seite2", "text8"));	
@@ -263,25 +267,42 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		for (int i=0; i<5; i++) //Sterne für Bewertung
 		{
 			bew[i] = new JLabel();
-			bew[i].setBounds(rand+listenb+20+i*25, (int)(hoehe*0.275), 40, 40);
+			bew[i].setBounds(rand+listenb+20+i*25, (int)(hoehe*0.2), 40, 40);
 			bew[i].setCursor(c);	
 			bew[i].setIcon(new ImageIcon(this.getClass().getResource("src/star0.png")));
 			bew[i].addMouseListener(this);
 			cp.add(bew[i]);
 		}
 		
-		HTMLEditorKit kit = new HTMLEditorKit();
-	
-		pane = new JTextPane(); //Beschreibungsfenster
+		
+		bild.setBounds(rand+listenb+15, (int)(hoehe*0.28), 400, 255); 
+			
+		cp.add(bild);
+		
+		HTMLEditorKit kit = new HTMLEditorKit();		
+			
+		pane = new JEditorPane(); //Beschreibungsfenster
 		pane.setEditable(false);
-	    pane.setContentType("text/html");
-	    pane.setEditorKit(kit);  	    
+	    pane.setContentType("text/html");	
+	    Document doc = kit.createDefaultDocument();
+	    pane.setDocument(doc);
+	    	    
 	    pane.setText(Read.getTextwith("seite2", "wait"));	  
-	
+	    
+	    StyleSheet ss = kit.getStyleSheet();
+		try 
+		{
+			ss.importStyleSheet(new URL("http://www.minecraft-installer.de/sub/installerstyle.css"));
+		} 
+		catch (MalformedURLException e1) 
+		{
+			ss.addRule("body{background:orange; color:blue} b{color:red;}");
+		}		
+		kit.setStyleSheet(ss);
 	    
 	    scroller = new JScrollPane(pane);
-	    scroller.setBounds(rand+listenb+15, (int)(hoehe*0.35), textb, texth);
-	    scroller.setBorder(BorderFactory.createEmptyBorder());
+	    scroller.setBounds(rand+listenb+15, (int)(hoehe*0.65), textb, texth);
+	    scroller.setBorder(BorderFactory.createEmptyBorder());	   
 	    cp.add(scroller);
 	    
 	    web.setBounds((int)(breite/2-180), (int)(hoehe*0.94), 300, 20); //Beenden	
@@ -601,6 +622,17 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	private void setInfoText(String modname) //Modbeschreibung anzeigen
 	{			
 		modtext.setText(modname);
+		
+		ImageIcon ic;
+		try 
+		{
+			ic = new ImageIcon(new URL("http://www.minecraft-installer.de/Dateien/Bilder/gross/resize.php?name="+modname+".jpg")); //mit Netz
+			bild.setIcon(ic);	
+		} 
+		catch (MalformedURLException e1) 
+		{
+			bild.setText("Kein Bild verfügbar..."); //ohne Netz
+		}
 		
 		Sterne(0, false);	
 		anders=false;

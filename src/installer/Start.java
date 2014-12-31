@@ -275,8 +275,7 @@ public class Start extends JFrame
 		 
 		if (str.contains("win") && !installer.exists())
 		{
-			File dat = new java.io.File(Start.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsoluteFile();				
-			JOptionPane.showMessageDialog(null, dat.getAbsoluteFile().toString());							
+			File dat = new java.io.File(Start.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsoluteFile();										
 			try
 			{			
 				new OP().copy(dat, installer);
