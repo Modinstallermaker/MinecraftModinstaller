@@ -646,7 +646,7 @@ public class Install extends JFrame implements MouseListener
 		else if(s==banner)
 			new Browser("http://server.nitrado.net/deu/gameserver-mieten?pk_campaign=MinecraftInstaller");
 		else if(s==start)
-			new MCLauncher(webplace, mineord, online, stamm);	
+			new MCLauncher(webplace, stamm);	
 		else if(s==beenden)
 			System.exit(0);
 	}

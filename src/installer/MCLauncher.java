@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 
 public class MCLauncher 
 {	
-	public MCLauncher(final String webplace, final String mineord, final boolean online, final String stamm)
+	public MCLauncher(final String webplace, final String stamm)
 	{
 		new OP().makedirs(new File(stamm +"/Modinstaller/"));
 		boolean ausf = true;
@@ -39,7 +39,7 @@ public class MCLauncher
 		new OP().makedirs(speicherort.getParentFile());	
 		try 
 		{
-			if(!new Download().ident(downloadort, speicherort)||speicherort.length()>0)						
+			if(!new Download().ident(downloadort, speicherort)||speicherort.length()==0)						
 			{		
 				new Download().downloadFile(downloadort, new FileOutputStream(speicherort));		
 				ausf =true;				

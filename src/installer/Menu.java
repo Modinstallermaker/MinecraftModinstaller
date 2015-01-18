@@ -104,7 +104,8 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	private String[] ModloaderList, ForgeList, ModList, Bew;
 	private double proz=0;
 	private boolean anders=false;
-	private double bewertung=0;
+	private double bewertung = 0.;
+    private double harmmittel = 3;
 	
 	private int hoehe =700, breite=1000;
 	
@@ -282,12 +283,14 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		HTMLEditorKit kit = new HTMLEditorKit();		
 			
 		pane = new JEditorPane(); //Beschreibungsfenster
+		pane.setOpaque(false);
 		pane.setEditable(false);
+		pane.setBorder(null);
 	    pane.setContentType("text/html");	
 	    Document doc = kit.createDefaultDocument();
-	    pane.setDocument(doc);
-	    	    
+	    pane.setDocument(doc);	   
 	    pane.setText(Read.getTextwith("seite2", "wait"));	  
+	  
 	    
 	    StyleSheet ss = kit.getStyleSheet();
 		try 
@@ -302,7 +305,8 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	    
 	    scroller = new JScrollPane(pane);
 	    scroller.setBounds(rand+listenb+15, (int)(hoehe*0.65), textb, texth);
-	    scroller.setBorder(BorderFactory.createEmptyBorder());	   
+	    scroller.setBorder(null);		
+	    scroller.setOpaque(false);
 	    cp.add(scroller);
 	    
 	    web.setBounds((int)(breite/2-180), (int)(hoehe*0.94), 300, 20); //Beenden	
@@ -522,7 +526,15 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 											}
 										}										
 									}									
-								}								
+								}	
+								double teiler = 0.0;
+				                for (int r = 0; r < Menu.this.Bew.length; r++)
+				                {
+				                  double prozb = Double.parseDouble(Menu.this.Bew[r].split(":")[1]);
+				                  teiler += 1.0 / prozb;
+				                }
+				                harmmittel = (Bew.length / teiler);				              
+					            
 							} 
 							catch (IOException e) 
 							{
@@ -716,15 +728,14 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 						  {	
 							 try
 						     {
-					        	proz = Info[i].getRating();  
-					        	double schnitt = 100.0 / Bew.length;
-					        	double faktor = 3 / schnitt;
-					        	proz = proz * faktor;					        	
-								Sterne(proz, false);
-								if(proz > 6.5)
-								{									
+								 proz = Info[i].getRating();
+								 double faktor = 2.5D / harmmittel;
+								 proz *= faktor;		        	
+								 Sterne(proz, false);
+								 if(proz > 6.5)
+								 {									
 									modtext.setText(modtext.getText() +" - TOP!");									
-								}
+								 }
 								interrupt();
 						     }
 						     catch(Exception e){}	
@@ -884,7 +895,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		String[] namen = new String[jList2Model.getSize()];	
 		int[] anzahl = new int[jList2Model.getSize()];	
 		
-		String h="";
+		String Modnamen = "";
 		try 
 		{			
 			if(online==true)
@@ -903,27 +914,25 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 						String[] spl = lines[i].split(";");
 						for (int j = 0; j < jList2Model.getSize(); j++) 
 						{							
-							if (spl[0].equals(jList2Model.getElementAt(j))) // Wenn Name des Mods in Liste2 identisch
+							if (spl[0].equals(jList2Model.getElementAt(j))) // Wenn Name der Mods in Liste2 identisch
 							{
 								namen[j] = spl[0];
 								zeilen[j] = spl[1];                           // Speicherort in zeilen speichern
-								anzahl[j] = Integer.parseInt(spl[2]);
-								h+=spl[0]+";;;";						// Anzahl der Dateien pro Mod in auswahlzahl speichern
-								
-								try 
-								{
-									String body = "Minecraft=" + URLEncoder.encode(Version, "UTF-8" ) + "&" + "Mod=" + URLEncoder.encode(spl[0], "UTF-8" ) + "&" + "OP=" + URLEncoder.encode(System.getProperty("os.name").toString() + "; " + System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString(), "UTF-8" ) + "&" + "InstallerVers=" + URLEncoder.encode(Read.getTextwith("installer", "version"), "UTF-8");
-									new Download().post("http://www.minecraft-installer.de/modstat.php", body);
-								} 
-								catch (Exception e) 
-								{										
-								}
+								anzahl[j] = Integer.parseInt(spl[2]);								
+								Modnamen += namen[j]+";;";								
 							}
 						}
-					}
-					if(h.length()>2) 
+					}					
+					if(Modnamen.length()>1)
+						Modnamen = Modnamen.substring(0, Modnamen.length()-2);					
+					
+					try 
 					{
-						h.substring(h.length()-3);						
+						String body = "Minecraft=" + URLEncoder.encode(Version, "UTF-8" ) + "&" + "Mod=" + URLEncoder.encode(Modnamen, "UTF-8" ) + "&" + "OP=" + URLEncoder.encode(System.getProperty("os.name").toString() + "; " + System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString(), "UTF-8" ) + "&" + "InstallerVers=" + URLEncoder.encode(Read.getTextwith("installer", "version"), "UTF-8");
+						new Download().post("http://www.minecraft-installer.de/modstat.php", body);
+					} 
+					catch (Exception e) 
+					{										
 					}
 				}			
 			}
@@ -1013,32 +1022,6 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 			aktual = false;
 			link.setEnabled(false);
 		}	
-	}
-	
-	public void check2_ItemStateChanged(ItemEvent evt) //Design einstellen
-	{		
-		if (evt.getStateChange() == 1) 
-		{	
-			try {
-				new OP().optionWriter("design", "default");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			dispose();
-			new Menu();
-		} 
-		else 
-		{			
-			try {
-				new OP().optionWriter("design", "simple");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			dispose();
-			new Menu();			
-		}		
 	}
 	
 	private void Sterne(double bewe, boolean anders) //Bewertung grafisch umsetzen
