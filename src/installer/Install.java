@@ -64,9 +64,9 @@ public class Install extends JFrame implements MouseListener
 	private Cursor c = new Cursor(Cursor.HAND_CURSOR);	
 	private Thread t1, t2, t3;
 	private Download dow, dowf;
-	private int breite = 600, hoehe=350;
-	
+	private int breite = 600, hoehe=350;	
 	private String webplace = Start.webplace, mineord = Start.mineord, stamm = Start.stamm, Version = Start.Version;	
+	private String modsport = mineord + "/"+Version+"_Mods/";
 	private boolean online = Start.online;
 	
 	public static String Fehler="";
@@ -187,13 +187,12 @@ public class Install extends JFrame implements MouseListener
 					status(value += 1); //4
 					
 					stat.setText(Read.getTextwith("seite3", "prog3"));                              //Wiederherstellungspunkt
-					iconf.setIcon(new ImageIcon(this.getClass().getResource("src/restore2.png")));
-					File vmod = new File(mineord + "/versions/Modinstaller");
-					new OP().copy(vmod, new File(stamm + "/Modinstaller/Backup"));
-					new OP().del(new File(mineord + "/versions/Modinstaller"));
-					new OP().copy(new File(mineord + "/versions/"+Version), new File(mineord + "/versions/Modinstaller")); //von Versions Ordner in Modinstaller Ordner kopieren
-					new OP().rename(new File(mineord + "/versions/Modinstaller/"+Version+".jar"), new File(mineord + "/versions/Modinstaller/Modinstaller.jar")); //Umbenennen in Modinstaller
-					new OP().rename(new File(mineord + "/versions/Modinstaller/"+Version+".json"), new File(mineord + "/versions/Modinstaller/Modinstaller.json"));
+					iconf.setIcon(new ImageIcon(this.getClass().getResource("src/restore2.png")));					
+					new OP().copy(new File(modsport), new File(stamm + "/Modinstaller/Backup"));
+					new OP().del(new File(modsport));
+					new OP().copy(new File(mineord + "/versions/"+Version), new File(modsport)); //von Versions Ordner in Modinstaller Ordner kopieren
+					new OP().rename(new File(modsport + Version+".jar"), new File(modsport + Version + "_Mods.jar")); //Umbenennen in Modinstaller
+					new OP().rename(new File(modsport + Version+".json"), new File(modsport + Version + "_Mods.json"));
 					
 					status(value += 3); //7
 					
@@ -232,16 +231,7 @@ public class Install extends JFrame implements MouseListener
 					
 					status(value += 3);	//10	
 					
-					File json = new File(mineord + "/versions/Modinstaller/Modinstaller.json");
-					if(json.exists())
-					{
-						String[] lines = new OP().Textreader(json);
-						for (int i=0; i<lines.length; i++)
-						{
-							lines[i] = lines[i].replaceAll("\"id\": \""+Version, "\"id\": \"Modinstaller");  // z.B. 1.7.4 in JSON Datei durch Modinstaller ersetzen
-						}
-						new OP().Textwriter(json, lines, false);
-					}
+					
 								
 					if (Modloader==true) //Modloader Modus
 					{
@@ -482,8 +472,27 @@ public class Install extends JFrame implements MouseListener
 					stat.setText(Read.getTextwith("seite3", "prog12"));	
 					iconf.setIcon(new ImageIcon(this.getClass().getResource("src/Komprimieren.png")));
 					status(value += 5);
-					new Compress(new File(stamm + "/Modinstaller/Result/"), new File(mineord + "/versions/Modinstaller/Modinstaller.jar"));  // Komprimieren
+					new Compress(new File(stamm + "/Modinstaller/Result/"), new File(modsport + Version +"_Mods.jar"));  // Komprimieren
 					status(value += 5);
+				}			
+				
+				try
+				{
+					File json = new File(mineord + "/versions/"+Version+"_Mods/"+Version+"_Mods.json");
+					if(json.exists())
+					{					
+						String[] lines = new OP().Textreader(json);
+						for (int i=0; i<lines.length; i++)
+						{						
+							lines[i] = lines[i].replaceAll("\"id\": \"Modinstaller\",", "\"id\": \""+Version+"_Mods\","); 		
+							lines[i] = lines[i].replaceAll("\"id\": \""+Version+"\",", "\"id\": \""+Version+"_Mods\",");  // z.B. 1.7.4 in JSON Datei durch 1.7.10_Mods ersetzen									
+						}
+						new OP().Textwriter(json, lines, false);
+					}
+					new OP().del(mineord+"/versions/Modinstaller");
+				}
+				catch (Exception e)
+				{					
 				}
 				
 				File profiles = new File(mineord + "/launcher_profiles.json");  //Minecraft Launcher: JSON Datei präparieren: Profil Modinstaller einstellen				
@@ -510,7 +519,7 @@ public class Install extends JFrame implements MouseListener
 				    }				 
 				    try 
 			    	{					    					    	
-				        JsonField[] fields = {field("name", string("Modinstaller")), field("lastVersionId", string("Modinstaller")) };
+				        JsonField[] fields = {field("name", string("Modinstaller")), field("lastVersionId", string(Version+"_Mods")) };
 				       
 
 				        Map<JsonStringNode, JsonNode> profileCopy = new HashMap<JsonStringNode, JsonNode>(versionData.getNode(new Object[] { "profiles" }).getFields());
@@ -536,17 +545,15 @@ public class Install extends JFrame implements MouseListener
 				}
 				
 				File sound = new File(mineord + "/assets/indexes/"+Version+".json");    //Sounddateien kopieren
-				File soundc = new File(mineord + "/assets/indexes/Modinstaller.json");
+				File soundc = new File(mineord + "/assets/indexes/"+Version+"_Mods.json");
 				if(sound.exists())
 				{
-					try {
+					try 
+					{
 						new OP().copy(sound, soundc);
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					} 
+					catch (Exception e) 
+					{						
 					}
 				}
 
@@ -600,10 +607,10 @@ public class Install extends JFrame implements MouseListener
 			}
 			try
 			{
-				new OP().del(new File(mineord+"/versions/Modinstaller"));
+				new OP().del(new File(modsport));
 				try 
 				{
-					new OP().copy(new File(stamm+"/Modinstaller/Backup"), new File(mineord+"/versions/Modinstaller"));
+					new OP().copy(new File(stamm+"/Modinstaller/Backup"), new File(modsport));
 					JOptionPane.showMessageDialog(null,	Read.getTextwith("seite2", "restore"), Read.getTextwith("seite2", "restoreh"), JOptionPane.INFORMATION_MESSAGE);
 				} 
 				catch (Exception e) 

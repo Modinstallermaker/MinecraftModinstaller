@@ -251,13 +251,13 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		hilfe.addMouseListener(this); 		
 		cp.add(hilfe);
 		
-		modtext.setBounds(rand+listenb+10, (int)(hoehe*0.12), textb, 30);           //Modname
+		modtext.setBounds(rand+listenb+10, (int)(hoehe*0.16), textb, 30);           //Modname
 		modtext.setText(Read.getTextwith("seite2", "text7"));		
 		modtext.setHorizontalAlignment(SwingConstants.CENTER);
 		modtext.setFont(new Font("Dialog", Font.BOLD, 25));
 		cp.add(modtext);
 		
-		link.setBounds(rand+listenb+280, (int)(hoehe*0.2), 160, 40); // Link zur Modwebseiten		
+		link.setBounds(rand+listenb+280, (int)(hoehe*0.22), 160, 40); // Link zur Modwebseiten		
 		link.setFont(link.getFont().deriveFont(Font.BOLD));
 		link.setIcon(new ImageIcon(this.getClass().getResource("src/infokl.png")));
 		link.setText(Read.getTextwith("seite2", "text8"));	
@@ -268,7 +268,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		for (int i=0; i<5; i++) //Sterne für Bewertung
 		{
 			bew[i] = new JLabel();
-			bew[i].setBounds(rand+listenb+20+i*25, (int)(hoehe*0.2), 40, 40);
+			bew[i].setBounds(rand+listenb+20+i*25, (int)(hoehe*0.22), 40, 40);
 			bew[i].setCursor(c);	
 			bew[i].setIcon(new ImageIcon(this.getClass().getResource("src/star0.png")));
 			bew[i].addMouseListener(this);
@@ -277,15 +277,17 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		
 		
 		bild.setBounds(rand+listenb+15, (int)(hoehe*0.28), 400, 255); 
-			
+		bild.setHorizontalAlignment(SwingConstants.CENTER);
+    	bild.setVerticalAlignment(SwingConstants.CENTER);   
+    	bild.addMouseListener(this);
+    	bild.setCursor(c);
+		bild.setIcon(new ImageIcon(this.getClass().getResource("src/warten.gif")));	
 		cp.add(bild);
 		
 		HTMLEditorKit kit = new HTMLEditorKit();		
 			
-		pane = new JEditorPane(); //Beschreibungsfenster
-		pane.setOpaque(false);
-		pane.setEditable(false);
-		pane.setBorder(null);
+		pane = new JEditorPane(); //Beschreibungsfenster		
+		pane.setEditable(false);		
 	    pane.setContentType("text/html");	
 	    Document doc = kit.createDefaultDocument();
 	    pane.setDocument(doc);	   
@@ -304,9 +306,8 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		kit.setStyleSheet(ss);
 	    
 	    scroller = new JScrollPane(pane);
-	    scroller.setBounds(rand+listenb+15, (int)(hoehe*0.65), textb, texth);
-	    scroller.setBorder(null);		
-	    scroller.setOpaque(false);
+	    scroller.setBorder(null);
+	    scroller.setBounds(rand+listenb+15, (int)(hoehe*0.65), textb, texth);	
 	    cp.add(scroller);
 	    
 	    web.setBounds((int)(breite/2-180), (int)(hoehe*0.94), 300, 20); //Beenden	
@@ -460,8 +461,9 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 			datei = new File(stamm +"/Modinstaller/Forge.txt");
 		
 		jList1Model.removeAllElements();
-		jList1bModel.removeAllElements();
-		jList2Model.removeAllElements();		
+		jList1bModel.removeAllElements();		
+		jList2Model.removeAllElements();
+		bild.setIcon(new ImageIcon(this.getClass().getResource("src/warten.gif")));	
 		
 		if(online)
 			try
@@ -572,7 +574,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	public void versioneinstellen() //Version ändern
 	{			
 		Modloader = true;	
-		
+		bild.setIcon(new ImageIcon(this.getClass().getResource("src/warten.gif")));	
 		Start.Version = Start.Versionen[ChVers.getSelectedIndex()];
 		Version = Start.Versionen[ChVers.getSelectedIndex()];
 		SwingUtilities.invokeLater(new Runnable() 
@@ -633,8 +635,8 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	
 	private void setInfoText(String modname) //Modbeschreibung anzeigen
 	{			
-		modtext.setText(modname);
-		
+		modtext.setText(modname);	
+		bild.setIcon(new ImageIcon(this.getClass().getResource("src/warten.gif")));	
 		ImageIcon ic;
 		try 
 		{
@@ -643,7 +645,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		} 
 		catch (MalformedURLException e1) 
 		{
-			bild.setText("Kein Bild verfügbar..."); //ohne Netz
+			bild.setText("Kein Bild verfügbar..."); //ohne Netz			
 		}
 		
 		Sterne(0, false);	
@@ -1109,6 +1111,8 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		 {			
 			 new Browser(Read.getTextwith("seite2", "web"));
 		 }
+		 else if(s==bild)
+			 new Fullscreen(jList, jListModel);
 		 else if(s==beenden)
 			 System.exit(0);
 		 

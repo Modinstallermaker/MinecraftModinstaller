@@ -29,7 +29,7 @@ public class Read
     JdomParser parser = new JdomParser();
     try
     {
-      this.versionData = parser.parse(new InputStreamReader(installProfile));
+      this.versionData = parser.parse(new InputStreamReader(installProfile, "UTF-8"));
     }
     catch (Exception e)
     {

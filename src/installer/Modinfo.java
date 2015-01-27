@@ -81,9 +81,13 @@ public class Modinfo
 	}
 	
 	public String getDescription()
-	{		
+	{	
+		String str = spl[0];				
+		String s = "\"><br>";
+		int index = str.indexOf(s) +6;  
+		str = str.substring(index);
 		if(spl!=null&&spl.length>0)
-    		return spl[0];
+    		return str;
     	else
     		return "error";		
 	}

@@ -54,6 +54,11 @@ public class OP
 		}
 	}
 	
+	boolean del(String dir)
+	{
+		return del(new File(dir));
+	}
+	
 	public void copy(File quelle, File ziel) throws FileNotFoundException, IOException 
 	{
 		if(quelle.exists())
@@ -69,6 +74,10 @@ public class OP
 				copyFile(quelle, ziel);
 			}
 		}
+	}
+	public void copy(String quelle, String ziel) throws FileNotFoundException, IOException
+	{
+		copy(new File(quelle), new File(ziel));
 	}
 			  
 		
