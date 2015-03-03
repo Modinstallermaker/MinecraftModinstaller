@@ -150,9 +150,11 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 		bild.setText("");
 		geladen=false;
 		neu=true;
-		   headl.setText(modname);	
-		   headl2.setText(modname);	    
-		 url="http://www.minecraft-installer.de/Dateien/Bilder/gross/"+modname+".jpg";
+	    headl.setText(modname);	
+	    headl2.setText(modname);	    
+	    url = "http://www.minecraft-installer.de/Dateien/BilderHQ/"+modname+".jpg";		 
+	    url = url.replace(" ", "%20");
+		 	
 		 try 
 	 	    {
 	 			bild.setIcon((Icon) new ImageIcon(this.getClass().getResource("src/warten.gif")));
@@ -188,7 +190,8 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 						} 
 					    catch (Exception e) 
 					    {
-							bild.setText("\n\n" + new OP().getStackTrace(e));
+							bild.setText("Kein Bild verfügbar...");
+							bild.setIcon(null);
 						}					 
 					 geladen = true;
 					 if(!neu) laden();

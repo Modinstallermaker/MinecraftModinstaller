@@ -32,17 +32,15 @@ public class Download
 	
 	
 	public float[] downloadFile(String url_str, OutputStream outstr) throws IllegalStateException, MalformedURLException,ProtocolException, IOException
-	{			
-		System.setProperty("http.proxyPort", "443");		
-	    URL url = new URL(url_str.replace(" ", "%20"));
-	
+	{	
+	    URL url = new URL(url_str.replace(" ", "%20"));	
 	    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	    conn.setUseCaches(false);
-	    conn.setDefaultUseCaches(false);
-	    conn.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
-	    conn.setRequestProperty("Expires", "0");
-	    conn.setRequestProperty("Pragma", "no-cache");
-	    conn.setConnectTimeout(10000);
+	    //conn.setUseCaches(false);
+	    //conn.setDefaultUseCaches(false);
+	    //conn.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
+	    //conn.setRequestProperty("Expires", "0");
+	    //conn.setRequestProperty("Pragma", "no-cache");
+	    conn.setConnectTimeout(20000);
 	    conn.setReadTimeout(25000);	    
 	    conn.connect();	  
 	   	    
@@ -152,7 +150,6 @@ public class Download
 		OutputStreamWriter writer = new OutputStreamWriter( connection.getOutputStream() );
 		writer.write(params);
 		writer.flush();
-
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()) );
 		

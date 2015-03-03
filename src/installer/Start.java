@@ -3,9 +3,6 @@ package installer;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,7 +43,7 @@ import org.spout.nbt.stream.NBTOutputStream;
  * @author Dirk Lippke
  */
 
-public class Start extends JFrame 
+public class Start extends JFrame
 {
 	private static final long serialVersionUID = 6893761562923644768L;
 
@@ -54,7 +51,6 @@ public class Start extends JFrame
 	private JLabel prog = new JLabel();	
 	private JLabel logo = new JLabel();	
 	private JPanel cp;	
-	
 	public static String Version;
 	public static String Programmnummer;
 	public static String Zusatz;
@@ -67,14 +63,14 @@ public class Start extends JFrame
 	List<String> OnlineList = new ArrayList<String>();
 	List<String> OfflineList = new ArrayList<String>();
 	List<String> AvialableList;
-	
+	int versuch = 0;	
 	private int hoehe =300, breite=500;
+	private String lang ="en";
 	
-
 	public Start()
 	{		
 		minecraftSuchen();
-		File logf = new File(stamm + "/Modinstaller/log.log"); //Neuinstallation
+		File logf = new File(stamm + "/Modinstaller/Texte"); //Neuinstallation
 		if(logf.exists())
 			new OP().del(new File(stamm + "/Modinstaller"));
 		new OP().makedirs(new File(stamm + "/Modinstaller"));
@@ -90,20 +86,20 @@ public class Start extends JFrame
 			{						
 				e1.printStackTrace();
 			}
-		}	
-		String lang ="en";
+		}		
 		try 
 		{
-			if(new OP().optionReader("language").equals("n/a"))
-			  {
+			lang = new OP().optionReader("language");
+			if(lang.equals("n/a"))
+			{
 				Object[] options2 = {"Deutsch (German)", "English (Englisch)"};			
 				int selected2 = JOptionPane.showOptionDialog(null, "Welche Sprache sprichst Du?\nWhat language do you speak?", "Spache/Language?", JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null,	options2, options2[0]);
 				switch (selected2)
 				{
-				case 0: lang="de";
+					case 0: lang="de";
 				}
 				new OP().optionWriter("language", lang);
-			  }
+			}
 		}
 		catch (IOException e1) 
 		{			
@@ -120,7 +116,7 @@ public class Start extends JFrame
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setIconImage(new ImageIcon(this.getClass().getResource("src/icon.png")).getImage());
-		
+				
 		cp = new GraphicsPanel(false, "src/bild.png");
 		cp.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 		cp.setLayout(null);			
@@ -152,40 +148,18 @@ public class Start extends JFrame
 				try 
 				{
 					lcd = Font.createFont(Font.TRUETYPE_FONT, this.getClass().getResource("src/Comfortaa.ttf").openStream());
-				} catch (FontFormatException e2) {
-					// TODO Auto-generated catch block
-					e2.printStackTrace();
-				} catch (IOException e2) {
-					// TODO Auto-generated catch block
-					e2.printStackTrace();
+				} 
+				catch (Exception e)
+				{					
 				}	
 				
 				Serverlist();
 				
-				new OP().makedirs(new File(stamm+"/Modinstaller/Texte"));    
 				new OP().del(new File(stamm+"/Modinstaller/zusatz.txt"));
 				new OP().del(new File(stamm+"/Modinstaller/Import"));
 				new OP().del(new File(stamm + "/Modinstaller/modlist.txt"));
 				
 				versionenSuchen();
-				
-				if(OfflineList.size()==0)  //keine Dateien im Ordner versions
-				{
-					
-					File vers = new File(mineord+"/versions");
-					vers.mkdirs();					
-					
-					try 
-					{							
-						JOptionPane.showMessageDialog(null, Read.getTextwith("OP", "error")+":\n\n"+ mineord + "/versions", Read.getTextwith("OP", "errorh"), JOptionPane.ERROR_MESSAGE);
-						Desktop.getDesktop().open(vers);							
-					} 
-					catch (IOException e) 
-					{							
-						e.printStackTrace();
-					}
-					System.exit(0);
-				}
 				
 				if(updateHerunterladen())  //Online
 				{
@@ -202,6 +176,28 @@ public class Start extends JFrame
 			}
 		}.start();
 	}
+	
+	/*
+	public void Online()
+	{
+		File versionendat = new File(stamm+"/Modinstaller/versionen.txt");
+		File rec = new File(stamm+"/Modinstaller/recom.txt");		
+		try 
+		{
+			new Download().downloadFile(webplace+"quellen.txt", new FileOutputStream(versionendat));
+			OnlineList = new OP().Textreadera(versionendat);
+			Versionen = OnlineList.toArray( new String[]{} );	
+			
+			new Download().downloadFile(webplace+"recom.txt", new FileOutputStream(rec));			
+			String[] reco = new OP().Textreader(rec);
+			Version = reco[0];			
+		} 
+		catch (Exception e) 
+		{						
+			Offline();
+		} 
+	}
+	*/
 	
 	public void Online()
 	{
@@ -448,6 +444,11 @@ public class Start extends JFrame
 		}		 
 		catch (Exception ex) 
 		{
+			if(versuch<2)
+			{
+				versuch++;				
+				return updateHerunterladen();				
+			}
 			try 
 			{
 				String body = "Text=" + String.valueOf(ex) + "; Errorcode: S1x04&MCVers=" + Version + "&InstallerVers=" + Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString()+ "&EMail=unkn";
@@ -465,7 +466,7 @@ public class Start extends JFrame
 			}
 			online = false;
 		}
-		return online;
+		return online;		
 	}
 	
 	public void versionenSuchen()
@@ -518,46 +519,91 @@ public class Start extends JFrame
 	public void hauptmStarten()
 	{
 		prog.setText(Read.getTextwith("seite1", "prog12"));
-		File texte = new File(stamm+"/Modinstaller/Texte.zip");
-	    
+		Modinfo[] Mod = null, Downloadlist = null;
+			    
 		if(online)
-	    try 
-	    {
-	    	
-			new Download().downloadFile("http://www.minecraft-installer.de/Dateien/zipper.php?lang="+new OP().optionReader("language"), new FileOutputStream(texte));
-			new Extract(texte, new File(stamm+"/Modinstaller/"));
-		} 
-	    catch (Exception e1) 
-		{				
-			e1.printStackTrace();
-		} 
-		    
-	    try 
-	    {
-			Thread.sleep(100);
-			dispose();
-		} 
-	    catch (InterruptedException e1) 
-	    {				
-			e1.printStackTrace();
-		} 
-	   
-	    try 
-	    {
-	    	String lizenz = new OP().optionReader("lizenz");
-			if(lizenz.equals("n/a")||lizenz.equals("false"))
+		{
+			try 
 			{
-				new License();
-			}
-			else
+				File texte = new File(stamm+"/Modinstaller/modtexts.txt");
+				new Download().downloadFile("http://www.minecraft-installer.de/api/mods.php", new FileOutputStream(texte));
+				String[] modliste = new OP().Textreaders(texte).split(";;;");
+				
+				Mod = new Modinfo[modliste.length];
+				for(int i=0; i<modliste.length; i++)
+				{
+					Mod[i] = new Modinfo();
+					Mod[i].setLanguage(lang);
+					String[] kat = modliste[i].split(",,,");
+					for (int j=0; j<kat.length; j++)
+					{					
+						String[] unterkat = kat[j].split(":::");						
+						
+						if(unterkat[0].equals("Name"))					
+							Mod[i].setName(unterkat[1]);
+						else if(unterkat[0].equals("BeschrDE"))
+							Mod[i].setTextDe(unterkat[1]);
+						else if(unterkat[0].equals("BeschrEN"))
+							Mod[i].setTextEn(unterkat[1]);
+						else if(unterkat[0].equals("Quelle"))
+							Mod[i].setSource(unterkat[1]);
+					}
+				}
+				new OP().del(texte);
+			} 
+			catch (Exception e) 
+			{				
+				e.printStackTrace();
+			} 
+			
+			try 
 			{
-				new Menu();
+				File downloadt = new File(stamm+"/Modinstaller/downloadtexts.txt");
+				new Download().downloadFile("http://www.minecraft-installer.de/api/offerall.php", new FileOutputStream(downloadt));
+				String[] downloadlist = new OP().Textreaders(downloadt).split(";;;");
+				
+				Downloadlist = new Modinfo[downloadlist.length];
+				for(int i2=0; i2<downloadlist.length; i2++)
+				{
+					Downloadlist[i2] = new Modinfo();				
+					String[] kat2 = downloadlist[i2].split(",,,");
+					for (int j2=0; j2<kat2.length; j2++)
+					{					
+						String[] unterkat2 = kat2[j2].split(":::");
+				
+						if(unterkat2[0].equals("Mod"))					
+							Downloadlist[i2].setName(unterkat2[1]);
+						else if(unterkat2[0].equals("MC"))
+							Downloadlist[i2].setMC(unterkat2[1]);
+						else if(unterkat2[0].equals("Art"))
+							Downloadlist[i2].setCat(Integer.parseInt(unterkat2[1]));						
+						else if(unterkat2[0].equals("Bewertung"))
+							Downloadlist[i2].setRating(Double.parseDouble(unterkat2[1]));	
+					}				
+				}	
+				new OP().del(downloadt);
 			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+			}
+		}
+		
+    	String lizenz="";
+		try 
+		{
+			lizenz = new OP().optionReader("lizenz");
 		} 
-	    catch (IOException e) 
-	    {				
-			e.printStackTrace();
-		}		 	
+		catch (IOException e) {}
+		if(lizenz.equals("n/a")||lizenz.equals("false"))
+		{
+			new License(Mod, Downloadlist);
+		}
+		else
+		{
+			new Menu(Mod, Downloadlist);
+		}		
+	    dispose();
 	}
 	
 	public void Serverlist()  //Serverliste modifizieren
@@ -612,6 +658,7 @@ public class Start extends JFrame
 				catch (IOException e1) 
 				{			
 					e1.printStackTrace();
+					
 				}
 		} 
 		catch (IOException e1) 
@@ -619,25 +666,13 @@ public class Start extends JFrame
 			e1.printStackTrace();
 		}	
 	}
-		
-	
-	public void beenden_ActionPerformed(ActionEvent evt) 
-	{
-		System.exit(0);
-	}
-	
 
 	public static void main(String[] args) 
-	{	
-		Toolkit.getDefaultToolkit().setDynamicLayout(true);
-		System.setProperty("java.net.preferIPv4Stack", "true");
-		
-		
+	{			
 		try 
 	    {	
 			Color red = Color.decode("#9C2717");
-			Color white = Color.decode("#FFFfff");
-			//Color white = Color.decode("#FFF9E9");
+			Color white = Color.decode("#FFFfff");			
 			Color darkwhite = Color.decode("#eFe9d9");
 			
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");			 
@@ -648,8 +683,7 @@ public class Start extends JFrame
 			UIManager.put("nimbusSelectedText", white);
 			UIManager.put("nimbusFocus", white);
 			UIManager.put("nimbusLightBackground", white);			
-			UIManager.put("control", darkwhite);	
-			
+			UIManager.put("control", darkwhite);
 	    } 
 	    catch (Exception e) 
 	    {
@@ -658,7 +692,8 @@ public class Start extends JFrame
 	    	  UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
 	      }
 	      catch (Exception e2)
-	      {}
+	      {	    	  
+	      }
 	    }
 		new Start();			
 	}	

@@ -6,20 +6,21 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
@@ -62,10 +63,8 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	private JScrollPane jList2ScrollPane = new JScrollPane(jList2);
 	public static DefaultListModel<String> jList2Model = new DefaultListModel<String>();
 	
-	DefaultListModel<String> jListModel;
-	JList<String> jList;
-	Modinfo[] Info;
-	
+	DefaultListModel<String> jListModel = null;
+	JList<String> jList;	
 	JTabbedPane tabbedPane = new JTabbedPane();
 		
 	private JEditorPane pane;  
@@ -85,32 +84,25 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	private JLabel restore = new JLabel();
 	private JLabel hilfe = new JLabel();
 	private JLabel link = new JLabel();
+	private JLabel quelle = new JLabel();
 	private JLabel web = new JLabel();
 	private JLabel beenden = new JLabel();
-	public static JLabel weiter = new JLabel();	
-	
+	public static JLabel weiter = new JLabel();		
 	private JComboBox<String> ChVers;
-
-	private JPanel cp;		
-	
-	private Cursor c = new Cursor(Cursor.HAND_CURSOR);
-	private boolean aktual = true, Modloader=true;		
-		
-	private String webplace = Start.webplace, mineord = Start.mineord, stamm = Start.stamm, Version = Start.Version;	
-	private boolean online = Start.online;
-	private String hyperlink = Read.getTextwith("seite2", "web");
+	private JPanel cp;			
+	private Cursor c = new Cursor(Cursor.HAND_CURSOR);		
+	private String mineord = Start.mineord, stamm = Start.stamm, Version = Start.Version, hyperlink = Read.getTextwith("seite2", "web"), linkquelle=Read.getTextwith("seite2", "web");	
 	public static int zahl;
-	private Modinfo[] ModloaderInfo, ForgeInfo;
-	private String[] ModloaderList, ForgeList, ModList, Bew;
-	private double proz=0;
-	private boolean anders=false;
-	private double bewertung = 0.;
-    private double harmmittel = 3;
+	private Modinfo[] Mod, Downloadlist;
+	private double proz=0,  bewertung = 0.;
+	private boolean Modloader=true, online = Start.online,  anders=false;	
+	private int hoehe =650, breite=1024;
 	
-	private int hoehe =700, breite=1000;
-	
-	public Menu() 
+	public Menu(Modinfo[] Mod, Modinfo[] Downloadlist) 
 	{
+		this.Mod=Mod;
+		this.Downloadlist=Downloadlist;
+		
 		setUndecorated(true);
 		setSize(breite, hoehe);
 		setTitle(Read.getTextwith("installer", "name"));		
@@ -118,6 +110,8 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		setResizable(false);
 		
 		cp = new GraphicsPanel(false, "src/bild.png");
+		//cp = new JPanel();
+		cp.setBackground(Color.decode("#CEE3F6"));
 		cp.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 		cp.setLayout(null);
 		add(cp);
@@ -153,11 +147,17 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		
 		int rand = 20;
 		int uber = (int)(hoehe*0.09);
+		int listeya = 2*rand+uber;
 		int listenb = (int)(breite*0.2);
-		int listenh = (int)(hoehe*0.7);
-		int textb = (int)(breite*0.4);
-		int texth = (int)(hoehe*0.2-2);
-				
+		int listenh = (int)(hoehe*0.72);
+		int mittexa= rand+listenb+20;
+		int modtexty = 2*rand+uber;	
+		int infol = modtexty+40;
+		int bildya = infol+rand+30;
+		int bildx = 400;
+		int bildy = 225;
+		int textya = bildya + bildy+rand-5;
+		int texth = (int)(listenh-bildy-50-3*rand+5);
 		
 		listleft.setBounds(rand, rand+uber-5, listenb, 20);  //Liste1 Überschrift
 		listleft.setHorizontalAlignment(SwingConstants.CENTER);
@@ -166,7 +166,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		cp.add(listleft);
 		
 		jList1Model.addElement(Read.getTextwith("seite2", "wait2")); //Liste1 Modloader
-		jList1.setModel(jList1Model);
+		jList1.setModel(jList1Model);		
 		jList1.setCellRenderer(new CellRenderer());				
 		jList1.addMouseListener(this);
 				
@@ -175,8 +175,9 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		jList1b.setCellRenderer(new CellRenderer());				
 		jList1b.addMouseListener(this);
 		
-		jList1ScrollPane.setBorder(BorderFactory.createEmptyBorder());
-		jList1bScrollPane.setBorder(BorderFactory.createEmptyBorder());
+		jList1ScrollPane.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
+		jList1bScrollPane.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
+		
 		tabbedPane.addTab( "Modloader", jList1ScrollPane);
 		tabbedPane.addTab( "Forge", jList1bScrollPane);
 		tabbedPane.setEnabled(false);
@@ -193,44 +194,86 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	    		 }
 	        }
 	    });
-		tabbedPane.setBounds(rand, rand+uber+20, listenb, listenh);
-							
-        cp.add(tabbedPane);
+		tabbedPane.setBounds(rand, listeya, listenb, listenh);							
+        cp.add(tabbedPane);        
+    	
+		modtext.setBounds(mittexa, modtexty, bildx, 30);           //Modname
+		modtext.setText(Read.getTextwith("seite2", "text7"));		
+		modtext.setHorizontalAlignment(SwingConstants.CENTER);
+		modtext.setFont(new Font("Dialog", Font.BOLD, 25));
+		cp.add(modtext);
 		
-		listright.setBounds(breite-rand-listenb, (int)(hoehe*0.315), listenb, 20); //Liste2 Überschrift
-		listright.setHorizontalAlignment(SwingConstants.CENTER);
-		listright.setText(Read.getTextwith("seite2", "modi"));		
-		cp.add(listright);
+		link.setBounds(mittexa+bildx-80, infol+5, 40, 40); // Link zu Modinstallerweb	
+		link.setIcon(new ImageIcon(this.getClass().getResource("src/infokl.png")));
+		link.addMouseListener(this); 
+		link.setToolTipText(Read.getTextwith("seite2", "webi"));
+		link.setCursor(c);
+		cp.add(link);
 		
-		jList2Model.addElement("");    // Liste2
-		jList2.setModel(jList2Model);   
-		jList2.setCellRenderer(new CellRenderer());  
-		jList2.addMouseListener(this);
-		jList2ScrollPane.setBounds(breite-rand-listenb,  (int)(hoehe*0.35), listenb, (int)(hoehe*0.5));
-		jList2ScrollPane.setBorder(BorderFactory.createEmptyBorder());
-		cp.add(jList2ScrollPane);
+		quelle.setBounds(mittexa+bildx-40, infol+5, 40, 40); // Link zum Entwickler	
+		quelle.setIcon(new ImageIcon(this.getClass().getResource("src/quelle.png")));
+		quelle.addMouseListener(this); 
+		quelle.setToolTipText(Read.getTextwith("seite2", "dev"));
+		quelle.setCursor(c);
+		cp.add(quelle);
 		
-		pfeilrechts.setBounds(rand+listenb+10+textb+20+25, 300, 100, 83); // Pfeil nach rechts		
+		for (int i=0; i<5; i++) //Sterne für Bewertung
+		{
+			bew[i] = new JLabel();
+			bew[i].setBounds(mittexa+10+i*25, infol, 40, 40);
+			bew[i].setCursor(c);	
+			bew[i].setIcon(new ImageIcon(this.getClass().getResource("src/star0.png")));
+			bew[i].addMouseListener(this);
+			cp.add(bew[i]);
+		}
+		
+		bild.setBounds(mittexa, bildya, bildx, bildy); 
+		bild.setHorizontalAlignment(SwingConstants.CENTER);
+    	bild.setVerticalAlignment(SwingConstants.CENTER);   
+    	bild.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
+    	bild.addMouseListener(this);
+    	bild.setCursor(c);    	
+		bild.setIcon(new ImageIcon(this.getClass().getResource("src/warten.gif")));	
+		bild.setToolTipText(Read.getTextwith("seite2", "pici"));
+		cp.add(bild);
+		
+		HTMLEditorKit kit = new HTMLEditorKit();		
+			
+		pane = new JEditorPane(); //Beschreibungsfenster		
+		pane.setEditable(false);
+	    pane.setContentType("text/html");	
+	    Document doc = kit.createDefaultDocument();
+	    pane.setDocument(doc);	  
+	    pane.setText(Read.getTextwith("seite2", "wait"));	  	  
+	    
+	    StyleSheet ss = kit.getStyleSheet();
+		try 
+		{
+			ss.importStyleSheet(new URL("http://www.minecraft-installer.de/sub/installerstyle.css"));
+		} 
+		catch (MalformedURLException e1) 
+		{			
+		}		
+		kit.setStyleSheet(ss);
+	    
+	    scroller = new JScrollPane(pane);
+	    scroller.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
+	    scroller.setBounds(mittexa, textya, bildx, texth);	
+	    cp.add(scroller);
+        
+		pfeilrechts.setBounds(mittexa+bildx+2*rand, 300, 100, 83); // Pfeil nach rechts		
 		pfeilrechts.setIcon(new ImageIcon(this.getClass().getResource("src/hinzufügen.png")));		
 		pfeilrechts.setToolTipText(Read.getTextwith("seite2", "text1"));
 		pfeilrechts.addMouseListener(this);
 		pfeilrechts.setCursor(c);
 		cp.add(pfeilrechts);
 
-		pfeillinks.setBounds(rand+listenb+10+textb+20-5, 390, 100, 83); // Pfeil nach links		
+		pfeillinks.setBounds(mittexa+bildx+rand, 390, 100, 83); // Pfeil nach links		
 		pfeillinks.setIcon(new ImageIcon(this.getClass().getResource("src/löschen.png")));	
 		pfeillinks.setToolTipText(Read.getTextwith("seite2", "text2"));	
 		pfeillinks.addMouseListener(this);
 		pfeillinks.setCursor(c);
 		cp.add(pfeillinks);	
-		
-		importbutton.setBounds(breite-rand-listenb+10, (int)(hoehe*0.23), 180, 40); // Mods importieren				
-		importbutton.setText(Read.getTextwith("seite2", "text3"));
-		importbutton.setFont(importbutton.getFont().deriveFont(Font.BOLD));
-		importbutton.setIcon(new ImageIcon(this.getClass().getResource("src/importkl.png")));	
-		importbutton.addMouseListener(this); 
-		importbutton.setCursor(c);		
-		cp.add(importbutton);
 		
 		restore.setBounds(breite-rand-listenb+10, (int)(hoehe*0.15), 180, 40); // Restore druchführen	
 		restore.setText(Read.getTextwith("seite2", "text5"));	
@@ -245,70 +288,32 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		}
 		cp.add(restore);
 		
+		importbutton.setBounds(breite-rand-listenb+10, (int)(hoehe*0.15)+50, 180, 40); // Mods importieren				
+		importbutton.setText(Read.getTextwith("seite2", "text3"));
+		importbutton.setFont(importbutton.getFont().deriveFont(Font.BOLD));
+		importbutton.setIcon(new ImageIcon(this.getClass().getResource("src/importkl.png")));	
+		importbutton.addMouseListener(this); 
+		importbutton.setCursor(c);		
+		cp.add(importbutton);
+		
+		listright.setBounds(breite-rand-listenb, (int)(hoehe*0.315), listenb, 20); //Liste2 Überschrift
+		listright.setHorizontalAlignment(SwingConstants.CENTER);
+		listright.setText(Read.getTextwith("seite2", "modi"));		
+		cp.add(listright);
+		
+		jList2Model.addElement("");    // Liste2
+		jList2.setModel(jList2Model);   
+		jList2.setCellRenderer(new CellRenderer());  
+		jList2.addMouseListener(this);
+		jList2ScrollPane.setBounds(breite-rand-listenb,  (int)(hoehe*0.35), listenb, (int)(hoehe*0.5));
+		jList2ScrollPane.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
+		cp.add(jList2ScrollPane);
+		
 		hilfe.setBounds(2, 5, 50, 50); // FAQ anzeigen			
 		hilfe.setIcon(new ImageIcon(this.getClass().getResource("src/help.png")));
 		hilfe.setToolTipText(Read.getTextwith("seite2", "text6"));	
 		hilfe.addMouseListener(this); 		
 		cp.add(hilfe);
-		
-		modtext.setBounds(rand+listenb+10, (int)(hoehe*0.16), textb, 30);           //Modname
-		modtext.setText(Read.getTextwith("seite2", "text7"));		
-		modtext.setHorizontalAlignment(SwingConstants.CENTER);
-		modtext.setFont(new Font("Dialog", Font.BOLD, 25));
-		cp.add(modtext);
-		
-		link.setBounds(rand+listenb+280, (int)(hoehe*0.22), 160, 40); // Link zur Modwebseiten		
-		link.setFont(link.getFont().deriveFont(Font.BOLD));
-		link.setIcon(new ImageIcon(this.getClass().getResource("src/infokl.png")));
-		link.setText(Read.getTextwith("seite2", "text8"));	
-		link.addMouseListener(this); 
-		link.setCursor(c);
-		cp.add(link);
-		
-		for (int i=0; i<5; i++) //Sterne für Bewertung
-		{
-			bew[i] = new JLabel();
-			bew[i].setBounds(rand+listenb+20+i*25, (int)(hoehe*0.22), 40, 40);
-			bew[i].setCursor(c);	
-			bew[i].setIcon(new ImageIcon(this.getClass().getResource("src/star0.png")));
-			bew[i].addMouseListener(this);
-			cp.add(bew[i]);
-		}
-		
-		
-		bild.setBounds(rand+listenb+15, (int)(hoehe*0.28), 400, 255); 
-		bild.setHorizontalAlignment(SwingConstants.CENTER);
-    	bild.setVerticalAlignment(SwingConstants.CENTER);   
-    	bild.addMouseListener(this);
-    	bild.setCursor(c);
-		bild.setIcon(new ImageIcon(this.getClass().getResource("src/warten.gif")));	
-		cp.add(bild);
-		
-		HTMLEditorKit kit = new HTMLEditorKit();		
-			
-		pane = new JEditorPane(); //Beschreibungsfenster		
-		pane.setEditable(false);		
-	    pane.setContentType("text/html");	
-	    Document doc = kit.createDefaultDocument();
-	    pane.setDocument(doc);	   
-	    pane.setText(Read.getTextwith("seite2", "wait"));	  
-	  
-	    
-	    StyleSheet ss = kit.getStyleSheet();
-		try 
-		{
-			ss.importStyleSheet(new URL("http://www.minecraft-installer.de/sub/installerstyle.css"));
-		} 
-		catch (MalformedURLException e1) 
-		{
-			ss.addRule("body{background:orange; color:blue} b{color:red;}");
-		}		
-		kit.setStyleSheet(ss);
-	    
-	    scroller = new JScrollPane(pane);
-	    scroller.setBorder(null);
-	    scroller.setBounds(rand+listenb+15, (int)(hoehe*0.65), textb, texth);	
-	    cp.add(scroller);
 	    
 	    web.setBounds((int)(breite/2-180), (int)(hoehe*0.94), 300, 20); //Beenden	
 	    web.setText(Read.getTextwith("seite2", "web2"));
@@ -346,37 +351,13 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	
 	public void laden()
 	{
-		tabbedPane.setSelectedIndex(0);
-		tabbedPane.setEnabled(false);
-		
 		if(online)
 		{			
 		   SwingUtilities.invokeLater(new Runnable() 
-		   {				      
+		   {					   
 				 public void run() 
-				 { 	
-					 File Modloaderlist = new File(stamm +"/Modinstaller/Modloader.txt");
-					 File ForgeList = new File(stamm +"/Modinstaller/Forge.txt");
-					 
-					 Download(webplace + Version + "/quellen.txt", Modloaderlist);									
-					 Download(webplace + Version + "/Forge_Mods/quellen.txt", ForgeList);	
-					
-					 if(ForgeList.length()!=0) //keine Forge Mods vorhanden
-					 {
-							tabbedPane.setEnabled(true);	
-							
-							if(Modloaderlist.length()<ForgeList.length()) //die größerere Modl
-							{
-								tabbedPane.setSelectedIndex(1);
-								ForgeMode();	
-							}
-							else							
-								ModloaderMode();							
-					 }
-					 else
-					 {
-						 ModloaderMode();
-					 }
+				 { 							
+					 change();					
 				 }
 		   });			   
 		}
@@ -392,13 +373,13 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		{
 			online=false;
 			jList1Model.removeAllElements();
+			jList1bModel.removeAllElements();
 			jList2Model.removeAllElements();		
 			for(int i=0; i<5; i++)
-				bew[i].setEnabled(false);		
-			importbutton.setEnabled(true);
+				bew[i].setEnabled(false);				
 			try
 			{
-				pane.setText(Read.getTextwith("seite2", "offline"));
+				pane.setText(Read.getTextwith("seite2", "import"));
 				pane.setCaretPosition(0);	
 				modtext.setText(Read.getTextwith("seite2", "text7"));
 			}
@@ -410,347 +391,155 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		{
 			online=true;	
 		}
-		
 	}
 	
 	public void loadText()
 	{
-		if(jListModel.isEmpty())
-    	{
+		if(jListModel.isEmpty())  
+		{
 	    	if(!jList2Model.isEmpty())
 	    	{
 	    		jList2.setSelectedIndex(0);
-	    		setInfoText((String)jList2Model.get(jList2.getSelectedIndex()));		    	
-	    	}
-    	}
-    	else
-    	{	 
-    		if(!jListModel.isEmpty())
-	    	{	    		
-	    		setInfoText((String)jListModel.get(jList.getSelectedIndex()));	  		  	
-	    	}    		
+	    		setInfoText((String)jList2Model.get(0));		    	
+	    	}  
+		}
+    	else   
+    	{
+    		jList.setSelectedIndex(0);
+    		setInfoText((String)jListModel.get(0));	  
     	}
 	}
 	
 	public void ModloaderMode()
 	{			
 		jListModel = jList1Model;
-		jList = jList1;
-		Info = ModloaderInfo;			
-		ModList = ModloaderList;
-		Modloader=true;
-		change();
+		jList = jList1;			
+		Modloader=true;	
+		tabbedPane.setSelectedIndex(0);
+		loadText();
 	}
 
 	public void ForgeMode() 
 	{		
 		jListModel = jList1bModel;
 		jList = jList1b;
-		Info = ForgeInfo;
-		ModList = ForgeList;
-		Modloader=false;	
-		change();		
+		Modloader=false;
+		tabbedPane.setSelectedIndex(1);
+		loadText();
 	}
 	
 	public void change()
 	{	
-		File datei;
-		if(Modloader)
-			datei = new File(stamm +"/Modinstaller/Modloader.txt");
-		else
-			datei = new File(stamm +"/Modinstaller/Forge.txt");
-		
+		bild.setIcon(new ImageIcon(this.getClass().getResource("src/warten.gif")));	
+		tabbedPane.setEnabled(false);		
 		jList1Model.removeAllElements();
 		jList1bModel.removeAllElements();		
-		jList2Model.removeAllElements();
-		bild.setIcon(new ImageIcon(this.getClass().getResource("src/warten.gif")));	
-		
-		if(online)
-			try
-			{
-				ModList = new OP().Textreader(datei);				
-				Info = new Modinfo[ModList.length];
-				String[] modnamen = new String[ModList.length];
-				for (int k=0; k<ModList.length; k++)
-				{		
-					modnamen[k]= ModList[k].split(";")[0];
-				}
-				Arrays.sort(modnamen);
-				for (int l=0; l<ModList.length; l++)
-				{					
-					boolean gefunden =false;
-					
-					String Mode = "Modloader"; //bereits installierte Mods anzeigen
-					if(!Modloader) Mode = "Forge";
-					if(new OP().optionReader("lastmc").equals(Version)&&new OP().optionReader("lastmode").equals(Mode))
-					{
-						String alastm = new OP().optionReader("lastmods");
-						String[] lastm = alastm.split(";;");					
-						for (int r=0; r<lastm.length; r++)
-						{
-							if(lastm[r].equals(modnamen[l]))
-							{
-								jList2Model.addElement(modnamen[l]);
-								gefunden=true;
-							}
-						}
-					}
-					
-					if(!gefunden)
-						jListModel.addElement(modnamen[l]);
-					if(aktual)				
-						Info[l] = new Modinfo(modnamen[l]);					
-				}
+		jList2Model.removeAllElements();		
 				
-				if(aktual)
-					new Thread()  //Bewertungen
-					{			
-						public void run() 
-						{							
-							try 
-							{
-								File rating = new File(stamm +"/Modinstaller/bewertungen.txt");
-								Download("http://minecraft-installer.de/proz3.php?MC="+Version, rating);
-								Bew = new OP().Textreaders(rating).split(";");								
-								
-								for (int k=0; k<ModList.length; k++)	
-								{									
-									loop1 : for(int i=0; i<Bew.length; i++)	
-									{
-										if(Info[k]!=null&&Bew[i]!=null)
-										{
-											String downloadmodname = Bew[i].split(":")[0];
-											String listenmodname = Info[k].getModname();
-											if(downloadmodname.equals(listenmodname))
-											{
-												Info[k].setRating(Bew[i].split(":")[1]);													
-												continue loop1;
-											}
-										}										
-									}									
-								}	
-								double teiler = 0.0;
-				                for (int r = 0; r < Menu.this.Bew.length; r++)
-				                {
-				                  double prozb = Double.parseDouble(Menu.this.Bew[r].split(":")[1]);
-				                  teiler += 1.0 / prozb;
-				                }
-				                harmmittel = (Bew.length / teiler);				              
-					            
-							} 
-							catch (IOException e) 
-							{
-								for (int k=0; k<ModList.length; k++)
-								{
-									if(Info[k].getRating()==0)
-										Info[k].setRating("error");
-								}
-							}						
-						}
-					}.start();
+		try
+		{					
+			for (int k=0; k<Downloadlist.length; k++)
+			{		
+				if( Downloadlist[k].getMC().equals(Version)&&Downloadlist[k].getCat()==0)
+				{
+					jList1Model.addElement(Downloadlist[k].getName());						
+				}
+				else if( Downloadlist[k].getMC().equals(Version)&&Downloadlist[k].getCat()==3)
+				{
+					jList1bModel.addElement(Downloadlist[k].getName());						
+				}
+			}					
 				
-				new OP().del(new File(stamm +"/Modinstaller/Import"));
-				new OP().del(new File(stamm +"/Modinstaller/zusatz.txt"));
-				jList.setSelectedIndex(0);
-			}
-			catch (Exception ex)
-			{			
-			}			
-		loadText();
-	}
-	
-	public void Download(String URL, File target)
-	{			
-		try 
+			new OP().del(new File(stamm +"/Modinstaller/Import"));
+			new OP().del(new File(stamm +"/Modinstaller/zusatz.txt"));			
+		}
+		catch (Exception ex)
 		{			
-			new Download().downloadFile(URL, new FileOutputStream(target));				
-		} 
-		catch (Exception ex) 
-		{
-			
-		}		
+		}
+		
+		if(jList1bModel.getSize()>0)		
+			 tabbedPane.setEnabled(true);
+		
+		if(jList1bModel.getSize()>=jList1Model.getSize())
+			ForgeMode();		
+		else
+			ModloaderMode();
+		
+		jList1ScrollPane.getVerticalScrollBar().setValue(0);
+		jList1bScrollPane.getVerticalScrollBar().setValue(0);
 	}
 	
 	public void versioneinstellen() //Version ändern
-	{			
-		Modloader = true;	
-		bild.setIcon(new ImageIcon(this.getClass().getResource("src/warten.gif")));	
+	{	
 		Start.Version = Start.Versionen[ChVers.getSelectedIndex()];
 		Version = Start.Versionen[ChVers.getSelectedIndex()];
-		SwingUtilities.invokeLater(new Runnable() 
-		 {				      
-			 public void run() 
-			 {
-				 try 
-				 {
-						String[] vers = Version.split("\\.");
-						boolean vorhanden=false;
-						if(Integer.parseInt(vers[0])>0)
-						{	
-							if(Integer.parseInt(vers[0])==1&&Integer.parseInt(vers[1])>3)
-							{
-								vorhanden=true;
-							}
-							if(Integer.parseInt(vers[0])>1)
-							{
-								vorhanden=true;
-							}
-						}
-						if(vorhanden)
-						{			
-							laden();			
-						}
-						else
-						{
-							JOptionPane.showMessageDialog(null, Read.getTextwith("seite1", "inco"), Read.getTextwith("seite1", "incoh"), JOptionPane.INFORMATION_MESSAGE); //�ndern					
-							online = false;		
-						}
-						
-				 } 
-				 catch (Exception ex) 
-				 {
-					new Error(Read.getTextwith("seite2", "error1")+ String.valueOf(ex)+ "\n\nErrorcode: S2x03");	
-					new Browser("http://www.minecraft-installer.de/verbindung.htm");
-				 }
-				 
-				 try 												// Wenn Minecraft aktueller
-					{ 
-						String lastmc = new OP().optionReader("lastmc");
-						
-						if (!lastmc.equals("n/a")&&!lastmc.equals(Version))
-						{	
-							new OP().del(new File(stamm + "/Modinstaller/Mods"));				
-							new OP().del(new File(stamm + "/Modinstaller/Original"));			
-							new OP().del(new File(stamm + "/Modinstaller/Mods/forge.zip"));	
-							new OP().del(new File(stamm + "/Modinstaller/Mods/Forge"));	
-						}			
-					} 
-					catch (Exception ex) 
-					{
-						new Error(String.valueOf(ex) +"\n\nErrorcode: S2xak");
-					}	
-			 }
-		 });	
+		laden();				
 	}	
 	
-	private void setInfoText(String modname) //Modbeschreibung anzeigen
+	private void setInfoText(final String modname) //Modbeschreibung anzeigen
 	{			
 		modtext.setText(modname);	
 		bild.setIcon(new ImageIcon(this.getClass().getResource("src/warten.gif")));	
-		ImageIcon ic;
-		try 
-		{
-			ic = new ImageIcon(new URL("http://www.minecraft-installer.de/Dateien/Bilder/gross/resize.php?name="+modname+".jpg")); //mit Netz
-			bild.setIcon(ic);	
-		} 
-		catch (MalformedURLException e1) 
-		{
-			bild.setText("Kein Bild verfügbar..."); //ohne Netz			
-		}
 		
-		Sterne(0, false);	
-		anders=false;
-		
-		if(aktual)
-		{			
-			for(int i=0; i<Info.length; i++)
-			{
-				if(Info[i].getModname().equals(modname))
-				{	
-					zahl=i;
-					new Thread() 
+		for(int i=0; i<Mod.length; i++)
+		{
+			if(Mod[i].getName().equals(modname))
+			{	
+				try
+			    {								
+				 	String inh = Mod[i].getText();			
+				 	linkquelle =  Mod[i].getSource();
+					hyperlink = Read.getTextwith("seite2", "web") + "/modinfo.php?modname=" + modname.replace(" ", "+");
+					if(!inh.startsWith("<html>"))
 					{
-						public void run()
-						{
-						  int i= Menu.zahl;		
-						  boolean ende=false;
-						  do
-						  {
-							  try
-							  {
-							  if(Info[i]!=null&&Info[i].fertig())
-							  {	
-							    ende=true;    							   
-							  }	
-							  }
-							  catch (Exception e){}
-						  }
-						  while(!ende);	
-						  if(ende)
-						  {	
-							 try
-						     {								
-							 	String inh = Info[i].getDescription();
-							 	String modname =Info[i].getModname().replace(" ", "+");
-								hyperlink = Read.getTextwith("seite2", "web") + "/modinfo.php?modname=" + modname;
-							    
-								if(!inh.startsWith("<html>"))
-								{
-									inh="<html><body>"+inh+"</body></html>";
-								}
-								pane.setText(inh);
-								pane.setCaretPosition(0);
-								interrupt();
-						     }
-						     catch(Exception e){}	
-						  }
-						}
-					}.start();						
+						inh="<html><body>"+inh+"</body></html>";
+					}				
+					pane.setText(inh);							
+					pane.setCaretPosition(0);
+					anders=false;
 					
-					new Thread() 
+					for(int j=0; j<Downloadlist.length; j++)	
 					{
-						public void run()
+						if(Downloadlist[j].getName().equals(modname)&&Downloadlist[j].getMC().equals(Version))
 						{
-						  int i= Menu.zahl;		
-						  boolean ende=false;
-						  do
-						  {
-							  if(Info!=null&&Info.length>i)
-							  {
-								  try
-								  {
-									  if(Info[i].fertig2())
-										  ende=true;  
-									  if(!ende)
-									  try {
-											Thread.sleep(100);
-										} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}
-								  }
-								  catch (Exception ex)
-								  {
-									  
-								  }
-							  }							 
-						  }
-						  while(!ende);	
-						  if(ende)
-						  {	
-							 try
-						     {
-								 proz = Info[i].getRating();
-								 double faktor = 2.5D / harmmittel;
-								 proz *= faktor;		        	
-								 Sterne(proz, false);
-								 if(proz > 6.5)
-								 {									
-									modtext.setText(modtext.getText() +" - TOP!");									
-								 }
-								interrupt();
-						     }
-						     catch(Exception e){}	
-						  }
+							proz = Downloadlist[j].getRating();
+							if(proz > 6.5)
+							{									
+								modtext.setText(modname +" - TOP!");									
+							}		
+							Sterne(proz, false);	
+							break;
 						}
-					}.start();		
-				}
+					}					
+			    }
+			    catch(Exception e)
+			    {	
+			    	 e.getStackTrace();
+			    }	
+			}
+		}
+		
+		new Thread() 
+ 	    {
+    	  public void run() 
+    	  {	 	    		
+    		try 
+		    {	
+    			String url = "http://www.minecraft-installer.de/Dateien/BilderPre/"+modname+".jpg";
+    			url = url.replace(" ", "%20");
+			 	BufferedImage img = ImageIO.read(new URL(url));			 	
+				bild.setIcon((Icon) new ImageIcon(img));	
+				img.flush();
+				bild.setText("");
+			} 
+		    catch (Exception e) 
+		    {
+				bild.setText(Read.getTextwith("seite2", "nopic"));
+				JOptionPane.showMessageDialog(null, new OP().getStackTrace(e));
+				bild.setIcon(null);
 			}	
-		}
-		else
-		{
-			pane.setText(Read.getTextwith("seite2", "text12"));
-		}
+    	 }
+	    }.start();
 	}
 	
 	public void ModAuswahl() // Auswählen von Mods
@@ -761,31 +550,6 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		{
 			jList2Model.add(jList2Model.getSize(),modname);
 			jListModel.removeElement(modname);
-			
-			
-			for (int i=0; i<Info.length; i++)
-			{	
-				if(Info[i]!=null&&Info[i].getModname().equals(modname))
-				{
-					String comp = Info[i].getCompatibleWith();					
-					if(!comp.equals("error"))
-					{
-						String[] spl = comp.split(";");
-						for (int j=0; j<spl.length; j++)
-						{
-							if (searchentry(jListModel, spl[j])) 
-							{
-								jList2Model.add(jList2Model.getSize(),spl[j]);
-								jListModel.removeElement(spl[j]);
-							}
-						}
-					}
-					if(Info[i]!=null&Info[i].getIncompatibleWith().equals("allother")) //Alle verbieten mit allother
-					{
-						jList.setEnabled(false);
-					}
-				}
-			}
 		}			
 		weiter.setEnabled(true); // Installieren Knopf freischalten									
 	}
@@ -892,54 +656,17 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 
 	public void weiter_ActionPerformed(MouseEvent e2) // Installieren Knopf
 	{		
-		
-		String[] zeilen = new String[jList2Model.getSize()];
-		String[] namen = new String[jList2Model.getSize()];	
-		int[] anzahl = new int[jList2Model.getSize()];	
-		
-		String Modnamen = "";
 		try 
-		{			
-			if(online==true)
+		{		
+			ArrayList<String> chnamen = new ArrayList<String>();
+			for(int i=0; i<jList2Model.getSize(); i++)
 			{
-				File modli;
-				if(Modloader)	
-					modli = new File(stamm +"/Modinstaller/Modloader.txt");
-				else
-					modli = new File(stamm +"/Modinstaller/Forge.txt");
-				
-				if(modli.exists())
-				{
-					String[] lines = new OP().Textreader(modli);
-					for (int i =0; i<lines.length; i++)
-					{
-						String[] spl = lines[i].split(";");
-						for (int j = 0; j < jList2Model.getSize(); j++) 
-						{							
-							if (spl[0].equals(jList2Model.getElementAt(j))) // Wenn Name der Mods in Liste2 identisch
-							{
-								namen[j] = spl[0];
-								zeilen[j] = spl[1];                           // Speicherort in zeilen speichern
-								anzahl[j] = Integer.parseInt(spl[2]);								
-								Modnamen += namen[j]+";;";								
-							}
-						}
-					}					
-					if(Modnamen.length()>1)
-						Modnamen = Modnamen.substring(0, Modnamen.length()-2);					
-					
-					try 
-					{
-						String body = "Minecraft=" + URLEncoder.encode(Version, "UTF-8" ) + "&" + "Mod=" + URLEncoder.encode(Modnamen, "UTF-8" ) + "&" + "OP=" + URLEncoder.encode(System.getProperty("os.name").toString() + "; " + System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString(), "UTF-8" ) + "&" + "InstallerVers=" + URLEncoder.encode(Read.getTextwith("installer", "version"), "UTF-8");
-						new Download().post("http://www.minecraft-installer.de/modstat.php", body);
-					} 
-					catch (Exception e) 
-					{										
-					}
-				}			
+				chnamen.add(jList2Model.getElementAt(i));				
 			}
-			dispose();			
-			new Install(namen, zeilen, anzahl, Modloader);
+			dispose();	
+			String[] namen = chnamen.toArray(new String[chnamen.size()]); 
+			
+			new Install(namen, Modloader);
 		} 
 		catch (Exception ex) 
 		{	
@@ -962,7 +689,9 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		new OP().del(new File(mineord+"/versions/Modinstaller"));
 		try 
 		{
-			new OP().copy(new File(stamm+"/Modinstaller/Backup"), new File(mineord+"/versions/Modinstaller"));
+			new OP().copy(new File(stamm+"/Modinstaller/Backup/Modinstaller.jar"), new File(mineord+"/versions/Modinstaller.jar"));
+			new OP().copy(new File(stamm+"/Modinstaller/Backup/Modinstaller.json"), new File(mineord+"/versions/Modinstaller.json"));
+			new OP().copy(new File(stamm+"/Modinstaller/Backup/mods"), new File(mineord+"/mods"));
 			JOptionPane.showMessageDialog(null,	Read.getTextwith("seite2", "restore"), Read.getTextwith("seite2", "restoreh"), JOptionPane.INFORMATION_MESSAGE);
 		} 
 		catch (Exception e) 
@@ -983,47 +712,6 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 			e1.printStackTrace();
 		}		
 		restore.setEnabled(false);	
-	}
-	
-	
-	
-	public void check_ItemStateChanged(ItemEvent evt) //Modtexte mit Bewertung laden
-	{		
-		if (evt.getStateChange() == 1) 
-		{
-			SwingUtilities.invokeLater(new Runnable() 
-			 {				      
-				 public void run() 
-				 { 
-					 try 
-					 {
-						 new OP().optionWriter("loadtexts", "true");
-					 } 
-					 catch (Exception e) 
-					 {							
-						 e.printStackTrace();
-					 }
-					aktual = true;
-					link.setEnabled(true);											
-					for(int i=0; i<5; i++)
-						bew[i].setEnabled(true);					
-					change();
-				 }
-			 });				
-		} 
-		else 
-		{
-			try {
-				new OP().optionWriter("loadtexts", "false");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			for(int i=0; i<5; i++)
-				bew[i].setEnabled(false);			
-			aktual = false;
-			link.setEnabled(false);
-		}	
 	}
 	
 	private void Sterne(double bewe, boolean anders) //Bewertung grafisch umsetzen
@@ -1052,31 +740,16 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	}
 	
 	private static class CellRenderer extends DefaultListCellRenderer //Auswahlliste verschönern
-	{   	    
-	    /**
-		 * 
-		 */
+	{   
 		private static final long serialVersionUID = 1L;
 
 		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) 
 	    {  
            super.getListCellRendererComponent( list, value, index, isSelected, cellHasFocus );  
            list.setFixedCellHeight(25);     
-           setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
-           
-           if(isSelected) 
-           {
-        	          
-               setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 0));
-           }
-           
-           if(cellHasFocus) 
-           {
-        	             
-               setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-           }
-        
-           
+           setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));           
+           if(isSelected) setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 0));          
+           if(cellHasFocus) setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
            return (this);  
         }
     }
@@ -1088,11 +761,9 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		if(s==banner)
 			new Browser(Read.getTextwith("seite2", "web"));
 		else if(s==pfeilrechts)		 
-			 ModAuswahl();
-		 
+			 ModAuswahl();		 
 		 else if(s==pfeillinks)
-			 ModEntfernen();
-		 
+			 ModEntfernen();		 
 		 else if(s==importbutton)					
 			ModsImportieren();
 		 else if(s==restore)
@@ -1106,6 +777,11 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		 {
 			 if(link.isEnabled())
 			 new Browser(hyperlink);
+		 }
+		 else if(s==quelle)
+		 {
+			 if(quelle.isEnabled())
+			 new Browser(linkquelle);
 		 }
 		 else if(s==web)
 		 {			
@@ -1146,8 +822,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	@Override
 	public void mouseEntered(MouseEvent e) 
 	{
-		Object s = e.getSource();
-		
+		Object s = e.getSource();		
 		
 		for(int i=0; i<bew.length; i++)
 		{
@@ -1161,8 +836,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	@Override
 	public void mouseExited(MouseEvent e) 
 	{
-		Object s = e.getSource();
-		
+		Object s = e.getSource();		
 		
 		for(int i=0; i<bew.length; i++)
 		{
@@ -1199,7 +873,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 							    String Auswahl = (String) jList1Model.getElementAt(jList1.getSelectedIndex());
 							    if(!modtext.getText().equals(Auswahl))
 							    {								    	
-						           setInfoText(Auswahl);						           
+						          setInfoText(Auswahl);						           
 							    }
 							}				    	  
 				       }
@@ -1284,13 +958,9 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 				 weiter_ActionPerformed(e);	
 	}
 
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+	public void mouseReleased(MouseEvent arg0) {		
 	}
 
-	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
 		Object s = e.getSource();

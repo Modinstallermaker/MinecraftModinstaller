@@ -43,9 +43,13 @@ public class License extends JFrame
 	private JEditorPane tp = new JEditorPane();
 	private Scanner scan;
 	private int hoehe = 345, breite=550;
+	private Modinfo[] Mod, Downloadlist;
 
-	public License() 
+	public License(Modinfo[] Mod, Modinfo[] Downloadlist) 
 	{
+		this.Mod=Mod;
+		this.Downloadlist=Downloadlist;
+		
 		setUndecorated(true);			
 		setSize(breite, hoehe);
 		JPanel cp = new GraphicsPanel(false, "src/bild.png");
@@ -142,7 +146,7 @@ public class License extends JFrame
 		}		
 		
 		dispose();
-		new Menu();
+		new Menu(Mod, Downloadlist);
 	}
 
 	public void check_ItemStateChanged(ItemEvent evt) 

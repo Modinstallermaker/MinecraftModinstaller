@@ -27,6 +27,14 @@ public class MCLauncher
 		
 		 if (str.contains("win"))	
 		 {
+			File spo = new File(System.getenv("programfiles(x86)")+"/Minecraft/MinecraftLauncher.exe");			
+			if(spo.exists())
+				runExe(spo);
+			
+			File spo2 = new File(System.getenv("programfiles")+"/Minecraft/MinecraftLauncher.exe");
+			if(spo2.exists())
+				runExe(spo);
+			
 			speicherort = new File(stamm +"/Modinstaller/MCLauncher.exe");
 		 	downloadort = webplace + "Launcher2.exe";
 		 }
@@ -77,29 +85,33 @@ public class MCLauncher
 		if(ausf==true)
 		{
 			 if (str.contains("win"))	
-			 {
-				 try 
-					{				
-					 Runtime.getRuntime().exec(speicherort.toString());								
-					} 
-					catch (Exception ex) 
-					{
-						JOptionPane.showMessageDialog(null, ex + "\n\nErrorcode: STx03a");
-					}
-			 }
+				 runExe(speicherort);
 			 else
-			 {
-				 try 
-					{				
-						Runtime.getRuntime().exec("java -jar " + speicherort.toString());								
-					} 
-					catch (Exception ex) 
-					{
-						JOptionPane.showMessageDialog(null, ex + "\n\nErrorcode: STx03b");
-					}
-			 }
-			
-			System.exit(0);
+				 runJar(speicherort);
 		}	
+	}
+	
+	void runExe(File exe)
+	{
+		try 
+		{				
+			Runtime.getRuntime().exec(exe.toString());				
+		} 
+		catch (Exception ex) 
+		{					
+		}
+		System.exit(0);
+	}
+	
+	void runJar(File jar)
+	{
+		try 
+		{				
+			Runtime.getRuntime().exec("java -jar " + jar.toString());			
+		} 
+		catch (Exception ex) 
+		{			
+		}
+		System.exit(0);
 	}
 }
