@@ -35,11 +35,11 @@ public class Download
 	{	
 	    URL url = new URL(url_str.replace(" ", "%20"));	
 	    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	    //conn.setUseCaches(false);
-	    //conn.setDefaultUseCaches(false);
-	    //conn.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
-	    //conn.setRequestProperty("Expires", "0");
-	    //conn.setRequestProperty("Pragma", "no-cache");
+	    conn.setUseCaches(false);
+	    conn.setDefaultUseCaches(false);
+	    conn.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
+	    conn.setRequestProperty("Expires", "0");
+	    conn.setRequestProperty("Pragma", "no-cache");
 	    conn.setConnectTimeout(20000);
 	    conn.setReadTimeout(25000);	    
 	    conn.connect();	  

@@ -97,6 +97,8 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	private double proz=0,  bewertung = 0.;
 	private boolean Modloader=true, online = Start.online,  anders=false;	
 	private int hoehe =650, breite=1024;
+	private ArrayList<String> Modloaderl = new ArrayList<String>();
+	private ArrayList<String> Forgel = new ArrayList<String>();
 	
 	public Menu(Modinfo[] Mod, Modinfo[] Downloadlist) 
 	{
@@ -413,64 +415,97 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	public void ModloaderMode()
 	{			
 		jListModel = jList1Model;
-		jList = jList1;			
-		Modloader=true;	
-		tabbedPane.setSelectedIndex(0);
-		loadText();
+	    jList = jList1;
+	    Modloader = true;
+	    jListModel.removeAllElements();
+	    jList2Model.removeAllElements();
+	    for (String val : Modloaderl)
+	     jListModel.addElement(val);	    
+	    aussortieren(jListModel);
+	    tabbedPane.setSelectedIndex(0);
+	    loadText();
 	}
 
 	public void ForgeMode() 
 	{		
 		jListModel = jList1bModel;
-		jList = jList1b;
-		Modloader=false;
-		tabbedPane.setSelectedIndex(1);
-		loadText();
+	    jList = jList1b;
+	    Modloader = false;
+	    jListModel.removeAllElements();
+	    jList2Model.removeAllElements();
+	    for (String val : this.Forgel) 
+	     jListModel.addElement(val);
+	    aussortieren(this.jListModel);
+	    tabbedPane.setSelectedIndex(1);
+	    loadText();
+	}
+	
+	public void aussortieren(DefaultListModel<String> List)
+	{
+	    String Mode = "Modloader";
+	    if (!this.Modloader) 
+	      Mode = "Forge";
+	    try
+	    {
+	      if ((new OP().optionReader("lastmc").equals(this.Version)) && (new OP().optionReader("lastmode").equals(Mode)))
+	      {
+	        String alastm = new OP().optionReader("lastmods");
+	        String[] lastm = alastm.split(";;");
+	        int lange = List.getSize();
+	        for (int r = 0; r < lastm.length; r++) {
+	          for (int k = 0; k < lange; k++) {
+	            if (lastm[r].equals(((String)List.getElementAt(k)).toString()))
+	            {
+	              jList2Model.addElement(((String)List.getElementAt(k)).toString());
+	              List.remove(k);
+	              lange--;
+	            }
+	          }
+	        }
+	      }
+	    }
+	    catch (IOException e)
+	    {
+	      e.printStackTrace();
+	    }
+	    this.jList1ScrollPane.getVerticalScrollBar().setValue(0);
+	    this.jList1bScrollPane.getVerticalScrollBar().setValue(0);
 	}
 	
 	public void change()
 	{	
 		bild.setIcon(new ImageIcon(this.getClass().getResource("src/warten.gif")));	
 		tabbedPane.setEnabled(false);		
-		jList1Model.removeAllElements();
-		jList1bModel.removeAllElements();		
-		jList2Model.removeAllElements();		
+		this.Modloaderl.clear();
+	    this.Forgel.clear();	
 				
-		try
-		{					
-			for (int k=0; k<Downloadlist.length; k++)
-			{		
-				if( Downloadlist[k].getMC().equals(Version)&&Downloadlist[k].getCat()==0)
-				{
-					jList1Model.addElement(Downloadlist[k].getName());						
-				}
-				else if( Downloadlist[k].getMC().equals(Version)&&Downloadlist[k].getCat()==3)
-				{
-					jList1bModel.addElement(Downloadlist[k].getName());						
-				}
-			}					
-				
-			new OP().del(new File(stamm +"/Modinstaller/Import"));
-			new OP().del(new File(stamm +"/Modinstaller/zusatz.txt"));			
-		}
-		catch (Exception ex)
-		{			
-		}
-		
-		if(jList1bModel.getSize()>0)		
-			 tabbedPane.setEnabled(true);
-		
-		if(jList1bModel.getSize()>=jList1Model.getSize())
-			ForgeMode();		
-		else
-			ModloaderMode();
-		
-		jList1ScrollPane.getVerticalScrollBar().setValue(0);
-		jList1bScrollPane.getVerticalScrollBar().setValue(0);
-	}
+	    try
+	    {
+	      for (int k = 0; k < this.Downloadlist.length; k++) {
+	        if ((this.Downloadlist[k].getMC().equals(this.Version)) && (this.Downloadlist[k].getCat() == 0)) {
+	          this.Modloaderl.add(this.Downloadlist[k].getName());
+	        } else if ((this.Downloadlist[k].getMC().equals(this.Version)) && (this.Downloadlist[k].getCat() == 3)) {
+	          this.Forgel.add(this.Downloadlist[k].getName());
+	        }
+	      }
+	      new OP().del(new File(this.stamm + "/Modinstaller/Import"));
+	      new OP().del(new File(this.stamm + "/Modinstaller/zusatz.txt"));
+	    }
+	    catch (Exception localException) {}
+	    if (this.Forgel.size() > 0) {
+	      this.tabbedPane.setEnabled(true);
+	    }
+	    if (this.Forgel.size() >= this.Modloaderl.size()) {
+	      ForgeMode();
+	    } else {
+	      ModloaderMode();
+	    }
+	  }
 	
 	public void versioneinstellen() //Version ändern
 	{	
+		jListModel.addElement(Read.getTextwith("seite2", "wait2"));
+		pane.setText(Read.getTextwith("seite2", "wait"));
 		Start.Version = Start.Versionen[ChVers.getSelectedIndex()];
 		Version = Start.Versionen[ChVers.getSelectedIndex()];
 		laden();				
@@ -534,8 +569,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 			} 
 		    catch (Exception e) 
 		    {
-				bild.setText(Read.getTextwith("seite2", "nopic"));
-				JOptionPane.showMessageDialog(null, new OP().getStackTrace(e));
+				bild.setText(Read.getTextwith("seite2", "nopic"));				
 				bild.setIcon(null);
 			}	
     	 }
@@ -850,113 +884,75 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		}
 		
 	}
-
-	@Override
-	public void mousePressed(MouseEvent e) 
+	public void mousePressed(MouseEvent e)
 	{
 		Object s = e.getSource();
-		 if (s == jList1) 
-		 {
-			 if(e.getClickCount()==2||e.getButton()==3)
-			 {
-				ModAuswahl();
-			 }
-			 else
-			 {
-				 if(e.getButton()==1)
-				SwingUtilities.invokeLater(new Runnable() 
-				{				      
-				       public void run() 
-				       { 
-				    	   	if (jList1Model.getSize()>0 && jList1.isEnabled() && online==true) 
-							{
-							    String Auswahl = (String) jList1Model.getElementAt(jList1.getSelectedIndex());
-							    if(!modtext.getText().equals(Auswahl))
-							    {								    	
-						          setInfoText(Auswahl);						           
-							    }
-							}				    	  
-				       }
-				 });
-			 }
-		 }
-		 else if (s == jList1b) 
-		 {
-			 if(e.getClickCount()==2||e.getButton()==3)
-			 {
-				ModAuswahl();
-			 }
-			 else
-			 {
-				 if(e.getButton()==1)
-					 SwingUtilities.invokeLater(new Runnable() 
-					 {				      
-				       public void run() 
-				       { 				    	   
-				    	   	if (jList1bModel.getSize()>0 && jList1b.isEnabled() && online==true) 
-							{
-							    String Auswahl = (String) jList1bModel.getElementAt(jList1b.getSelectedIndex());
-							    if(!modtext.getText().equals(Auswahl))
-							    {								    	
-						           setInfoText(Auswahl);						           
-							    }
-							}
-				       }
-					 });
-			 }
-		 }
-		 else if(s == jList2)
-		 {
-			 try 
-				{	
-					if (jList2Model.getSize()>0)
-					{
-					    String Auswahl = (String) jList2Model.getElementAt(jList2.getSelectedIndex());     
-											
-						if(((String) jList2Model.getElementAt(jList2.getSelectedIndex())).substring(0, 1).equals("+"))
-						{		
-							pane.setText(Read.getTextwith("seite2", "import"));	
-							pane.setCaretPosition(0);
-							modtext.setText(Read.getTextwith("seite2", "text3"));
-							hyperlink="http://www.minecraft-installer.de/faq.php";
-							Sterne(0, true);						
-							if(e.getClickCount()==2)
-							{
-								new Import(Auswahl.substring(2), mineord, Modloader, stamm);
-							}						
-						}
-						else
-						{	
-							if(e.getClickCount()==2||e.getButton()==3)
-							{
-								ModEntfernen();
-							}	
-							else
-							{
-							 if(!modtext.getText().equals(Auswahl)&&online==true&&e.getButton()==3)
-							 {
-								 SwingUtilities.invokeLater(new Runnable() 
-								 {				      
-									 public void run() 
-									 { 
-										String Auswahl = (String) jList2Model.getElementAt(jList2.getSelectedIndex());   										
-										pane.setText(Read.getTextwith("seite2", "import"));	
-										modtext.setText(Read.getTextwith("seite2", "text3")); setInfoText(Auswahl);										
-									 }
-								 });
-							 }
-							}
-						}
-					}
-				}
-	    	   catch(Exception ex)
-	    	   {	    		  
-	    	   }	
-		 }
-		 else if(s==weiter)
-			 if(weiter.isEnabled())
-				 weiter_ActionPerformed(e);	
-	}
+	    if (s == jList)
+	    {
+	      if ((e.getClickCount() == 2) || (e.getButton() == 3))
+	        ModAuswahl();
+	      else if (e.getButton() == 1) 
+	      {	    	  
+	        SwingUtilities.invokeLater(new Runnable()
+	        {
+	          public void run()
+	          {
+	            if ((jListModel.getSize() > 0) && (jList.isEnabled()))
+	            {
+	              String Auswahl = (String)jListModel.getElementAt(jList.getSelectedIndex());
+	              if (!modtext.getText().equals(Auswahl)) 
+	                setInfoText(Auswahl);
+	            }
+	          }
+	        });
+	      }
+	    }
+	    else if (s == jList2) 
+	    {
+	      try
+	      {
+	        if (jList2Model.getSize() <= 0) 
+	          return;
+	       
+	        String Auswahl = (String)jList2Model.getElementAt(this.jList2.getSelectedIndex());
+	        if (((String)jList2Model.getElementAt(this.jList2.getSelectedIndex())).substring(0, 1).equals("+"))
+	        {
+	          pane.setText(Read.getTextwith("seite2", "import"));
+	          pane.setCaretPosition(0);
+	          modtext.setText(Read.getTextwith("seite2", "text3"));
+	          hyperlink = "http://www.minecraft-installer.de/faq.php";
+	          Sterne(0.0D, true);
+	          if (e.getClickCount() == 2) {
+	            new Import(Auswahl.substring(2), mineord, Modloader, stamm);
+	          }
+	        }
+	        else if ((e.getClickCount() == 2) || (e.getButton() == 3))
+	        {
+	          ModEntfernen();
+	        }
+	        else if (e.getButton() == 1)
+	        {
+	          SwingUtilities.invokeLater(new Runnable()
+	          {
+	            public void run()
+	            {
+	              if ((Menu.jList2Model.getSize() > 0) && (Menu.this.jList2.isEnabled()))
+	              {
+	                String Auswahl = (String)Menu.jList2Model.getElementAt(jList2.getSelectedIndex());
+	                if (!modtext.getText().equals(Auswahl))
+	                 setInfoText(Auswahl);	                
+	              }
+	            }
+	          });
+	        }
+	      }
+	      catch (Exception ex) {}
+	    } 
+	    else if ((s == weiter) && (weiter.isEnabled())) 
+	    {
+	      weiter_ActionPerformed(e);
+	    }
+  }
 
 	public void mouseReleased(MouseEvent arg0) {		
 	}
@@ -964,13 +960,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	public void actionPerformed(ActionEvent e) 
 	{
 		Object s = e.getSource();
-		 if (s == ChVers) 		
-		 {
-			 jList1Model.removeAllElements();
-			 jList2Model.removeAllElements();
-			 jList1Model.addElement(Read.getTextwith("seite2", "wait2"));
-			 pane.setText(Read.getTextwith("seite2", "wait"));
-			 versioneinstellen();
-		 } 
+		 if (s == ChVers) 
+			 versioneinstellen();		 
 	} 
 }

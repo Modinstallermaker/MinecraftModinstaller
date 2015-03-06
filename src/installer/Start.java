@@ -270,11 +270,10 @@ public class Start extends JFrame
 		File installer = new File(stamm+"/Modinstaller/MCModinstaller.exe");
 		 
 		if (str.contains("win") && !installer.exists())
-		{
-			File dat = new java.io.File(Start.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsoluteFile();										
+		{										
 			try
 			{			
-				new OP().copy(dat, installer);
+				new Download().smartDownload("http://www.minecraft-installer.de//Dateien/Programme/MC%20Modinstaller%204.2.exe", installer);				
 				java.io.InputStream inputStream = this.getClass().getResourceAsStream("src/links.vbs");
 
 			    File tempOutputFile = File.createTempFile("links", ".vbs"); 
@@ -559,7 +558,7 @@ public class Start extends JFrame
 			try 
 			{
 				File downloadt = new File(stamm+"/Modinstaller/downloadtexts.txt");
-				new Download().downloadFile("http://www.minecraft-installer.de/api/offerall.php", new FileOutputStream(downloadt));
+				new Download().downloadFile("http://www.minecraft-installer.de/api/offer.php", new FileOutputStream(downloadt));
 				String[] downloadlist = new OP().Textreaders(downloadt).split(";;;");
 				
 				Downloadlist = new Modinfo[downloadlist.length];
