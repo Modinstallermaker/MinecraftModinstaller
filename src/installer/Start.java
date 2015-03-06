@@ -72,7 +72,11 @@ public class Start extends JFrame
 		minecraftSuchen();
 		File logf = new File(stamm + "/Modinstaller/Texte"); //Neuinstallation
 		if(logf.exists())
+		{
 			new OP().del(new File(stamm + "/Modinstaller"));
+			new OP().del(new File(System.getProperty("user.home") + "/Desktop/MC Modinstaller 4.1.lnk"));
+			new OP().del(new File(System.getProperty("user.home") + "/Microsoft/Windows/Start Menu/Programs/MC Modinstaller 4.1.lnk"));			
+		}
 		new OP().makedirs(new File(stamm + "/Modinstaller"));
 		File configf = new File(stamm + "/Modinstaller/config.txt");
 		if(!configf.exists())
