@@ -434,7 +434,7 @@ public class Start extends JFrame
 				int eingabe = JOptionPane.showConfirmDialog(null,"<html><body><span style=\"font-weight:bold\">"+Read.getTextwith("seite1", "update1")+ meld+ Read.getTextwith("seite1", "update2")+ textz+ Read.getTextwith("seite1", "update3"), Read.getTextwith("seite1", "update1"), JOptionPane.YES_NO_OPTION);
 				if (eingabe == 0) 
 				{
-					new Browser("http://www.minecraft-installer.de");
+					new Browser(Read.getTextwith("seite2", "web"));
 				} // end of if
 			} // end of if
 			else
