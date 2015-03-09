@@ -1,6 +1,5 @@
 package installer;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -16,14 +15,7 @@ public class Read
 
   public Read()
   {
-	String lang ="en";
-		
-	try {
-		lang = new OP().optionReader("language");
-	} catch (IOException e1) {
-		// TODO Auto-generated catch block
-		e1.printStackTrace();
-	}
+	String lang = new OP().optionReader("language");
 	
     InputStream installProfile = getClass().getResourceAsStream("src/texte_"+lang+".json");
     JdomParser parser = new JdomParser();

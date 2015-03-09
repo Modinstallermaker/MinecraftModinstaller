@@ -64,15 +64,7 @@ public class License extends JFrame
 		cp.setLayout(null);
 		add(cp);
 		
-		String lang ="en";		
-		
-		try {
-			lang = new OP().optionReader("language");
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
+		String lang = new OP().optionReader("language");
 		scan = new Scanner(getClass().getResourceAsStream("src/lizenz_"+lang+".txt"), "ISO-8859-15");
 
 		while (scan.hasNextLine()) 

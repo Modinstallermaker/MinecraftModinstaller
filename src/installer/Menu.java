@@ -445,29 +445,24 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	    String Mode = "Modloader";
 	    if (!this.Modloader) 
 	      Mode = "Forge";
-	    try
-	    {
-	      if ((new OP().optionReader("lastmc").equals(this.Version)) && (new OP().optionReader("lastmode").equals(Mode)))
-	      {
-	        String alastm = new OP().optionReader("lastmods");
-	        String[] lastm = alastm.split(";;");
-	        int lange = List.getSize();
-	        for (int r = 0; r < lastm.length; r++) {
-	          for (int k = 0; k < lange; k++) {
-	            if (lastm[r].equals(((String)List.getElementAt(k)).toString()))
-	            {
-	              jList2Model.addElement(((String)List.getElementAt(k)).toString());
-	              List.remove(k);
-	              lange--;
-	            }
-	          }
-	        }
-	      }
-	    }
-	    catch (IOException e)
-	    {
-	      e.printStackTrace();
-	    }
+	   
+      if ((new OP().optionReader("lastmc").equals(this.Version)) && (new OP().optionReader("lastmode").equals(Mode)))
+      {
+        String alastm = new OP().optionReader("lastmods");
+        String[] lastm = alastm.split(";;");
+        int lange = List.getSize();
+        for (int r = 0; r < lastm.length; r++) {
+          for (int k = 0; k < lange; k++) {
+            if (lastm[r].equals(((String)List.getElementAt(k)).toString()))
+            {
+              jList2Model.addElement(((String)List.getElementAt(k)).toString());
+              List.remove(k);
+              lange--;
+            }
+          }
+        }
+      }
+	    
 	    this.jList1ScrollPane.getVerticalScrollBar().setValue(0);
 	    this.jList1bScrollPane.getVerticalScrollBar().setValue(0);
 	}

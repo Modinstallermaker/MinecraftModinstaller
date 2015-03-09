@@ -256,19 +256,27 @@ public class OP
 		return JOptionPane.showOptionDialog(null, Read.getTextwith("OP", "modver"), Read.getTextwith("OP", "modverh"), JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);		
 	}
 	
-	public String optionReader(String attrib) throws IOException
+	public String optionReader(String attrib)
 	{
 		File configf = new File(Start.stamm + "/Modinstaller/config.txt");
-		String[] inhalt = Textreader(configf);	
 		String rueck=null;
 		boolean exist=false;
-		for (int i=0; i<inhalt.length; i++)
+		String[] inhalt;
+		try 
 		{
-			if(inhalt[i].split(":")[0].equals(attrib))
+			inhalt = Textreader(configf);	
+		
+			for (int i=0; i<inhalt.length; i++)
 			{
-				rueck= inhalt[i].split(":")[1];
-				exist=true;
+				if(inhalt[i].split(":")[0].equals(attrib))
+				{
+					rueck= inhalt[i].split(":")[1];
+					exist=true;
+				}
 			}
+		} 
+		catch (IOException e) 
+		{
 		}
 		if(exist==false) rueck="n/a";
 		return rueck;		
