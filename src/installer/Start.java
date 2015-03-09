@@ -101,6 +101,7 @@ public class Start extends JFrame
 				switch (selected2)
 				{
 					case 0: lang="de";
+					case 1: lang="en";
 				}
 				new OP().optionWriter("language", lang);
 			}
@@ -380,70 +381,64 @@ public class Start extends JFrame
 	public boolean updateHerunterladen()
 	{		
 		prog.setText(Read.getTextwith("seite1", "prog4"));
-    	try 
-    	{
-			Thread.sleep(100);
-		} 
-    	catch (InterruptedException e1) 
-    	{			
-			e1.printStackTrace();
-		}
 		try // Update testen
-		{
+		{			
 			File updatetxt = new File(stamm + "/Modinstaller/update.txt");		
 			new Download().downloadFile("http://www.minecraft-installer.de/request.php?target=update&lang="+Read.getTextwith("installer", "lang"), new FileOutputStream(updatetxt)); // update_de.txt herunterladen
-			BufferedReader in2 = new BufferedReader(new FileReader(stamm + "/Modinstaller/update.txt")); // Datei einlesen
-			String zeile3 = null;
-			int zahl = 0;
-			
-			String meld = "";
-			String textz = "";
-			boolean antw = false;
-			while ((zeile3 = in2.readLine()) != null) // Datei durchk�mmen
+			if(updatetxt.exists())
 			{
-				zahl++;
-				if (zahl == 1) 
-				{		
-					try
-					{						
-						String jetzt = Programmnummer;
-						String aktuell = zeile3;
-						String s1 = normalisedVersion(jetzt);
-				        String s2 = normalisedVersion(aktuell);
-				        int cmp = s1.compareTo(s2);
-				        if(cmp<0)
-				        	antw = true;
-					}
-					catch (Exception e)
+				BufferedReader in2 = new BufferedReader(new FileReader(updatetxt)); // Datei einlesen
+				String zeile3 = null;
+				int zahl = 0;
+				boolean antw = false;				
+				String meld = "";
+				String textz = "";
+				
+				while ((zeile3 = in2.readLine()) != null) // Datei durchk�mmen
+				{
+					zahl++;
+					if (zahl == 1) 
+					{		
+						try
+						{						
+							String jetzt = Programmnummer;
+							String aktuell = zeile3;
+							String s1 = normalisedVersion(jetzt);
+					        String s2 = normalisedVersion(aktuell);
+					        int cmp = s1.compareTo(s2);
+					        if(cmp<0)
+					        	antw = true;
+						}
+						catch (Exception e)
+						{
+							String body = "Text=" + String.valueOf(e) + "; Errorcode: S1x04a&MCVers=" + Version + "&InstallerVers=" + Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString()+ "&EMail=unkn";
+							new Download().post("http://www.minecraft-installer.de/error.php", body);
+						}					
+						
+						meld = zeile3;
+					} 
+					else // alle anderen Zeilen in text speichern
 					{
-						String body = "Text=" + String.valueOf(e) + "; Errorcode: S1x04a&MCVers=" + Version + "&InstallerVers=" + Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString()+ "&EMail=unkn";
-						new Download().post("http://www.minecraft-installer.de/error.php", body);
-					}					
-					
-					meld = zeile3;
-				} 
-				else // alle anderen Zeilen in text speichern
-				{
-					textz += zeile3;
+						textz += zeile3;
+					}
 				}
-			}
-			in2.close();
-			if (antw) // Wenn Programmnummer nicht identisch ist
-			{
-				prog.setText(Read.getTextwith("seite1", "prog5"));
-				int eingabe = JOptionPane.showConfirmDialog(null,"<html><body><span style=\"font-weight:bold\">"+Read.getTextwith("seite1", "update1")+ meld+ Read.getTextwith("seite1", "update2")+ textz+ Read.getTextwith("seite1", "update3"), Read.getTextwith("seite1", "update1"), JOptionPane.YES_NO_OPTION);
-				if (eingabe == 0) 
+				in2.close();
+				if (antw) // Wenn Programmnummer nicht identisch ist
 				{
-					new Browser(Read.getTextwith("seite2", "web"));
+					prog.setText(Read.getTextwith("seite1", "prog5"));
+					int eingabe = JOptionPane.showConfirmDialog(null,"<html><body><span style=\"font-weight:bold\">"+Read.getTextwith("seite1", "update1")+ meld+ Read.getTextwith("seite1", "update2")+ textz+ Read.getTextwith("seite1", "update3"), Read.getTextwith("seite1", "update1"), JOptionPane.YES_NO_OPTION);
+					if (eingabe == 0) 
+					{
+						new Browser(Read.getTextwith("seite2", "web"));
+					} // end of if
 				} // end of if
-			} // end of if
-			else
-			{
-				prog.setText(Read.getTextwith("seite1", "prog6"));
-		    	
-			}
-			online=true;
-			
+				else
+				{
+					prog.setText(Read.getTextwith("seite1", "prog6"));
+			    	
+				}
+			}			
+			online=true;			
 		}		 
 		catch (Exception ex) 
 		{

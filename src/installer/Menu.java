@@ -695,11 +695,15 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 			ArrayList<String> chnamen = new ArrayList<String>();
 			for(int i=0; i<jList2Model.getSize(); i++)
 			{
-				chnamen.add(jList2Model.getElementAt(i));				
-			}
-			dispose();	
+				String eintrag = jList2Model.getElementAt(i);
+				if(eintrag.charAt(0)!='+')
+				{
+					chnamen.add(eintrag);	
+				}
+			}				
 			String[] namen = chnamen.toArray(new String[chnamen.size()]); 
 			
+			dispose();
 			new Install(namen, Modloader);
 		} 
 		catch (Exception ex) 
