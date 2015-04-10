@@ -95,14 +95,16 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 	 
 	    cp.add(headl2);	
 	    
-	    int khoehe = 100;
-	    int kbreite = 60;
+	    int khoehe = (int)(y*0.9);
+	    int kbreite = (int)(x*0.4);
 	    vor.setBounds(-5, (y/2)-(khoehe/2), kbreite, khoehe);
 	    vor.setText("<<");	   
 	    vor.setCursor(curs1);	
 	    vor.addMouseWheelListener(this);
 	    vor.addKeyListener(this);
-	    vor.setFont(new Font("Arial", Font.BOLD, 25));
+	    vor.setHorizontalAlignment(SwingConstants.LEFT);
+	    vor.setContentAreaFilled(false);
+	    vor.setFont(new Font("Arial", Font.BOLD, 40));
 	    vor.addActionListener(this);	    
 	    cp.add(vor);
 	    
@@ -110,14 +112,17 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 	    zurueck.setText(">>");	  
 	    zurueck.addMouseWheelListener(this);
 	    zurueck.setCursor(curs1);
+	    zurueck.setContentAreaFilled(false);
 	    zurueck.addKeyListener(this);
-	    zurueck.setFont(new Font("Arial", Font.BOLD, 25));
+	    zurueck.setHorizontalAlignment(SwingConstants.RIGHT);
+	    zurueck.setFont(new Font("Arial", Font.BOLD, 40));
 	    zurueck.addActionListener(this);	   
 	    cp.add(zurueck);
 	    
-	    exit.setBounds(x-40, -5, 45, 45);
-	    exit.setText("X");
+	    exit.setBounds(x-40, 0, 40, 40);
+	    exit.setIcon(new ImageIcon(this.getClass().getResource("src/power.png")));
 	    exit.addMouseWheelListener(this);
+	    exit.setContentAreaFilled(false);
 	    exit.setCursor(curs1);		  
 	    exit.addKeyListener(this);
 	    exit.addActionListener(new ActionListener() {
@@ -125,8 +130,6 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 				dispose();							
 			}
 		});
-	    exit.setFont(new Font("Arial", Font.BOLD, 18));
-	    exit.addActionListener(this);
 	    cp.add(exit);
 	   
 	    int hoehe = y;

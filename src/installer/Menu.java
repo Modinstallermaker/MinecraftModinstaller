@@ -4,10 +4,13 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -76,7 +79,6 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	private JLabel[] bew = new JLabel[5];	
 	private JLabel banner = new JLabel();
 	private JLabel bild = new JLabel();
-	private JLabel listleft = new JLabel();
 	private JLabel listright = new JLabel();
 	private JLabel pfeilrechts = new JLabel();
 	private JLabel pfeillinks = new JLabel();
@@ -85,8 +87,9 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	private JLabel hilfe = new JLabel();
 	private JLabel link = new JLabel();
 	private JLabel quelle = new JLabel();
-	private JLabel web = new JLabel();
 	private JLabel beenden = new JLabel();
+	private JLabel maximize = new JLabel();
+	private JLabel minimize = new JLabel();
 	public static JLabel weiter = new JLabel();		
 	private JComboBox<String> ChVers;
 	private JPanel cp;			
@@ -96,10 +99,11 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 	private Modinfo[] Mod, Downloadlist;
 	private double proz=0,  bewertung = 0.;
 	private boolean Modloader=true, online = Start.online,  anders=false;	
-	private int hoehe =650, breite=1024;
+	private int hoehe =600, breite=1024;
+	//private int hoehe =1000, breite=1904;
 	private ArrayList<String> Modloaderl = new ArrayList<String>();
 	private ArrayList<String> Forgel = new ArrayList<String>();
-	
+
 	public Menu(Modinfo[] Mod, Modinfo[] Downloadlist) 
 	{
 		this.Mod=Mod;
@@ -109,7 +113,43 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		setSize(breite, hoehe);
 		setTitle(Read.getTextwith("installer", "name"));		
 		setLocationRelativeTo(null);
-		setResizable(false);
+		setIconImage(new ImageIcon(this.getClass().getResource("src/icon.png")).getImage());
+		
+		final Point point = new Point(0,0);
+		addMouseListener(new MouseAdapter() 
+		{  
+			 @SuppressWarnings("deprecation")
+			public void mousePressed(MouseEvent e) 
+			 {  
+				 if(!e.isMetaDown())
+				 {  
+					
+					 point.x = e.getX();  
+					 point.y = e.getY();  
+					 setCursor(Cursor.MOVE_CURSOR);
+				 } 
+			 } 
+			 @SuppressWarnings("deprecation")
+			public void mouseReleased(MouseEvent e) 
+			 {		
+				 setCursor(Cursor.DEFAULT_CURSOR);
+			}
+		});  
+		addMouseMotionListener(new MouseMotionAdapter() 
+		{  
+			 public void mouseDragged(MouseEvent e) 
+			 {  
+				 
+				 if(!e.isMetaDown())
+				 {  
+					 
+					 Point p = getLocation();  
+					 setLocation(p.x + e.getX() - point.x,  
+					 p.y + e.getY() - point.y); 					
+				 } 				
+			 } 
+			
+		});
 		
 		cp = new GraphicsPanel(false, "src/bild.png");
 		//cp = new JPanel();
@@ -117,8 +157,21 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		cp.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 		cp.setLayout(null);
 		add(cp);
-
-		setIconImage(new ImageIcon(this.getClass().getResource("src/icon.png")).getImage());
+		
+		int rand = 20;
+		int bildx = 400;
+		int bildy = 225;
+		int uber = (int)(hoehe*0.09);
+		int listeya = rand+uber;
+		int listenb = (int)(breite/2-bildx+4*rand);
+		int listenh = hoehe-listeya-rand;
+		int mittexa= rand+listenb+20;
+		int modtexty = rand+uber;	
+		int infol = modtexty+2*rand;
+		int bildya = infol+(int)(2.5*rand);		
+		int textya = bildy+bildya+20;		
+		int texth = listeya+listenh-textya;
+		int liste2h= (int)(listenh*0.55);
 
 		uberschrift.setBounds(0, 0, (int)(breite), (int)(hoehe*0.1));                              //Überschrift
 		uberschrift.setText(Read.getTextwith("installer", "name"));
@@ -135,37 +188,17 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 				if(Start.Versionen[ka].equals(Version))
 					ChVers.setSelectedIndex(ka);
 			}
-			ChVers.setBounds((int)(breite-80), (int)(hoehe*0.02), 67, 25);
+			ChVers.setBounds(rand+listenb-70, (int)(hoehe*0.05), 70, 25);
 			ChVers.addActionListener(this);			
 			if(Start.Versionen.length==1) ChVers.setEnabled(false);
 			cp.add(ChVers);		
 		
-			versionstext.setBounds((int)(breite-135), (int)(hoehe*0.02), 110, 25);
+			versionstext.setBounds((int)(rand+listenb-70-110-5), (int)(hoehe*0.05), 110, 25);
 			versionstext.setText("Minecraft");
 			versionstext.setVerticalAlignment(SwingConstants.CENTER);
-			versionstext.setHorizontalAlignment(SwingConstants.LEFT);
+			versionstext.setHorizontalAlignment(SwingConstants.RIGHT);
 			cp.add(versionstext);
 		}
-		
-		int rand = 20;
-		int uber = (int)(hoehe*0.09);
-		int listeya = 2*rand+uber;
-		int listenb = (int)(breite*0.2);
-		int listenh = (int)(hoehe*0.72);
-		int mittexa= rand+listenb+20;
-		int modtexty = 2*rand+uber;	
-		int infol = modtexty+40;
-		int bildya = infol+rand+30;
-		int bildx = 400;
-		int bildy = 225;
-		int textya = bildya + bildy+rand-5;
-		int texth = (int)(listenh-bildy-50-3*rand+5);
-		
-		listleft.setBounds(rand, rand+uber-5, listenb, 20);  //Liste1 Überschrift
-		listleft.setHorizontalAlignment(SwingConstants.CENTER);
-		listleft.setFont(importbutton.getFont().deriveFont(Font.BOLD,14));
-		listleft.setText(Read.getTextwith("seite2", "modv"));		
-		cp.add(listleft);
 		
 		jList1Model.addElement(Read.getTextwith("seite2", "wait2")); //Liste1 Modloader
 		jList1.setModel(jList1Model);		
@@ -307,7 +340,7 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		jList2.setModel(jList2Model);   
 		jList2.setCellRenderer(new CellRenderer());  
 		jList2.addMouseListener(this);
-		jList2ScrollPane.setBounds(breite-rand-listenb,  (int)(hoehe*0.35), listenb, (int)(hoehe*0.5));
+		jList2ScrollPane.setBounds(breite-rand-listenb,  (int)(hoehe*0.35), listenb, liste2h);
 		jList2ScrollPane.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 		cp.add(jList2ScrollPane);
 		
@@ -317,37 +350,36 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 		hilfe.addMouseListener(this); 		
 		cp.add(hilfe);
 	    
-	    web.setBounds((int)(breite/2-180), (int)(hoehe*0.94), 300, 20); //Beenden	
-	    web.setText(Read.getTextwith("seite2", "web2"));
-	    web.setFont(web.getFont().deriveFont(Font.PLAIN, 16));	
-	    web.addMouseListener(this);
-	    web.setHorizontalAlignment(SwingConstants.CENTER);	 
-	    web.setCursor(c);		
-		cp.add(web);
-	    
-		beenden.setBounds(rand, hoehe-40-rand, 150, 40); //Beenden	
-		beenden.setText(Read.getTextwith("seite2", "text9"));		
-		beenden.setIcon(new ImageIcon(this.getClass().getResource("src/power.png")));			
-		beenden.setFont(beenden.getFont().deriveFont(Font.BOLD, 16));	
+		minimize.setBounds(breite-(35+35+35+3+3)-3, 3, 35, 27); //Minimieren		
+		minimize.setIcon(new ImageIcon(this.getClass().getResource("src/mini.png")));			
+		minimize.addMouseListener(this);
+		cp.add(minimize);
+		
+		maximize.setBounds(breite-(35+35+3)-3, 3, 35, 27); //Maximieren
+		maximize.setIcon(new ImageIcon(this.getClass().getResource("src/maxi.png")));			
+		maximize.addMouseListener(this);
+		maximize.setEnabled(false);
+		cp.add(maximize);
+		
+		beenden.setBounds(breite-35-3, 3, 35, 27); //Beenden		
+		beenden.setIcon(new ImageIcon(this.getClass().getResource("src/closeme.png")));			
 		beenden.addMouseListener(this);
-		beenden.setCursor(c);		
 		cp.add(beenden);
 
-		weiter.setBounds((int)(breite-220-rand+5), hoehe-70-rand+10, 220, 70); // Installieren		
+		weiter.setBounds((int)(breite-200-rand), hoehe-70-rand, 200, 70); // Installieren		
 		weiter.setText(Read.getTextwith("seite2", "text10"));
 		weiter.setFont(weiter.getFont().deriveFont((float) 15));
 		weiter.addMouseListener(this);
 		weiter.setCursor(c);		
 		weiter.setHorizontalTextPosition(SwingConstants.LEFT);
-		weiter.setFont(weiter.getFont().deriveFont(Font.BOLD, 22));
+		weiter.setFont(weiter.getFont().deriveFont(Font.BOLD, 20));
 		weiter.setHorizontalAlignment(SwingConstants.RIGHT);	
 		weiter.setVerticalAlignment(SwingConstants.CENTER);
 		weiter.setIcon(new ImageIcon(this.getClass().getResource("src/install.png")));	
 		weiter.setEnabled(false);
-		cp.add(weiter);			
+		cp.add(weiter);	
 	    
-	    setVisible(true);	
-		
+	    setVisible(true);			
 	    laden();	 		
 	}
 	
@@ -816,15 +848,12 @@ public class Menu extends JFrame implements ActionListener, MouseListener
 			 if(quelle.isEnabled())
 			 new Browser(linkquelle);
 		 }
-		 else if(s==web)
-		 {			
-			 new Browser(Read.getTextwith("seite2", "web"));
-		 }
 		 else if(s==bild)
 			 new Fullscreen(jList, jListModel);
 		 else if(s==beenden)
 			 System.exit(0);
-		 
+		 else if(s==minimize)
+			 setState(ICONIFIED);
 		
 		 for(int i=0; i<bew.length; i++)
 		 {
