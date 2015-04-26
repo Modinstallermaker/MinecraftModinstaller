@@ -28,7 +28,11 @@ import javax.swing.JOptionPane;
  */
 
 public class OP 
-{			
+{		
+	public OP()
+	{
+		
+	}
 	public boolean del(File dir)
 	{
 		if(dir.exists())
@@ -36,15 +40,12 @@ public class OP
 			File f = dir;
 			if (f.isDirectory()) 
 			{
+				File[] files = f.listFiles();
 				
-					File[] files = f.listFiles();
-					
-						for (File aktFile : files) 
-						{
-							del(aktFile);
-						}
-					
-				
+				for (File aktFile : files) 
+				{
+					del(aktFile);
+				}	
 			}
 			return f.delete();
 		}
@@ -112,26 +113,14 @@ public class OP
 	  public static void transfer(FileChannel inputChannel, ByteChannel outputChannel, long lengthInBytes, long chunckSizeInBytes, boolean verbose) throws IOException 
 	  {
 	    long overallBytesTransfered = 0L;
-	    long time = -System.currentTimeMillis();
-	    while (overallBytesTransfered < lengthInBytes) {
+	
+	    while (overallBytesTransfered < lengthInBytes) 
+	    {
 	      long bytesToTransfer = Math.min(chunckSizeInBytes, lengthInBytes - overallBytesTransfered);
 	      long bytesTransfered = inputChannel.transferTo(overallBytesTransfered, bytesToTransfer, outputChannel);
 	      
 	      overallBytesTransfered += bytesTransfered;
-	      
-	      if (verbose) {
-	        long percentageOfOverallBytesTransfered = Math.round(overallBytesTransfered / ((double) lengthInBytes) * 100.0);
-	        System.out.printf("overall bytes transfered: %s progress %s%%\n", overallBytesTransfered, percentageOfOverallBytesTransfered);
-	      }
-	      
 	    }
-	    time += System.currentTimeMillis();
-	    
-	    if (verbose) {
-	      double kiloBytesPerSecond = (overallBytesTransfered / 1024.0) / (time / 1000.0);
-	      System.out.printf("Transfered: %s bytes in: %s s -> %s kbytes/s", overallBytesTransfered, time / 1000, kiloBytesPerSecond);
-	    }
-	    
 	  }
 	
 	public void copyDir(File quelle, File ziel) throws FileNotFoundException,IOException 
@@ -165,12 +154,11 @@ public class OP
 	}
 		
 	public void Textwriter(File datei, String[] lines, boolean weiterschreiben) throws IOException
-	{
-		BufferedWriter f;	
+	{		
 		boolean umbruch = false;
 		if(datei.length()!=0&&weiterschreiben==true) umbruch = true;
 	    
-        f = new BufferedWriter(new FileWriter(datei.toString(), weiterschreiben));
+		BufferedWriter f = new BufferedWriter(new FileWriter(datei.toString(), weiterschreiben));
         for (int i = 0; i < lines.length; ++i) 
         {	
         	if(umbruch) f.newLine();
@@ -181,35 +169,29 @@ public class OP
 	}	
 		
 	public String[] Textreader(File datei) throws IOException
-	{
-		BufferedReader f;	  	  
-	    String line, alles="";
-        f = new BufferedReader(new InputStreamReader(new FileInputStream(datei)));
+	{		  	  
+	    ArrayList<String> text = new ArrayList<String>();
+	    BufferedReader f = new BufferedReader(new InputStreamReader(new FileInputStream(datei)));
+        String line;
         while ((line = f.readLine()) != null) 
         {
-        	alles+=line+";;;;";
+        	text.add(line);
         }        	      
         f.close();
-        if(alles.endsWith(";;;;"))
-        	alles = alles.substring(0, alles.length()-4);
-        
-        return alles.split(";;;;");
+        return text.toArray(new String[text.size()]);
 	}
 	
 	public String[] Textreader(File datei, String charset) throws IOException
 	{
-		BufferedReader f;	  	  
-	    String line, alles="";
-        f = new BufferedReader(new InputStreamReader(new FileInputStream(datei), charset));
+        ArrayList<String> text = new ArrayList<String>();
+	    BufferedReader f = new BufferedReader(new InputStreamReader(new FileInputStream(datei), charset));
+        String line;
         while ((line = f.readLine()) != null) 
         {
-        	alles+=line+";;;;";
+        	text.add(line);
         }        	      
         f.close();
-        if(alles.endsWith(";;;;"))
-        	alles = alles.substring(0, alles.length()-4);
-        
-        return alles.split(";;;;");
+        return text.toArray(new String[text.size()]);
 	}
 	
 	public String Textreaders(File datei) throws IOException
@@ -224,11 +206,10 @@ public class OP
 	}
 	
 	public ArrayList<String> Textreadera(File datei) throws IOException
-	{
-		BufferedReader f;
+	{		
 		String line="";
 	    ArrayList<String> list = new ArrayList<String>();
-        f = new BufferedReader(new InputStreamReader(new FileInputStream(datei)));
+	    BufferedReader  f = new BufferedReader(new InputStreamReader(new FileInputStream(datei)));
         while ((line = f.readLine()) != null) 
         {
         	list.add(line);
@@ -238,11 +219,10 @@ public class OP
 	}
 	
 	public ArrayList<String> Textreadera(File datei, String charset) throws IOException
-	{
-		BufferedReader f;
+	{		
 		String line="";
 	    ArrayList<String> list = new ArrayList<String>();
-        f = new BufferedReader(new InputStreamReader(new FileInputStream(datei), charset));
+	    BufferedReader f = new BufferedReader(new InputStreamReader(new FileInputStream(datei), charset));
         while ((line = f.readLine()) != null) 
         {
         	list.add(line);

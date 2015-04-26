@@ -4,11 +4,6 @@ import static argo.jdom.JsonNodeFactories.field;
 import static argo.jdom.JsonNodeFactories.object;
 import static argo.jdom.JsonNodeFactories.string;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,14 +15,7 @@ import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.SwingConstants;
 
 import argo.format.PrettyJsonFormatter;
 import argo.jdom.JdomParser;
@@ -43,120 +31,32 @@ import argo.jdom.JsonStringNode;
  * @author Dirk Lippke
  */
 
-public class Install extends JFrame implements MouseListener 
+public class Install extends InstallGUI
 {
 	private static final long serialVersionUID = 1L;
-	private JButton back = new JButton();
-	private JLabel beenden = new JLabel();
-	private JLabel start = new JLabel();
-	private JLabel banner = new JLabel();
-	private JLabel[] social = new JLabel[3];
-	private JLabel uberschrift = new JLabel();
-	private JLabel info = new JLabel();
-	private JLabel iconf = new JLabel();
-	private static JProgressBar bar = new JProgressBar();
-	private JLabel stat = new JLabel();	
+	
 	private double value = 0.00;
-	private JPanel cp;
-	private Cursor c = new Cursor(Cursor.HAND_CURSOR);	
 	private Thread t1;
 	private Download dow, dowf;
-	private int breite = 600, hoehe=350;	
 	private String webplace = Start.webplace, mineord = Start.mineord, stamm = Start.stamm, Version = Start.Version;	
-	private String modsport = mineord + "/versions/Modinstaller/";
+	private String modsport = mineord + "versions/Modinstaller/";
 	private String sport = stamm + "/Modinstaller/";
 	private boolean online = Start.online;
+	private String[] namen;
+	private boolean Modloader;
 	
 	public static String Fehler="";
 	
 	public Install(final String[] namen, final boolean Modloader) 
 	{
-		
-		setUndecorated(true);			
-		setSize(breite, hoehe);
-		setTitle(Read.getTextwith("installer", "name"));		
-		setLocationRelativeTo(null);	
-		setResizable(false);
-		setIconImage(new ImageIcon(this.getClass().getResource("src/icon.png")).getImage());
-		
-		int rand = 20;
-		
-		cp = new GraphicsPanel(false, "src/bild.png");
-		cp.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
-		cp.setLayout(null);
-		add(cp);
-		
-		uberschrift.setBounds(0, 20, (int)(breite), (int)(hoehe*0.1));                              //Überschrift
-		uberschrift.setText(Read.getTextwith("installer", "name"));
-		uberschrift.setHorizontalAlignment(SwingConstants.CENTER);
-		uberschrift.setVerticalAlignment(SwingConstants.CENTER);
-		uberschrift.setFont(Start.lcd.deriveFont(Font.PLAIN,40));
-		cp.add(uberschrift);
-		
-		banner.setBackground(null);
-		banner.setForeground(null);
-		banner.setIcon(new ImageIcon(this.getClass().getResource("src/banner_gross.png")));
-		banner.setBounds(0, (int)(hoehe*0.12), (int)(breite), (int)(hoehe*0.3));
-		banner.setCursor(c);
-		banner.setHorizontalAlignment(SwingConstants.CENTER);
-		banner.addMouseListener(this);
-		cp.add(banner);
-		
-		iconf.setBackground(null);
-		iconf.setForeground(null);
-		iconf.setIcon(new ImageIcon(this.getClass().getResource("src/install.png")));
-		iconf.setBounds(15, 150, 80, 80);
-		cp.add(iconf);		
-
-		bar.setBounds(100, 180, 425, 33);
-		cp.add(bar);
-		
-		stat.setBounds(105, 160, 425, 17);
-		cp.add(stat);
-		
-		info.setBounds(0, 70, (int)(breite), (int)(hoehe*0.2));                             //Info
-		info.setHorizontalAlignment(SwingConstants.CENTER);
-		info.setFont(Start.lcd.deriveFont(Font.PLAIN,30));
-		cp.add(info);
-		
-		beenden.setBounds(rand, hoehe-40-rand, 150, 40); //Beenden	
-		beenden.setText(Read.getTextwith("seite3", "text2"));		
-		beenden.setIcon(new ImageIcon(this.getClass().getResource("src/power.png")));			
-		beenden.setFont(beenden.getFont().deriveFont(Font.BOLD, 16));	
-		beenden.addMouseListener(this);
-		beenden.setCursor(c);		
-		cp.add(beenden);
-		
-		start.setBounds((int)(breite-220-rand), hoehe-40-rand, 220, 40);
-		start.setIcon(new ImageIcon(this.getClass().getResource("src/start.png")));		
-		start.setText(Read.getTextwith("seite3", "text3"));
-		start.setHorizontalTextPosition(SwingConstants.LEFT);
-		start.setFont(start.getFont().deriveFont(Font.BOLD, 18));
-		start.setHorizontalAlignment(SwingConstants.RIGHT);	
-		start.setVerticalAlignment(SwingConstants.CENTER);
-		start.addMouseListener(this);	
-		start.setCursor(c);	
-		start.setEnabled(false);
-		cp.add(start);
-		
-		setVisible(true);
-		
-		String[] Bilder = {"src/facebook.png", "src/google.png", "src/mail.png"};
-		int abstand = 30;
-		int lange = 70;
-		int anz = social.length;
-		
-		for (int i=0; i<anz; i++)
-		{
-			social[i] = new JLabel();
-			social[i].setIcon(new ImageIcon(this.getClass().getResource(Bilder[i])));
-			social[i].setBounds((breite-anz*(lange+abstand)+abstand)/2 + i*(lange+abstand), 155, lange, lange);
-			social[i].setCursor(c);
-			social[i].setVisible(false);
-			social[i].addMouseListener(this);
-			cp.add(social[i]);	
-		}		
-
+		this.namen=namen;
+		this.Modloader=Modloader;
+		GUI();
+		installation();
+	}
+	
+	public void installation()
+	{
 		t1 = new Thread() 
 		{			
 			private JsonRootNode versionData;
@@ -171,16 +71,16 @@ public class Install extends JFrame implements MouseListener
 					iconf.setIcon(new ImageIcon(this.getClass().getResource("src/restore2.png")));		
 					new OP().del(new File(sport + "Backup"));		
 					new OP().copy(new File(modsport), new File(sport + "Backup"));	
-					new OP().copy(new File(mineord +"/mods"), new File(sport + "Backup/mods"));		
+					new OP().copy(new File(mineord +"mods"), new File(sport + "Backup/mods"));		
 					
 					status(value += 5); //6
 					
 					stat.setText(Read.getTextwith("seite3", "prog1"));	//Löschen								
 					new OP().del(new File(sport + "Result"));
 					new OP().del(new File(sport + "Original"));					
-					new OP().del(new File(mineord +"/mods"));
-					new OP().del(new File(mineord +"/coremods"));
-					new OP().del(new File(mineord +"/config"));	
+					new OP().del(new File(mineord +"mods"));
+					new OP().del(new File(mineord +"coremods"));
+					new OP().del(new File(mineord +"config"));	
 					new OP().del(new File(modsport));
 					
 					stat.setText(Read.getTextwith("seite3", "prog2"));            //Anlegen
@@ -188,7 +88,7 @@ public class Install extends JFrame implements MouseListener
 					new OP().makedirs(new File(sport + "Backup"));	
 					new OP().makedirs(new File(modsport));
 					
-					new OP().copy(new File(mineord + "/versions/"+Version), new File(modsport)); //von Versions Ordner in Modinstaller Ordner kopieren
+					new OP().copy(new File(mineord + "versions/"+Version), new File(modsport)); //von Versions Ordner in Modinstaller Ordner kopieren
 					new OP().rename(new File(modsport + Version+".jar"), new File(modsport + "Modinstaller.jar")); //Umbenennen in Modinstaller
 					new OP().rename(new File(modsport + Version+".json"), new File(modsport + "Modinstaller.json"));
 					
@@ -297,8 +197,7 @@ public class Install extends JFrame implements MouseListener
 								status(value+= hinzu*0.75);
 								
 								stat.setText(Read.getTextwith("seite3", "extra2")+namen[k]+"...");
-								iconf.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));							
-								
+								iconf.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));	
 								new Extract(Temporar, Zeilverzeichnis); //Heruntergeladene ZIP Datei entpacken
 								
 								if(Modloader) //Modloader
@@ -318,7 +217,7 @@ public class Install extends JFrame implements MouseListener
 						} 
 						status(value += hinzu*0.25);
 						
-						if (Modloader==false) //Forge Modus
+						if (!Modloader) //Forge Modus
 						{	
 							String text = Read.getTextwith("seite3", "forge");
 							stat.setText(text);  
@@ -362,56 +261,32 @@ public class Install extends JFrame implements MouseListener
 					}
 			    }
 				
-				File zusatz = new File(sport + "zusatz.txt");  // Importiertes kopieren
-				if (zusatz.exists())  
+				iconf.setIcon(new ImageIcon(this.getClass().getResource("src/import.png")));  // Importiertes kopieren
+				File importord = new File(stamm+"Modinstaller/Import/");
+				if(Modloader)
 				{
-					iconf.setIcon(new ImageIcon(this.getClass().getResource("src/import.png")));
-					try 
-					{
-						String[] read1 = new OP().Textreader(zusatz);
-						for(int w=0; w<read1.length; w++)
-						{
-							stat.setText(Read.getTextwith("seite3", "prog11a") + read1[w] + Read.getTextwith("seite3", "prog11b"));
-							File neu = new File(sport + "Import/"+read1[w]+".txt");
-							if(neu.exists())
-							{
-								String read2[] = new OP().Textreader(neu);
-								for (int x=0; x<read2.length; x++)
-								{
-									String[] spl = read2[x].split(";;");
-									if(spl.length==1)
-									{	
-										if(new File(spl[0]).isDirectory())
-										{
-											new OP().copy(new File(spl[0]), new File(sport + "Result/"));
-										}
-										else
-										{
-											String name = new File(spl[0]).getName().toString().replace("\\", "/");
-											new OP().copy(new File(spl[0]), new File(sport + "Result/"+name));
-										}									
-									}
-									else
-									{									
-										String von = spl[0];
-										String nach = spl[1]+new File(spl[0]).getName().toString().replace("\\", "/");
-										
-										new OP().copy(new File(von), new File(nach));
-									}
-								}
-							}
-						}
-					} 
-					catch (IOException e) 
-					{
-						stat.setText("Errorcode: S3x05" + String.valueOf(e));
-						Fehler += new OP().getStackTrace(e) + " Errorcode: S3x05\n\n";
+					try {
+						new OP().copy(importord, new File(sport + "Result/"));
+					} catch (FileNotFoundException e) {	
+						e.printStackTrace();
+					} catch (IOException e) {						
+						e.printStackTrace();
+					}
+				}
+				else
+				{
+					try {
+						new OP().copy(importord, new File(mineord + "mods/"));
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 				}
 				
 				iconf.setIcon(new ImageIcon(this.getClass().getResource("src/install.png")));
 				
-				if(Modloader==true)     //Dateien in Minecraft JAR bei Modloader Modus komprimieren
+				if(Modloader)     //Dateien in Minecraft JAR bei Modloader Modus komprimieren
 				{					
 					stat.setText(Read.getTextwith("seite3", "prog12"));	
 					iconf.setIcon(new ImageIcon(this.getClass().getResource("src/Komprimieren.png")));
@@ -437,7 +312,7 @@ public class Install extends JFrame implements MouseListener
 				{					
 				}
 				
-				File profiles = new File(mineord + "/launcher_profiles.json");  //Minecraft Launcher: JSON Datei präparieren: Profil Modinstaller einstellen				
+				File profiles = new File(mineord + "launcher_profiles.json");  //Minecraft Launcher: JSON Datei präparieren: Profil Modinstaller einstellen				
 				if(profiles.exists())
 				{				
 					FileInputStream installProfile = null;
@@ -486,8 +361,8 @@ public class Install extends JFrame implements MouseListener
 					}					    
 				}
 				
-				File sound = new File(mineord + "/assets/indexes/"+Version+".json");    //Sounddateien kopieren
-				File soundc = new File(mineord + "/assets/indexes/Modinstaller.json");
+				File sound = new File(mineord + "assets/indexes/"+Version+".json");    //Sounddateien kopieren
+				File soundc = new File(mineord + "assets/indexes/Modinstaller.json");
 				if(sound.exists())
 				{
 					try 
@@ -528,34 +403,5 @@ public class Install extends JFrame implements MouseListener
 	public static void status(double zahl) // Statusbar einstellen
 	{
 		bar.setValue((int) zahl);
-	}
-	
-	public void mouseClicked(MouseEvent e) 
-	{
-		Object s = e.getSource();
-		if(s==social[0])
-			new Browser("https://www.facebook.com/mcmodinstaller");
-		else if(s==social[1])
-			new Browser("https://plus.google.com/+MinecraftinstallerDeMod");
-		else if(s==social[2])
-			new Browser("http://www.minecraft-installer.de/faq.php");
-		else if(s==banner)
-			new Browser("http://server.nitrado.net/deu/gameserver-mieten?pk_campaign=MinecraftInstaller");
-		else if(s==start)
-			new MCLauncher(webplace, stamm);	
-		else if(s==beenden)
-			System.exit(0);
-	}
-
-	public void mousePressed(MouseEvent e) {
-	}
-
-	public void mouseReleased(MouseEvent e) {
-	}
-
-	public void mouseEntered(MouseEvent e) {
-	}
-
-	public void mouseExited(MouseEvent e) {
 	}
 }

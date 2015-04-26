@@ -1,40 +1,36 @@
 package installer;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.Scanner;
 
-import argo.jdom.JdomParser;
-import argo.jdom.JsonNode;
-import argo.jdom.JsonRootNode;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 
 public class Read
 {
-  public static final Read INSTANCE = new Read();
-  public JsonRootNode versionData = null;
+	public static final Read INSTANCE = new Read();
+	private Scanner scan;
+	static JsonObject js1;
 
-  public Read()
-  {
-	String lang = new OP().optionReader("language");
-	
-    InputStream installProfile = getClass().getResourceAsStream("src/texte_"+lang+".json");
-    JdomParser parser = new JdomParser();
-    try
-    {
-      this.versionData = parser.parse(new InputStreamReader(installProfile, "UTF-8"));
-    }
-    catch (Exception e)
-    {
-      System.out.print(e);
-    }
-  }
+	public Read()
+	{
+		String lang = new OP().optionReader("language");
+		 
+		String json="";
+		scan = new Scanner(getClass().getResourceAsStream("src/texte_"+lang+".json"), "UTF-8");
+		while (scan.hasNextLine()) 
+		{
+			json += scan.nextLine();
+		}
+		scan.close();
+		
+		Gson gson = new Gson();	
+		js1 = gson.fromJson(json, JsonObject.class); 
+	}
   
-  public static String getTextwith(String vor, String text)
-  {
-	  return INSTANCE.versionData.getStringValue(new Object[] { vor, text }); 
-  }
-  public static JsonNode getVersionInfo()
-  {
-	  return INSTANCE.versionData.getNode(new Object[] { "versionInfo" });
-  }
+	public static String getTextwith(String vor, String nach)
+	{
+		JsonObject js2 = js1.getAsJsonObject(vor); 	 
+		return js2.get(nach).getAsString();
+	}
 }

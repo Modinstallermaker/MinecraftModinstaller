@@ -313,38 +313,38 @@ public class Start extends JFrame
 		
 		 if (str.contains("win"))
 		 {
-			 mineord = System.getenv("APPDATA").replace("\\", "/") + "/.minecraft";
-			 stamm = System.getenv("APPDATA").replace("\\", "/");			 
+			 mineord = System.getenv("APPDATA").replace("\\", "/") + "/.minecraft/";
+			 stamm = System.getenv("APPDATA").replace("\\", "/")+"/";			 
 		 }
 		 else if (str.contains("mac")) 
 		 {
-			 mineord = System.getProperty("user.home").replace("\\", "/") + "/Library/Application Support/minecraft";
-			 stamm =  System.getProperty("user.home").replace("\\", "/") + "/Library/Application Support";
+			 mineord = System.getProperty("user.home").replace("\\", "/") + "/Library/Application Support/minecraft/";
+			 stamm =  System.getProperty("user.home").replace("\\", "/") + "/Library/Application Support/";
 		 }
 		 else if (str.contains("solaris")) 
 		 {
-			 mineord = System.getProperty("user.home").replace("\\", "/") + "/.minecraft";
-			 stamm = System.getProperty("user.home").replace("\\", "/");
+			 mineord = System.getProperty("user.home").replace("\\", "/") + "/.minecraft/";
+			 stamm = System.getProperty("user.home").replace("\\", "/")+"/";
 		 }
 		 else if (str.contains("sunos")) 
 		 {
-			 mineord = System.getProperty("user.home").replace("\\", "/") + "/.minecraft";
-			 stamm = System.getProperty("user.home").replace("\\", "/");
+			 mineord = System.getProperty("user.home").replace("\\", "/") + "/.minecraft/";
+			 stamm = System.getProperty("user.home").replace("\\", "/")+"/";
 		 }
 		 else if (str.contains("linux"))
 		 {
-			 mineord = System.getProperty("user.home").replace("\\", "/") + "/.minecraft";
-			 stamm = System.getProperty("user.home").replace("\\", "/");
+			 mineord = System.getProperty("user.home").replace("\\", "/") + "/.minecraft/";
+			 stamm = System.getProperty("user.home").replace("\\", "/")+"/";
 		 }
 		 else if (str.contains("unix")) 
 		 {
-			 mineord = System.getProperty("user.home").replace("\\", "/") + "/.minecraft";
-			 stamm = System.getProperty("user.home").replace("\\", "/");
+			 mineord = System.getProperty("user.home").replace("\\", "/") + "/.minecraft/";
+			 stamm = System.getProperty("user.home").replace("\\", "/")+"/";
 		 }
 		 else 
 		 {
-			mineord = System.getProperty("user.home").replace("\\", "/") + "/.minecraft";
-		    stamm = System.getProperty("user.home").replace("\\", "/");
+			mineord = System.getProperty("user.home").replace("\\", "/") + "/.minecraft/";
+		    stamm = System.getProperty("user.home").replace("\\", "/")+"/";
 		 }		
 			
 		if(!new File(mineord).exists())
@@ -470,7 +470,7 @@ public class Start extends JFrame
 	
 	public void versionenSuchen()
 	{				
-		File file = new File(mineord + "/versions");
+		File file = new File(mineord + "versions");
 		if (file.exists()) 
 		{
 			File[] li = file.listFiles();
@@ -607,10 +607,10 @@ public class Start extends JFrame
 			try 
 			{
 				List<CompoundTag> list3 = new ArrayList<CompoundTag>();	  
-				File sd = new File(mineord+"/servers.dat");
+				File sd = new File(mineord+"servers.dat");
 				if(sd.exists())
 				{
-					NBTInputStream fd = new NBTInputStream(new FileInputStream(mineord+"/servers.dat"), false);	
+					NBTInputStream fd = new NBTInputStream(new FileInputStream(mineord+"servers.dat"), false);	
 					
 					CompoundTag master = (CompoundTag) fd.readTag();
 					fd.close();
@@ -641,7 +641,7 @@ public class Start extends JFrame
 
 				map3.put(new ListTag<CompoundTag>("servers", CompoundTag.class, list2));
 				
-				NBTOutputStream os = new NBTOutputStream(new FileOutputStream(mineord+"/servers.dat"), false);			
+				NBTOutputStream os = new NBTOutputStream(new FileOutputStream(mineord+"servers.dat"), false);			
 				CompoundTag exit = new CompoundTag("", map3);
 				os.writeTag(exit);
 				os.close();

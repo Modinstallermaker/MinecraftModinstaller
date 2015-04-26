@@ -1,29 +1,26 @@
 package installer;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
-import java.io.IOException;
 
-import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JList;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
+
+import layout.TableLayout;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 /**
  * 
@@ -36,373 +33,320 @@ import javax.swing.SwingConstants;
 public class Import extends JFrame 
 {
 	private static final long serialVersionUID = 1L;
-	private String eingabe, Ordner;
-	private JList<String> jList1 = new JList<String>();
-	private DefaultListModel<String> jList1Model = new DefaultListModel<String>();
-	private JScrollPane jList1ScrollPane = new JScrollPane(jList1);
-	private JButton hinzu = new JButton();
-	private JButton entf = new JButton();
-	private JButton bend = new JButton();
-	private Cursor c = new Cursor(Cursor.HAND_CURSOR); 
-	private boolean erstellen = false;
-	private boolean Modloader;
-	private String mineord = Start.mineord, stamm = Start.stamm;	
 	
-	public Import(final boolean Modloader)
-	{
-		this.Modloader = Modloader;		
-		this.eingabe = JOptionPane.showInputDialog(null, Read.getTextwith("modimport", "text1"), Read.getTextwith("modimport", "text1h"), JOptionPane.PLAIN_MESSAGE);
-		if(eingabe!=null)
-		{
-			boolean um=true;
-			for(int i = 0; i<Menu.jList2Model.getSize();i++)
-			{
-				if(Menu.jList2Model.getElementAt(i).toString().substring(2).equals(eingabe))
-				{
-					um=false;
-				}
-			}
-			if(um==true)
-			{
-				File zus = new File(stamm+"/Modinstaller/zusatz.txt");
-				String[] inh = new String[1];
-				inh[0] = eingabe;
-				try 
-				{
-					new OP().Textwriter(zus, inh, true);
-				} 
-				catch (IOException e) 
-				{					
-					e.printStackTrace();
-				}				
-				if(Modloader==true)
-				{
-					JOptionPane.showMessageDialog(null, Read.getTextwith("modimport", "text2"), Read.getTextwith("modimport", "text2h"), JOptionPane.INFORMATION_MESSAGE);
-				}
-				erstellen =true;
-				make();
-			}
-			else
-			{
-				JOptionPane.showMessageDialog(null, Read.getTextwith("modimport", "text3"), Read.getTextwith("modimport", "text3h"), JOptionPane.WARNING_MESSAGE);
-				new Import(Modloader);
-			}
-		}
-	}
-
-	public Import (final String ein, final String mineord, final boolean Modloader, final String stamm)
-	{
-		this.mineord = mineord;
-		this.eingabe=ein;
-		this.Modloader = Modloader;
-		this.stamm = stamm;
-		make();
-	}
+	private boolean Modloader =Menu.Modloader;
+	private String stamm = Start.stamm;	
+	private File sport = new File(stamm+"Modinstaller/Import/");
+	private File extr = new File(stamm+"Modinstaller/Importc/");
+	private File extr2 = new File(stamm+"Modinstaller/Importc2/");
+	private String Modname="nicht angegeben", Modversion="unbekannt", MCVersion="unbekannt", Beschreibung="nicht vorhanden", Autoren="", Webseite="", Credits="", Benoetigt="keine", Logo="";
 	
-
-	public void make()
-	{
-		setTitle(Read.getTextwith("modimport", "text4") + " \""+eingabe+"\"");
-		int frameWidth = 310;
-		int frameHeight = 290;
-		setSize(frameWidth, frameHeight);
-		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-		int x = (d.width - getSize().width) / 2;
-		int y = (d.height - getSize().height) / 2;
-		setLocation(x, y);
-		setResizable(false);
-	
-		setIconImage(new ImageIcon(this.getClass().getResource("src/icon.png"))	.getImage());
-	
-		JPanel cp = new JPanel();	
-		cp.setLayout(null);
-		add(cp);
-	
-		hinzu.setBounds(0, 30, 130, 45); 
-		hinzu.setBackground(new Color(0, 0, 0, 0));
-		hinzu.setFont(hinzu.getFont().deriveFont(Font.BOLD));
-		hinzu.setHorizontalAlignment(SwingConstants.LEFT);
-		hinzu.setText(Read.getTextwith("modimport", "text5"));
-		hinzu.setMargin(new Insets(2, 2, 2, 2));
-		hinzu.setIcon(new ImageIcon(this.getClass().getResource("src/hinzufügenn.png")));
-		hinzu.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent evt) {
-			hinzu_ActionPerformed(evt);
-		}
-		});
-		hinzu.setCursor(c);
-		cp.add(hinzu);
-	
-		entf.setBounds(0, 75, 130, 45); 
-		entf.setBackground(new Color(0, 0, 0, 0));
-		entf.setHorizontalAlignment(SwingConstants.LEFT);
-		entf.setFont(entf.getFont().deriveFont(Font.BOLD));
-		entf.setText(Read.getTextwith("modimport", "text6"));
-		entf.setIcon(new ImageIcon(this.getClass().getResource("src/löschenn.png")));
-		entf.setMargin(new Insets(2, 2, 2, 2));
-		entf.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent evt) {
-			entf_ActionPerformed(evt);
-		}
-		});
-		entf.setCursor(c);
-		cp.add(entf);
+	public Import(File datei)
+	{	
+		System.gc();
+		new OP().del(extr);
+		new OP().del(extr2);
+		new OP().makedirs(sport);
+		new OP().makedirs(extr);
 		
-		bend.setBounds(10, 220, 120, 30); 
-		bend.setBackground(null);
-		bend.setText(Read.getTextwith("modimport", "text7"));
-		bend.setMargin(new Insets(2, 2, 2, 2));
-		bend.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent evt) {
-			bend_ActionPerformed(evt);
-		}
-		});
-		bend.setCursor(c);
-		cp.add(bend);
-	
-		jList1.setModel(jList1Model); // Liste1
-		jList1ScrollPane.setBounds(135, 10, 160, 240);
-		cp.add(jList1ScrollPane);
-	
-		File b = new File(stamm+"/Modinstaller/Import/"+eingabe+".txt");
-		if(b.exists())
-		{
+		
+		if(!Modloader)
+		{	
 			try 
 			{
-				String[] zuss = new OP().Textreader(b);
-				for (int i=0; i<zuss.length; i++)
-				{
-					String[] spl = zuss[i].split(";;");
-					File zz	= new File(spl[0]);						
-					jList1Model.addElement(zz.getName());
-				}
+				sucher(datei);					
 			} 
-			catch (IOException e1) 
-			{				
-				JOptionPane.showMessageDialog(null, e1 + "\n\nErrorcode: MOx02");
-			}
-		}	
-		jList1.addMouseListener(new MouseListener() 
-		{
-			public void mouseClicked(MouseEvent e) {
-			}
-	
-			public void mouseExited(MouseEvent e) {
-			}
-	
-			public void mouseEntered(MouseEvent e) {
-			} 
-	
-			public void mouseReleased(MouseEvent e) {
-			}
-	
-			public void mousePressed(MouseEvent e) 
-			{
-				if(jList1Model.getSize()>0&&e.getClickCount() == 2)
-				{
-					File f2 = new File(stamm+"/Modinstaller/Import/"+eingabe+".txt");
-					if(f2.exists())
-					{
-						try 
-						{
-							String[] zuss2 = new OP().Textreader(f2);
-							String zeile5 = "";
-							for (int j=0; j<zuss2.length; j++)
-							{
-								String[] spl = zuss2[j].split(";;");
-								zeile5 = spl[0];
-								if (new File(zeile5).getName().equals(((String) jList1Model.getElementAt(jList1.getSelectedIndex())))) 
-								{
-									try 
-									{
-										Desktop.getDesktop().open(new File(zeile5));
-									} 
-									catch (IOException ex) 
-									{
-										ex.printStackTrace();
-									} 	
-								}		
-							}
-						} 
-						catch (IOException e1) 
-						{				
-							JOptionPane.showMessageDialog(null, e1 + "\n\nErrorcode: MOx03");
-						}
-					}							
-				}
-			}
-		});
-		setVisible(true);	
-	}
-
-	public void hinzu_ActionPerformed(ActionEvent evt) // Auswählen von Mods
-	{
-		new OP().makedirs(new File(stamm+"/Modinstaller/Import/"));		
-		if(Modloader==false)
-		{
-			Object[] options = {".minecraft", ".minecraft/mods", ".minecraft/coremods", ".minecraft/databases"};
-			int selected = JOptionPane.showOptionDialog(null, Read.getTextwith("modimport", "text8"), Read.getTextwith("modimport", "text8h"), JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null,	options, options[0]);
-			switch (selected) 
-			{                                  // Nach Version fragen
-				case 0:
-					Ordner = "";			
-					break;
-				case 1:
-					Ordner = "mods/";
-					break;
-				case 2:
-					Ordner = "coremods/";
-					break;
-				case 3:
-					Ordner = "database/";
-					break;
-				default:
-					Ordner = "";
-			} // end of switch	
+			catch (Exception e) {}
 		}
-		JFileChooser FC = new JFileChooser();
-		FC.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-		FC.setMultiSelectionEnabled(true);
-		FC.setDialogTitle(Read.getTextwith("modimport", "text9"));
-		if (FC.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) // Ordner öffnen
+		else
 		{
-			File[] files = FC.getSelectedFiles();
-			String lines[] = new String[files.length];
-			for (int j =0; j<files.length; j++)
+			if(datei.isFile()) //Modloader Datei importiert
 			{
-				jList1Model.addElement(files[j].getName());
-				if(Modloader==true)
+				String Dateiendung = datei.getName().substring(datei.getName().lastIndexOf("."));
+				if(Dateiendung.equals(".jar")||Dateiendung.equals(".zip"))
 				{
-					lines[j] =String.valueOf(files[j]).replace("\\", "/");
+					try {
+						new Extract(datei, sport);
+					} catch (Exception e) {					
+						e.printStackTrace();
+					}
 				}
 				else
 				{
-					lines[j] =String.valueOf(files[j]).replace("\\", "/")+";;"+mineord+"/"+Ordner;
+					try {
+						new OP().copy(datei, sport);
+					} catch (Exception e) {					
+						e.printStackTrace();
+					}
 				}
-				try 
-				{
-					String[] l = new String[1];
-					l[0] = lines[j];
-					new OP().Textwriter(new File(stamm+"/Modinstaller/Import/"+eingabe+".txt"), l, true);
-				} 
-				catch (IOException e) 
-				{
-					JOptionPane.showMessageDialog(null, Read.getTextwith("modimport", "error1")	+ String.valueOf(e)	+ "\n\nErrorcode: MOx04", Read.getTextwith("modimport", "error1h"), JOptionPane.ERROR_MESSAGE);
+			}
+			else //Modloader Ordner importiert
+			{
+				try {
+					new OP().copy(datei, sport);
+				} catch (Exception e) {					
+					e.printStackTrace();
 				}
-			}			
+			}
+		}		
+		if(updateCat())
+		{			
+			File importf = new File(stamm+"Modinstaller/Import/"+ Modname +".jar");
+			new Compress(extr, importf);
+			Menu.weiter.setEnabled(true);
+			make();
 		}
-	}
-
-	public void entf_ActionPerformed(ActionEvent evt) // Auswählen von Mods
-	{
-		if(jList1Model.getSize()>0&&jList1.isSelectionEmpty()==false)
+		else
 		{
-			File imt = new File(stamm+"/Modinstaller/Import/"+eingabe+".txt");
-			String neu ="";
-			boolean test = false;
-			if(imt.exists())
-			{
-				String[] lines;
-				try 
-				{
-					lines = new OP().Textreader(imt);
-				
-					for (int i=0; i<lines.length; i++)
-					{
-						File zz = new File(lines[i]);
-						if (!zz.getName().equals(((String) jList1Model.getElementAt(jList1.getSelectedIndex())))) 
-						{
-							neu+=String.valueOf(lines[i]+";;;");						
-							test = true;
-						} 
-					}
-					
-					if (test == false) 
-					{
-						new OP().del(imt);
-					}
-					else
-					{
-						neu.substring(neu.length()-3);
-						try 
-						{
-							new OP().Textwriter(imt, neu.split(";;;"), false);
-						} 
-						catch (IOException e) 
-						{						
-							e.printStackTrace();
-						}
-					}
-				} 
-				catch (Exception e1) 
-				{					
-					e1.printStackTrace();
-				}
-			}			
-			try
-			{
-				jList1Model.removeElementAt(jList1.getSelectedIndex());
-			}
-			catch (Exception ex)
-			{		
-				JOptionPane.showMessageDialog(null, ex + "\n\nErrorcode: MOx06");
-			}
+			if(datei.isFile())
+				Modname=datei.getName().substring(0, datei.getName().lastIndexOf("."));
+			else
+				Modname=datei.getName();
+			File importf = new File(stamm+"Modinstaller/Import/"+ Modname +".jar");
+			try {
+				new OP().copy(datei, importf);
+			} catch (Exception e) {}
 		}
+		Menu.jList2Model.addElement("+ " +Modname);
+		System.gc();
 	}
 	
-	public void bend_ActionPerformed(ActionEvent evt) // Auswählen von Mods
-	{
-		if(jList1Model.getSize()>0)
-		{
-			Menu.weiter.setEnabled(true);	
-			if(erstellen==true)
+	public void sucher(File datei)
+	{	
+		new OP().del(extr);
+		if(datei.isFile())
+		{	
+			String Dateiendung = datei.getName().substring(datei.getName().lastIndexOf("."));
+			if(Dateiendung.equals(".jar")||Dateiendung.equals(".zip"))
 			{
-				Menu.jList2Model.addElement("+ " + eingabe);
+				try 
+				{
+					new Extract(datei, extr);
+					if(searchFile(extr, ".info").length==0)
+					{						
+						try {
+							File[] jars = searchFile(extr, ".jar");
+							for (int j=0; j<jars.length; j++)
+							{
+								new OP().del(extr2);
+								new Extract(jars[j], extr2);
+							}
+						}
+						catch (Exception e){}
+					
+						try {
+							File[] zips = searchFile(extr, ".zip");
+							for (int z=0; z<zips.length; z++)
+							{
+								new OP().del(extr2);
+								new Extract(zips[z], extr2);
+							}
+						}
+						catch (Exception e){}
+						new OP().copy(extr2, extr);
+					}				
+				} catch (Exception e) {}
 			}
 		}
 		else
 		{
-			for(int i = 0; i<Menu.jList2Model.getSize();i++)
-			{
-				if(Menu.jList2Model.getElementAt(i).toString().substring(2).equals(eingabe))
-				{
-					Menu.jList2Model.removeElementAt(i);
-				}
-			}
-			File zusatz = new File(stamm+"/Modinstaller/zusatz.txt");
-			if(zusatz.exists())
-			{
-				try 
-				{
-					String lines[] = new OP().Textreader(zusatz);
-					String neu ="";
-					boolean test = false;
-					for (int i=0; i<lines.length; i++)
-					{
-						File zz = new File(lines[i]);
-						if (!zz.getName().equals(eingabe)) 
-						{		
-							neu+=String.valueOf(lines[i]+";;;");							
-							test = true;
-						} 
-					}
-					if (test == false) 
-					{
-						new OP().del(new File(stamm+"/Modinstaller/zusatz.txt"));
-						new OP().del(new File(stamm+"/Modinstaller/Import"));
-					} 
-					else
-					{
-						neu.substring(neu.length()-3);
-						new OP().Textwriter(zusatz, neu.split(";;;"), false);
-					}
-				} 
-				catch (IOException e) 
-				{
-					JOptionPane.showMessageDialog(null, e + "\n\nErrorcode: MOx07");
-				}
-			}
+			File[] jars = searchFile(datei, ".jar");
+			for (int j=0; j<jars.length; j++)
+				sucher(jars[j]);
+			File[] zips = searchFile(datei, ".zip");
+			for (int z=0; z<zips.length; z++)
+				sucher(zips[z]);
 		}
-		dispose();
+	}
+	
+	public boolean updateCat()
+	{	
+		File[] modinfo =  searchFile(extr, ".info");
+		if(modinfo.length>0)
+		{				
+			Gson gson = new Gson(); 
+	        try 
+	        {          
+	            String jsontext = new OP().Textreaders(modinfo[0]);
+	    		
+	            JsonArray jsona1 = gson.fromJson(jsontext, JsonArray.class);
+	            JsonObject jsono1 = gson.fromJson(jsona1.get(0), JsonObject.class); 
+	       
+	        	try{
+	        		Modname = jsono1.get("name").getAsString();
+	        	}
+	        	catch (Exception e){						
+				}
+	        	try{
+	        		Modversion = jsono1.get("version").getAsString();
+	        	}
+	        	catch (Exception e){						
+				}
+	        	try{
+	        		MCVersion = jsono1.get("mcversion").getAsString();
+	        		if(!MCVersion.equals("unbekannt")&&!MCVersion.contains(Start.Version))
+	        			JOptionPane.showMessageDialog(null, 
+	        					  "Die vom Modentwickler angebene Minecraft Version ("+MCVersion+") "
+	        					+ "stimmt nicht mit Deiner im Modinstaller ausgewählten Minecraft Version ("+Start.Version+") überein.\n"
+	        					+ "Entweder wird Minecraft beim Starten abstürzen oder die Mod funktioniert dennoch (der Entwicker hat evtl. falsche Angaben gemacht)...\n\n"	        							
+	        					+ "Wenn Du sicher sein möchtest, dass die Mod funktioniert, dann wähle zuerst im Modinstaller \"Minecraft "+MCVersion+"\" aus "
+	        					+ "und importiere die Mod dann.", "Mod funktioniert evtl. nicht", JOptionPane.WARNING_MESSAGE); 	        		
+	        	}
+	        	catch (Exception e){						
+				}
+	        	try{
+	        		Beschreibung = jsono1.get("description").getAsString();
+	        	}
+	        	catch (Exception e){						
+				}
+	        	try{	
+	        		String neu ="";
+        			JsonArray Autorena = jsono1.get("authorList").getAsJsonArray();
+	        		for (int i=0; i<Autorena.size(); i++)
+	        			neu += Autorena.get(i).getAsString() +", ";
+	        		if(neu.length()>0)
+	        		Autoren = neu.substring(0, neu.length()-2);
+	        	}
+	        	catch (Exception e){
+	        		try{
+	        			String neu ="";
+	        			JsonArray Autorena = jsono1.get("authors").getAsJsonArray();
+		        		for (int i=0; i<Autorena.size(); i++)
+		        			neu += Autorena.get(i).getAsString() +", ";
+		        		if(neu.length()>0)
+		        		Autoren = neu.substring(0, neu.length()-2);
+		        	}
+		        	catch (Exception e2){
+	        		
+		        	}
+				}
+	        	try{
+	        		Webseite = jsono1.get("url").getAsString();
+	        	}
+	        	catch (Exception e){						
+				}
+	        	try{
+	        		Credits = jsono1.get("credits").getAsString();
+	        	}
+	        	catch (Exception e){						
+				}
+	        	try{
+	        		String neu ="";
+	        		JsonArray Benoetigta = jsono1.get("dependencies").getAsJsonArray();
+	        		for (int i=0; i<Benoetigta.size(); i++)
+	        			neu += Benoetigta.get(i).getAsString() +", ";
+	        		if(neu.length()>0)
+	        		{
+	        			Benoetigt = neu.substring(0, neu.length()-2);
+	        			JOptionPane.showMessageDialog(null, "Bitte denke daran, folgende für die Mod benötigte Mods mit zu importieren:\n\n"+Benoetigt, "Mod benötigt weitere Mods", JOptionPane.INFORMATION_MESSAGE);
+	        		}
+	        	}
+	        	catch (Exception e){						
+				}
+	        	try{
+	        		Logo = jsono1.get("logoFile").getAsString().replace("\\", "/");
+	        	}
+	        	catch (Exception e){
+				}	        	
+	        } 
+	        catch (Exception e) 
+	        { 
+	            e.printStackTrace(); 
+	        } 
+	        return true;
+		}
+		else
+			return false;
+	}
+	
+	public File[] searchFile(File ordner, String suche)
+	{		
+		FileFinder ff = new FileFinder();
+        ff.sucheDatei(suche, ordner, null);
+        File[] fs = new File[ff.findings.size()];
+        for (int i=0; i<ff.findings.size(); i++)
+        {
+        	fs[i]=ff.findings.get(i);
+        }
+        return fs;
+	}
+
+	public Import(String Modname)
+	{
+		File Mod = new File(stamm+"Modinstaller/Import/"+Modname+".jar");
+		try {
+			new OP().del(extr);
+			new Extract(Mod, extr);
+		} catch (Exception e) {	}
+		if(updateCat())		
+			make();
+	}	
+
+	public void make()
+	{
+		setTitle(Modname);
+		
+		setLocationRelativeTo(null);
+		setResizable(true);	
+		setIconImage(new ImageIcon(this.getClass().getResource("src/icon.png")).getImage());	
+		 double size[][] = {{TableLayout.FILL}, // Columns
+		            {120, TableLayout.FILL, 40}}; // Rows
+
+		setLayout(new TableLayout(size));
+		boolean text = true;
+		if(!Logo.equals(""))
+		{
+			JLabel bild = new JLabel();		
+			bild.setHorizontalAlignment(SwingConstants.CENTER);
+			String pfad = extr.toString().replace("\\", "/")+"/"+Logo;
+			File f = new File(pfad);
+			if(!f.exists())
+			{
+				if(Logo.startsWith("mods"))
+					Logo = Logo.substring(5);
+					pfad = extr.toString().replace("\\", "/")+"/assets/"+Logo;
+					f = new File(pfad);				
+			}
+			if(f.exists())
+			{
+				bild.setIcon(new ImageIcon(f.getAbsolutePath()));
+				text =false;
+				add(bild,  "0,0");
+			}			
+		}
+		if(text)
+		{
+			JLabel head = new JLabel(Modname);
+			head.setPreferredSize(new Dimension(300, 50));
+			head.setFont(Start.lcd.deriveFont(Font.BOLD,30));
+			head.setHorizontalAlignment(SwingConstants.CENTER);
+			add(head, "0,0");
+		}
+		
+		DefaultTableModel model = new DefaultTableModel();       
+		model.setColumnIdentifiers(new Object[] {"Beschreibung", "Wert"});
+		
+        JTable table = new JTable(model);
+       
+        model.insertRow(0, new Object[] {"Modversion",Modversion}); //Modversion
+        model.insertRow(1, new Object[] {"für Minecraft",MCVersion}); //Für Minecraft
+        model.insertRow(2, new Object[] {"Beschreibung", Beschreibung}); //Beschreibung     
+        model.insertRow(3, new Object[] {"Benötigte Mods",Benoetigt}); //Benötigte Mods
+        model.insertRow(4, new Object[] {"Modautoren", Autoren}); //Autoren
+        model.insertRow(5, new Object[] {"Entwicklerwebseite", Webseite}); //Webseite
+        model.insertRow(6, new Object[] {"Danksagung", Credits}); //Webseite        
+        
+        table.setRowHeight(30);
+        add(new JScrollPane(table),  "0,1");   
+        
+        JButton close = new JButton("Schließen");
+        close.addActionListener(new ActionListener() { 
+  	      public void actionPerformed(ActionEvent evt) { 
+  	        dispose();
+  	      }
+  	    });
+        add(close, "0,2");
+        setSize(550, 450);
+        setVisible(true); 
 	}
 }

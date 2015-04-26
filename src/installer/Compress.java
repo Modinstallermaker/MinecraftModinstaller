@@ -17,9 +17,11 @@ public class Compress
 	{
 		ortkop = ort2;
 		
+		new OP().makedirs(ziel.getParentFile());
+		
 		try 
 		{
-			zipOut = new JarOutputStream(new FileOutputStream(String.valueOf(ziel)));
+			zipOut = new JarOutputStream(new FileOutputStream(ziel));
 		} 
 		catch (Exception ex) 
 		{
@@ -83,25 +85,12 @@ public class Compress
 		{
 			try 
 			{
-				if (buffinstr != null)	buffinstr.close(); // Inputstream beenden
+				if(buffinstr != null)	buffinstr.close(); // Inputstream beenden				
 			} 
 			catch (Exception ex) 
 			{
 				Install.Fehler+=new OP().getStackTrace(ex)+"\n\n";
-			}
-		}	
-	}
-	
-	public void exit()
-	{
-		try
-		{
-			buffinstr.close();
-			zipOut.closeEntry();
-			zipOut.close();			
-		}
-		catch (Exception ex)
-		{			
+			}				
 		}	
 	}
 }

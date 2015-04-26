@@ -12,10 +12,7 @@ public class Extract
 {
 	public Extract(File archive, File destDir) throws Exception 
 	{
-	        if (!destDir.exists()) 
-	        {
-	            destDir.mkdir();
-	        }
+	        destDir.mkdir();	       
 	 
 	        ZipFile zipFile = new ZipFile(archive);
 	        Enumeration<? extends ZipEntry> entries = zipFile.entries();

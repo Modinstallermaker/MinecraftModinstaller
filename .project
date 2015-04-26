@@ -14,4 +14,10 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<variableList>
+		<variable>
+			<name>lib</name>
+			<value>file:/C:/Users/Dirk/git/MinecraftModinstaller/lib</value>
+		</variable>
+	</variableList>
 </projectDescription>
