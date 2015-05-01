@@ -32,10 +32,9 @@ import com.google.gson.JsonObject;
 
 public class Import extends JFrame 
 {
-	private static final long serialVersionUID = 1L;
-	
-	private boolean Modloader =Menu.Modloader;
+	private static final long serialVersionUID = 1L;	
 	private String stamm = Start.stamm;	
+	private boolean Modloader =Menu.Modloader;
 	private File sport = new File(stamm+"Modinstaller/Import/");
 	private File extr = new File(stamm+"Modinstaller/Importc/");
 	private File extr2 = new File(stamm+"Modinstaller/Importc2/");
@@ -93,7 +92,7 @@ public class Import extends JFrame
 		{			
 			File importf = new File(stamm+"Modinstaller/Import/"+ Modname +".jar");
 			new Compress(extr, importf);
-			Menu.weiter.setEnabled(true);
+			Menu.nextButton.setEnabled(true);
 			make();
 		}
 		else
@@ -107,7 +106,7 @@ public class Import extends JFrame
 				new OP().copy(datei, importf);
 			} catch (Exception e) {}
 		}
-		Menu.jList2Model.addElement("+ " +Modname);
+		Menu.rightListModel.addElement("+ " +Modname);
 		System.gc();
 	}
 	
@@ -184,10 +183,10 @@ public class Import extends JFrame
 				}
 	        	try{
 	        		MCVersion = jsono1.get("mcversion").getAsString();
-	        		if(!MCVersion.equals("unbekannt")&&!MCVersion.contains(Start.Version))
+	        		if(!MCVersion.equals("unbekannt")&&!MCVersion.contains(Start.mcVersion))
 	        			JOptionPane.showMessageDialog(null, 
 	        					  "Die vom Modentwickler angebene Minecraft Version ("+MCVersion+") "
-	        					+ "stimmt nicht mit Deiner im Modinstaller ausgewählten Minecraft Version ("+Start.Version+") überein.\n"
+	        					+ "stimmt nicht mit Deiner im Modinstaller ausgewählten Minecraft Version ("+Start.mcVersion+") überein.\n"
 	        					+ "Entweder wird Minecraft beim Starten abstürzen oder die Mod funktioniert dennoch (der Entwicker hat evtl. falsche Angaben gemacht)...\n\n"	        							
 	        					+ "Wenn Du sicher sein möchtest, dass die Mod funktioniert, dann wähle zuerst im Modinstaller \"Minecraft "+MCVersion+"\" aus "
 	        					+ "und importiere die Mod dann.", "Mod funktioniert evtl. nicht", JOptionPane.WARNING_MESSAGE); 	        		
@@ -205,7 +204,7 @@ public class Import extends JFrame
 	        		for (int i=0; i<Autorena.size(); i++)
 	        			neu += Autorena.get(i).getAsString() +", ";
 	        		if(neu.length()>0)
-	        		Autoren = neu.substring(0, neu.length()-2);
+	        			Autoren = neu.substring(0, neu.length()-2);
 	        	}
 	        	catch (Exception e){
 	        		try{
@@ -214,10 +213,9 @@ public class Import extends JFrame
 		        		for (int i=0; i<Autorena.size(); i++)
 		        			neu += Autorena.get(i).getAsString() +", ";
 		        		if(neu.length()>0)
-		        		Autoren = neu.substring(0, neu.length()-2);
+		        			Autoren = neu.substring(0, neu.length()-2);
 		        	}
-		        	catch (Exception e2){
-	        		
+		        	catch (Exception e2){		        		
 		        	}
 				}
 	        	try{

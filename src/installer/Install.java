@@ -34,22 +34,20 @@ import argo.jdom.JsonStringNode;
 public class Install extends InstallGUI
 {
 	private static final long serialVersionUID = 1L;
-	
-	private double value = 0.00;
-	private Thread t1;
-	private Download dow, dowf;
-	private String webplace = Start.webplace, mineord = Start.mineord, stamm = Start.stamm, Version = Start.Version;	
-	private String modsport = mineord + "versions/Modinstaller/";
-	private String sport = stamm + "/Modinstaller/";
+	private String webplace = Start.webplace, mineord = Start.mineord, stamm = Start.stamm, Version = Start.mcVersion;	
 	private boolean online = Start.online;
-	private String[] namen;
+	private double value = 0.00;	
+	private Download dow, dowf;	
+	private String modsport = mineord + "versions/Modinstaller/";
+	private String sport = stamm + "/Modinstaller/";	
+	private String[] modnames;
 	private boolean Modloader;
 	
 	public static String Fehler="";
 	
-	public Install(final String[] namen, final boolean Modloader) 
+	public Install(final String[] modnames, final boolean Modloader) 
 	{
-		this.namen=namen;
+		this.modnames=modnames;
 		this.Modloader=Modloader;
 		GUI();
 		installation();
@@ -57,7 +55,7 @@ public class Install extends InstallGUI
 	
 	public void installation()
 	{
-		t1 = new Thread() 
+		new Thread() 
 		{			
 			private JsonRootNode versionData;
 			@Override
@@ -68,7 +66,7 @@ public class Install extends InstallGUI
 					status(value += 1); //1
 					
 					stat.setText(Read.getTextwith("seite3", "prog3"));                              //Wiederherstellungspunkt
-					iconf.setIcon(new ImageIcon(this.getClass().getResource("src/restore2.png")));		
+					stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/restore2.png")));		
 					new OP().del(new File(sport + "Backup"));		
 					new OP().copy(new File(modsport), new File(sport + "Backup"));	
 					new OP().copy(new File(mineord +"mods"), new File(sport + "Backup/mods"));		
@@ -97,7 +95,7 @@ public class Install extends InstallGUI
 					if(Modloader)  // Entpacken	
 					{
 						stat.setText(Read.getTextwith("seite3", "extra"));
-						iconf.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));
+						stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));
 						new Extract(new File(modsport+"Modinstaller.jar"), new File(sport + "Result/"));  
 					}
 					
@@ -111,13 +109,13 @@ public class Install extends InstallGUI
 						new OP().optionWriter("slastmode", new OP().optionReader("lastmode"));
 						new OP().optionWriter("lastmode", mode);	
 											
-						if(namen.length!=0)
+						if(modnames.length!=0)
 						{
 							new OP().optionWriter("slastmods", new OP().optionReader("lastmods"));
 							String modn="";
-							for (int e=0; e<namen.length; e++)
+							for (int e=0; e<modnames.length; e++)
 							{
-								modn+=namen[e]+";;";
+								modn+=modnames[e]+";;";
 							}
 							if(modn.endsWith(";;"))
 								modn = modn.substring(0, modn.length()-2);
@@ -148,12 +146,12 @@ public class Install extends InstallGUI
 						double hinzu = 10;
 						try
 						{
-							if(namen.length>0)
+							if(modnames.length>0)
 							{
-								hinzu = 75/namen.length;	
+								hinzu = 75/modnames.length;	
 								if(!Modloader)
 								{
-									hinzu = 85/(namen.length+1);
+									hinzu = 85/(modnames.length+1);
 								}
 							}
 							else
@@ -172,17 +170,17 @@ public class Install extends InstallGUI
 						{							
 						}
 						
-						for (int k = 0; k < namen.length; k++) 
+						for (int k = 0; k < modnames.length; k++) 
 						{
-							String statt = Read.getTextwith("seite3", "prog8a") + namen[k] + "</b>"+Read.getTextwith("seite3", "prog8b");
+							String statt = Read.getTextwith("seite3", "prog8a") + modnames[k] + "</b>"+Read.getTextwith("seite3", "prog8b");
 							stat.setText(statt);
-							iconf.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));
+							stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));
 							
 							int art =3;
 							if(Modloader) art=0;
-							String Downloadort = "http://www.minecraft-installer.de//api/download.php?MC="+Version+"&Mod="+namen[k]+"&Art="+art; //Downloadlink für ZIP Datei				
+							String Downloadort = "http://www.minecraft-installer.de//api/download.php?MC="+Version+"&Mod="+modnames[k]+"&Art="+art; //Downloadlink für ZIP Datei				
 							File Temporar= new File(sport + "temp.zip");
-							File Zeilverzeichnis = new File(sport + "Mods/"+ namen[k]+"/");
+							File Zeilverzeichnis = new File(sport + "Mods/"+ modnames[k]+"/");
 															
 							try
 							{	
@@ -196,8 +194,8 @@ public class Install extends InstallGUI
 								t.interrupt();	//Downloadgrößen-Thread beenden
 								status(value+= hinzu*0.75);
 								
-								stat.setText(Read.getTextwith("seite3", "extra2")+namen[k]+"...");
-								iconf.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));	
+								stat.setText(Read.getTextwith("seite3", "extra2")+modnames[k]+"...");
+								stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));	
 								new Extract(Temporar, Zeilverzeichnis); //Heruntergeladene ZIP Datei entpacken
 								
 								if(Modloader) //Modloader
@@ -212,7 +210,7 @@ public class Install extends InstallGUI
 							catch (Exception ex)
 							{
 								stat.setText("Errorocde: S3x04: " + String.valueOf(ex));
-								Fehler += "Mod: "+namen[k] + " " + Version +"\nSource: "+Downloadort+"\nFrom: "+Temporar.toString()+"\nTo: "+Zeilverzeichnis.toString()+"\nException:\n"+ new OP().getStackTrace(ex) + "\nErrorcode: S3x04\n\n";
+								Fehler += "Mod: "+modnames[k] + " " + Version +"\nSource: "+Downloadort+"\nFrom: "+Temporar.toString()+"\nTo: "+Zeilverzeichnis.toString()+"\nException:\n"+ new OP().getStackTrace(ex) + "\nErrorcode: S3x04\n\n";
 							}	
 						} 
 						status(value += hinzu*0.25);
@@ -221,7 +219,7 @@ public class Install extends InstallGUI
 						{	
 							String text = Read.getTextwith("seite3", "forge");
 							stat.setText(text);  
-							iconf.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));	
+							stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));	
 							File libr = new File(sport + "forge_"+Version+".zip");                //Downloadort Forge
 							dowf = new Download();	
 							String forgeort = webplace + Version +"/"+ "forge2.zip";
@@ -243,7 +241,7 @@ public class Install extends InstallGUI
 							}							
 							status(value += hinzu);	
 							
-							iconf.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));
+							stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));
 							try
 							{
 								new Extract(libr, new File(mineord));
@@ -261,7 +259,7 @@ public class Install extends InstallGUI
 					}
 			    }
 				
-				iconf.setIcon(new ImageIcon(this.getClass().getResource("src/import.png")));  // Importiertes kopieren
+				stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/import.png")));  // Importiertes kopieren
 				File importord = new File(stamm+"Modinstaller/Import/");
 				if(Modloader)
 				{
@@ -284,12 +282,12 @@ public class Install extends InstallGUI
 					}
 				}
 				
-				iconf.setIcon(new ImageIcon(this.getClass().getResource("src/install.png")));
+				stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/install.png")));
 				
 				if(Modloader)     //Dateien in Minecraft JAR bei Modloader Modus komprimieren
 				{					
 					stat.setText(Read.getTextwith("seite3", "prog12"));	
-					iconf.setIcon(new ImageIcon(this.getClass().getResource("src/Komprimieren.png")));
+					stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/Komprimieren.png")));
 					status(value += 5);
 					new Compress(new File(sport + "Result/"), new File(modsport +"Modinstaller.jar"));  // Komprimieren
 					status(value += 5);
@@ -374,8 +372,7 @@ public class Install extends InstallGUI
 					}
 				}
 
-				start.setEnabled(true);
-				back.setEnabled(false);
+				startMCButton.setEnabled(true);				
 				bar.setValue(100);
 				
 				if (!Fehler.equals("")) // alle Fehler anzeigen
@@ -387,17 +384,16 @@ public class Install extends InstallGUI
 				{
 					bar.setVisible(false);
 					banner.setVisible(false);
-					social[0].setVisible(true);
-					social[1].setVisible(true);
-					social[2].setVisible(true);
-					iconf.setVisible(false);
-					iconf.setIcon(new ImageIcon(this.getClass().getResource("src/play.png")));
+					socialIcons[0].setVisible(true);
+					socialIcons[1].setVisible(true);
+					socialIcons[2].setVisible(true);
+					stateIcon.setVisible(false);
+					stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/play.png")));
 					stat.setText("");	
 					info.setText(Read.getTextwith("seite3", "prog13"));					
 				}
 			}
-		};
-		t1.start();
+		}.start();
 	}
 
 	public static void status(double zahl) // Statusbar einstellen

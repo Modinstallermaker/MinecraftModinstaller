@@ -33,7 +33,7 @@ public class Error extends JFrame
 	  private JButton Send = new JButton();
 	  private JButton Forum = new JButton();
 	  private JButton Copy = new JButton();
-	  private String Version = Start.Version;
+	  private String Version = Start.mcVersion;
 
 	  private Cursor c = new Cursor(Cursor.HAND_CURSOR);
 	  

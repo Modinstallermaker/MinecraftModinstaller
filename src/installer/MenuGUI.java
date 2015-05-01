@@ -40,54 +40,46 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 {
 	private static final long serialVersionUID = 1L;
 	
-	JList<String> jList1 = new JList<String>();
-	JScrollPane jList1ScrollPane = new JScrollPane(jList1);
-	DefaultListModel<String> jList1Model = new DefaultListModel<String>();
-	
-	JList<String> jList1b = new JList<String>();
-	JScrollPane jList1bScrollPane = new JScrollPane(jList1b);
-	DefaultListModel<String> jList1bModel = new DefaultListModel<String>();
-	
-	JList<String> jList2 = new JList<String>();	
-	JScrollPane jList2ScrollPane = new JScrollPane(jList2);
-	static DefaultListModel<String> jList2Model = new DefaultListModel<String>();
-	
-	DefaultListModel<String> jListModel = null;
-	JList<String> jList;	
 	JTabbedPane tabbedPane = new JTabbedPane();
-		
-	JEditorPane pane;  
-	private JScrollPane scroller;
-	
-	JLabel uberschrift = new JLabel();
-	JLabel versionstext = new JLabel();
-	JLabel modtext = new JLabel();	
-	JLabel[] bew = new JLabel[5];	
-	JLabel banner = new JLabel();
-	JLabel bild = new JLabel();
-	JLabel listright = new JLabel();
-	JLabel pfeilrechts = new JLabel();
-	JLabel pfeillinks = new JLabel();
-	JLabel importbutton = new JLabel();
-	JLabel restore = new JLabel();
-	JLabel hilfe = new JLabel();
-	JLabel link = new JLabel();
-	JLabel quelle = new JLabel();
-	JLabel beenden = new JLabel();
-	JLabel maximize = new JLabel();
-	JLabel minimize = new JLabel();
-	static JLabel weiter = new JLabel();		
 	JComboBox<String> ChVers;
 	JPanel cp;
 	
+	JList<String> leftListM = new JList<String>();
+	JScrollPane  leftListMSP = new JScrollPane(leftListM);
+	DefaultListModel<String> leftListMModel = new DefaultListModel<String>();
+	
+	JList<String> leftListF = new JList<String>();
+	JScrollPane leftListFSP = new JScrollPane(leftListF);
+	DefaultListModel<String> leftListFModel = new DefaultListModel<String>();
+	
+	JList<String> rightList = new JList<String>();	
+	JScrollPane rightListSP = new JScrollPane(rightList);
+	static DefaultListModel<String> rightListModel = new DefaultListModel<String>();	
+			
+	JEditorPane pane;  
+	JScrollPane scroller;
+	
+	JLabel headerLabel = new JLabel();
+	JLabel mcLabel = new JLabel();
+	JLabel modtext = new JLabel();	
+	JLabel[] ratIcons = new JLabel[5];		
+	JLabel picture = new JLabel();
+	JLabel rightListHeadl = new JLabel();
+	JLabel selectArrow = new JLabel();
+	JLabel removeArrow = new JLabel();
+	JLabel importButton = new JLabel();
+	JLabel restoreButton = new JLabel();
+	JLabel helpButton = new JLabel();
+	JLabel linkButton = new JLabel();
+	JLabel sourceButton = new JLabel();
+	JLabel exitButton = new JLabel();
+	JLabel maximizeButton = new JLabel();
+	JLabel minimizeButton = new JLabel();
+	static JLabel nextButton = new JLabel();
+	
 	private Cursor c = new Cursor(Cursor.HAND_CURSOR);		
-	private String stamm = Start.stamm, Version = Start.Version;	
-	public static int zahl;
-
-	static boolean Modloader=true;
-	
+	private String stamm = Start.stamm, mcVersion = Start.mcVersion;		
 	private int hoehe =600, breite=1024;
-	
 	
 	public void GUI() 
 	{
@@ -135,106 +127,106 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		add(cp);
 		
 		int rand = 20;
-		int bildx = 400;
-		int bildy = 225;
+		int picturex = 400;
+		int picturey = 225;
 		int uber = (int)(hoehe*0.09);
 		int listeya = rand+uber;
-		int listenb = (int)(breite/2-bildx+4*rand);
+		int listenb = (int)(breite/2-picturex+4*rand);
 		int listenh = hoehe-listeya-rand;
 		int mittexa= rand+listenb+20;
 		int modtexty = rand+uber;	
 		int infol = modtexty+2*rand;
-		int bildya = infol+(int)(2.5*rand);		
-		int textya = bildy+bildya+20;		
+		int pictureya = infol+(int)(2.5*rand);		
+		int textya = picturey+pictureya+20;		
 		int texth = listeya+listenh-textya;
 		int liste2h= (int)(listenh*0.55);
 	
-		uberschrift.setBounds(0, 0, (int)(breite), (int)(hoehe*0.1));                              //Überschrift
-		uberschrift.setText(Read.getTextwith("installer", "name"));
-		uberschrift.setHorizontalAlignment(SwingConstants.CENTER);
-		uberschrift.setVerticalAlignment(SwingConstants.CENTER);
-		uberschrift.setFont(Start.lcd.deriveFont(Font.BOLD,48));
-		cp.add(uberschrift);
+		headerLabel.setBounds(0, 0, (int)(breite), (int)(hoehe*0.1));                              //Überschrift
+		headerLabel.setText(Read.getTextwith("installer", "name"));
+		headerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		headerLabel.setVerticalAlignment(SwingConstants.CENTER);
+		headerLabel.setFont(Start.lcd.deriveFont(Font.BOLD,48));
+		cp.add(headerLabel);
 	
-		if(Start.Versionen!=null&&Start.Versionen.length>0)  //MC Version ändern
+		if(Start.mcVersionen!=null&&Start.mcVersionen.length>0)  //MC Version ändern
 		{
-			ChVers = new JComboBox<String>(Start.Versionen);
-			for (int ka =0; ka<Start.Versionen.length; ka++)	
+			ChVers = new JComboBox<String>(Start.mcVersionen);
+			for (int ka =0; ka<Start.mcVersionen.length; ka++)	
 			{
-				if(Start.Versionen[ka].equals(Version))
+				if(Start.mcVersionen[ka].equals(mcVersion))
 					ChVers.setSelectedIndex(ka);
 			}
 			ChVers.setBounds(rand+listenb-70, (int)(hoehe*0.05), 70, 25);
 			ChVers.addActionListener(this);			
-			if(Start.Versionen.length==1) ChVers.setEnabled(false);
+			if(Start.mcVersionen.length==1) ChVers.setEnabled(false);
 			cp.add(ChVers);		
 		
-			versionstext.setBounds((int)(rand+listenb-70-110-5), (int)(hoehe*0.05), 110, 25);
-			versionstext.setText("Minecraft");
-			versionstext.setVerticalAlignment(SwingConstants.CENTER);
-			versionstext.setHorizontalAlignment(SwingConstants.RIGHT);
-			cp.add(versionstext);
+			mcLabel.setBounds((int)(rand+listenb-70-110-5), (int)(hoehe*0.05), 110, 25);
+			mcLabel.setText("Minecraft");
+			mcLabel.setVerticalAlignment(SwingConstants.CENTER);
+			mcLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+			cp.add(mcLabel);
 		}
 		
-		jList1Model.addElement(Read.getTextwith("seite2", "wait2")); //Liste1 Modloader
-		jList1.setModel(jList1Model);		
-		jList1.setCellRenderer(new CellRenderer());				
-		jList1.addMouseListener(this);
+		leftListMModel.addElement(Read.getTextwith("seite2", "wait2")); //Liste1 Modloader
+		leftListM.setModel(leftListMModel);		
+		leftListM.setCellRenderer(new CellRenderer());				
+		leftListM.addMouseListener(this);
 				
-		jList1bModel.addElement(Read.getTextwith("seite2", "wait2")); //Liste1 Forge
-		jList1b.setModel(jList1bModel);
-		jList1b.setCellRenderer(new CellRenderer());				
-		jList1b.addMouseListener(this);
+		leftListFModel.addElement(Read.getTextwith("seite2", "wait2")); //Liste1 Forge
+		leftListF.setModel(leftListFModel);
+		leftListF.setCellRenderer(new CellRenderer());				
+		leftListF.addMouseListener(this);
 		
-		jList1ScrollPane.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
-		jList1bScrollPane.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
+		leftListMSP.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
+		leftListFSP.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 		
-		tabbedPane.addTab( "Modloader", jList1ScrollPane);
-		tabbedPane.addTab( "Forge", jList1bScrollPane);
+		tabbedPane.addTab("Modloader", leftListMSP);
+		tabbedPane.addTab("Forge", leftListFSP);
 		tabbedPane.setEnabled(false);
 		tabbedPane.addChangeListener(this);
 		tabbedPane.setBounds(rand, listeya, listenb, listenh);							
 	    cp.add(tabbedPane);        
 		
-		modtext.setBounds(mittexa, modtexty, bildx, 30);           //Modname
+		modtext.setBounds(mittexa, modtexty, picturex, 30);           //Modname
 		modtext.setText(Read.getTextwith("seite2", "text7"));		
 		modtext.setHorizontalAlignment(SwingConstants.CENTER);
 		modtext.setFont(new Font("Dialog", Font.BOLD, 25));
 		cp.add(modtext);
 		
-		link.setBounds(mittexa+bildx-80, infol+5, 40, 40); // Link zu Modinstallerweb	
-		link.setIcon(new ImageIcon(this.getClass().getResource("src/infokl.png")));
-		link.addMouseListener(this); 
-		link.setToolTipText(Read.getTextwith("seite2", "webi"));
-		link.setCursor(c);
-		cp.add(link);
+		linkButton.setBounds(mittexa+picturex-80, infol+5, 40, 40); // Link zu Modinstallerweb	
+		linkButton.setIcon(new ImageIcon(this.getClass().getResource("src/infokl.png")));
+		linkButton.addMouseListener(this); 
+		linkButton.setToolTipText(Read.getTextwith("seite2", "webi"));
+		linkButton.setCursor(c);
+		cp.add(linkButton);
 		
-		quelle.setBounds(mittexa+bildx-40, infol+5, 40, 40); // Link zum Entwickler	
-		quelle.setIcon(new ImageIcon(this.getClass().getResource("src/quelle.png")));
-		quelle.addMouseListener(this); 
-		quelle.setToolTipText(Read.getTextwith("seite2", "dev"));
-		quelle.setCursor(c);
-		cp.add(quelle);
+		sourceButton.setBounds(mittexa+picturex-40, infol+5, 40, 40); // Link zum Entwickler	
+		sourceButton.setIcon(new ImageIcon(this.getClass().getResource("src/quelle.png")));
+		sourceButton.addMouseListener(this); 
+		sourceButton.setToolTipText(Read.getTextwith("seite2", "dev"));
+		sourceButton.setCursor(c);
+		cp.add(sourceButton);
 		
 		for (int i=0; i<5; i++) //Sterne für Bewertung
 		{
-			bew[i] = new JLabel();
-			bew[i].setBounds(mittexa+10+i*25, infol, 40, 40);
-			bew[i].setCursor(c);	
-			bew[i].setIcon(new ImageIcon(this.getClass().getResource("src/star0.png")));
-			bew[i].addMouseListener(this);
-			cp.add(bew[i]);
+			ratIcons[i] = new JLabel();
+			ratIcons[i].setBounds(mittexa+10+i*25, infol, 40, 40);
+			ratIcons[i].setCursor(c);	
+			ratIcons[i].setIcon(new ImageIcon(this.getClass().getResource("src/star0.png")));
+			ratIcons[i].addMouseListener(this);
+			cp.add(ratIcons[i]);
 		}
 		
-		bild.setBounds(mittexa, bildya, bildx, bildy); 
-		bild.setHorizontalAlignment(SwingConstants.CENTER);
-		bild.setVerticalAlignment(SwingConstants.CENTER);   
-		bild.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
-		bild.addMouseListener(this);
-		bild.setCursor(c);    	
-		bild.setIcon(new ImageIcon(this.getClass().getResource("src/warten.gif")));	
-		bild.setToolTipText(Read.getTextwith("seite2", "pici"));
-		cp.add(bild);
+		picture.setBounds(mittexa, pictureya, picturex, picturey); 
+		picture.setHorizontalAlignment(SwingConstants.CENTER);
+		picture.setVerticalAlignment(SwingConstants.CENTER);   
+		picture.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
+		picture.addMouseListener(this);
+		picture.setCursor(c);    	
+		picture.setIcon(new ImageIcon(this.getClass().getResource("src/warten.gif")));	
+		picture.setToolTipText(Read.getTextwith("seite2", "pici"));
+		cp.add(picture);
 		
 		HTMLEditorKit kit = new HTMLEditorKit();		
 			
@@ -257,95 +249,95 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	    
 	    scroller = new JScrollPane(pane);
 	    scroller.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
-	    scroller.setBounds(mittexa, textya, bildx, texth);	
+	    scroller.setBounds(mittexa, textya, picturex, texth);	
 	    cp.add(scroller);
 	    
-		pfeilrechts.setBounds(mittexa+bildx+2*rand, 300, 100, 83); // Pfeil nach rechts		
-		pfeilrechts.setIcon(new ImageIcon(this.getClass().getResource("src/hinzufügen.png")));		
-		pfeilrechts.setToolTipText(Read.getTextwith("seite2", "text1"));
-		pfeilrechts.addMouseListener(this);
-		pfeilrechts.setCursor(c);
-		cp.add(pfeilrechts);
+		selectArrow.setBounds(mittexa+picturex+2*rand, 300, 100, 83); // Pfeil nach rechts		
+		selectArrow.setIcon(new ImageIcon(this.getClass().getResource("src/hinzufügen.png")));		
+		selectArrow.setToolTipText(Read.getTextwith("seite2", "text1"));
+		selectArrow.addMouseListener(this);
+		selectArrow.setCursor(c);
+		cp.add(selectArrow);
 	
-		pfeillinks.setBounds(mittexa+bildx+rand, 390, 100, 83); // Pfeil nach links		
-		pfeillinks.setIcon(new ImageIcon(this.getClass().getResource("src/löschen.png")));	
-		pfeillinks.setToolTipText(Read.getTextwith("seite2", "text2"));	
-		pfeillinks.addMouseListener(this);
-		pfeillinks.setCursor(c);
-		cp.add(pfeillinks);	
+		removeArrow.setBounds(mittexa+picturex+rand, 390, 100, 83); // Pfeil nach links		
+		removeArrow.setIcon(new ImageIcon(this.getClass().getResource("src/löschen.png")));	
+		removeArrow.setToolTipText(Read.getTextwith("seite2", "text2"));	
+		removeArrow.addMouseListener(this);
+		removeArrow.setCursor(c);
+		cp.add(removeArrow);	
 		
-		restore.setBounds(breite-rand-listenb+10, (int)(hoehe*0.15), 180, 40); // Restore druchführen	
-		restore.setText(Read.getTextwith("seite2", "text5"));	
-		restore.setFont(restore.getFont().deriveFont(Font.BOLD));
-		restore.setIcon(new ImageIcon(this.getClass().getResource("src/restore.png")));		
-		restore.addMouseListener(this); 
-		restore.setCursor(c);			
+		restoreButton.setBounds(breite-rand-listenb+10, (int)(hoehe*0.1), 180, 40); // Restore druchführen	
+		restoreButton.setText(Read.getTextwith("seite2", "text5"));	
+		restoreButton.setFont(restoreButton.getFont().deriveFont(Font.BOLD));
+		restoreButton.setIcon(new ImageIcon(this.getClass().getResource("src/restore.png")));		
+		restoreButton.addMouseListener(this); 
+		restoreButton.setCursor(c);			
 		File backupfile = new File(stamm +"Modinstaller/Backup/");
 		if (!backupfile.exists()) // überprüfen, ob Restore möglich ist		
 		{
-			restore.setEnabled(false);
+			restoreButton.setEnabled(false);
 		}
-		//cp.add(restore);
+		cp.add(restoreButton);
 		
-		importbutton.setText(Read.getTextwith("seite2", "text3"));	
-		importbutton.setFont(importbutton.getFont().deriveFont(Font.BOLD));
-		importbutton.setIcon(new ImageIcon(this.getClass().getResource("src/importkl.png")));	
-		importbutton.addMouseListener(this); 
-		importbutton.setCursor(c);	
-		importbutton.setIcon(new ImageIcon(this.getClass().getResource("src/importkl.png")));	
-		importbutton.setBounds(breite-rand-listenb+10, (int)(hoehe*0.1), listenb+20, 120); 
-		cp.add(BorderLayout.CENTER, importbutton);
+		importButton.setText(Read.getTextwith("seite2", "text3"));	
+		importButton.setFont(importButton.getFont().deriveFont(Font.BOLD));
+		importButton.setIcon(new ImageIcon(this.getClass().getResource("src/importkl.png")));	
+		importButton.addMouseListener(this); 
+		importButton.setCursor(c);	
+		importButton.setIcon(new ImageIcon(this.getClass().getResource("src/importkl.png")));	
+		importButton.setBounds(breite-rand-listenb+10, (int)(hoehe*0.2), listenb+20, 50); 
+		cp.add(BorderLayout.CENTER, importButton);
 		
 	    DragDropListener myDragDropListener = new DragDropListener();	    
-	    new DropTarget(importbutton, myDragDropListener);	   
+	    new DropTarget(importButton, myDragDropListener);	   
 		
-		listright.setBounds(breite-rand-listenb, (int)(hoehe*0.315), listenb, 20); //Liste2 Überschrift
-		listright.setHorizontalAlignment(SwingConstants.CENTER);
-		listright.setText(Read.getTextwith("seite2", "modi"));		
-		cp.add(listright);
+		rightListHeadl.setBounds(breite-rand-listenb, (int)(hoehe*0.315), listenb, 20); //Liste2 Überschrift
+		rightListHeadl.setHorizontalAlignment(SwingConstants.CENTER);
+		rightListHeadl.setText(Read.getTextwith("seite2", "modi"));		
+		cp.add(rightListHeadl);
 		
-		jList2Model.addElement("");    // Liste2
-		jList2.setModel(jList2Model);   
-		jList2.setCellRenderer(new CellRenderer());  
-		jList2.addMouseListener(this);
-		jList2ScrollPane.setBounds(breite-rand-listenb,  (int)(hoehe*0.35), listenb, liste2h);
-		jList2ScrollPane.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
-		cp.add(jList2ScrollPane);
+		rightListModel.addElement("");    // Liste2
+		rightList.setModel(rightListModel);   
+		rightList.setCellRenderer(new CellRenderer());  
+		rightList.addMouseListener(this);
+		rightListSP.setBounds(breite-rand-listenb,  (int)(hoehe*0.35), listenb, liste2h);
+		rightListSP.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
+		cp.add(rightListSP);
 		
-		hilfe.setBounds(2, 5, 50, 50); // FAQ anzeigen			
-		hilfe.setIcon(new ImageIcon(this.getClass().getResource("src/help.png")));
-		hilfe.setToolTipText(Read.getTextwith("seite2", "text6"));	
-		hilfe.addMouseListener(this); 		
-		cp.add(hilfe);
+		helpButton.setBounds(2, 5, 50, 50); // FAQ anzeigen			
+		helpButton.setIcon(new ImageIcon(this.getClass().getResource("src/help.png")));
+		helpButton.setToolTipText(Read.getTextwith("seite2", "text6"));	
+		helpButton.addMouseListener(this); 		
+		cp.add(helpButton);
 	    
-		minimize.setBounds(breite-(35+35+35+3+3)-3, 3, 35, 27); //Minimieren		
-		minimize.setIcon(new ImageIcon(this.getClass().getResource("src/mini.png")));			
-		minimize.addMouseListener(this);
-		cp.add(minimize);
+		minimizeButton.setBounds(breite-(35+35+35+3+3)-3, 3, 35, 27); //Minimieren		
+		minimizeButton.setIcon(new ImageIcon(this.getClass().getResource("src/mini.png")));			
+		minimizeButton.addMouseListener(this);
+		cp.add(minimizeButton);
 		
-		maximize.setBounds(breite-(35+35+3)-3, 3, 35, 27); //Maximieren
-		maximize.setIcon(new ImageIcon(this.getClass().getResource("src/maxi.png")));			
-		maximize.addMouseListener(this);
-		maximize.setEnabled(false);
-		cp.add(maximize);
+		maximizeButton.setBounds(breite-(35+35+3)-3, 3, 35, 27); //Maximieren
+		maximizeButton.setIcon(new ImageIcon(this.getClass().getResource("src/maxi.png")));			
+		maximizeButton.addMouseListener(this);
+		maximizeButton.setEnabled(false);
+		cp.add(maximizeButton);
 		
-		beenden.setBounds(breite-35-3, 3, 35, 27); //Beenden		
-		beenden.setIcon(new ImageIcon(this.getClass().getResource("src/closeme.png")));			
-		beenden.addMouseListener(this);
-		cp.add(beenden);
+		exitButton.setBounds(breite-35-3, 3, 35, 27); //Beenden		
+		exitButton.setIcon(new ImageIcon(this.getClass().getResource("src/closeme.png")));			
+		exitButton.addMouseListener(this);
+		cp.add(exitButton);
 	
-		weiter.setBounds((int)(breite-200-rand), hoehe-70-rand, 200, 70); // Installieren		
-		weiter.setText(Read.getTextwith("seite2", "text10"));
-		weiter.setFont(weiter.getFont().deriveFont((float) 15));
-		weiter.addMouseListener(this);
-		weiter.setCursor(c);		
-		weiter.setHorizontalTextPosition(SwingConstants.LEFT);
-		weiter.setFont(weiter.getFont().deriveFont(Font.BOLD, 20));
-		weiter.setHorizontalAlignment(SwingConstants.RIGHT);	
-		weiter.setVerticalAlignment(SwingConstants.CENTER);
-		weiter.setIcon(new ImageIcon(this.getClass().getResource("src/install.png")));	
-		weiter.setEnabled(false);
-		cp.add(weiter);	
+		nextButton.setBounds((int)(breite-200-rand), hoehe-70-rand, 200, 70); // Installieren		
+		nextButton.setText(Read.getTextwith("seite2", "text10"));
+		nextButton.setFont(nextButton.getFont().deriveFont((float) 15));
+		nextButton.addMouseListener(this);
+		nextButton.setCursor(c);		
+		nextButton.setHorizontalTextPosition(SwingConstants.LEFT);
+		nextButton.setFont(nextButton.getFont().deriveFont(Font.BOLD, 20));
+		nextButton.setHorizontalAlignment(SwingConstants.RIGHT);	
+		nextButton.setVerticalAlignment(SwingConstants.CENTER);
+		nextButton.setIcon(new ImageIcon(this.getClass().getResource("src/install.png")));	
+		nextButton.setEnabled(false);
+		cp.add(nextButton);	
 	    
 	    setVisible(true);
 	}

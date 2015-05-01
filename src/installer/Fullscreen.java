@@ -37,10 +37,10 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 	private static final long serialVersionUID = 1L;
 	private JLabel headl = new JLabel();
 	private JLabel headl2 = new JLabel();
-	private JLabel bild = new JLabel();	
-	private JButton vor = new JButton();
-	private JButton zurueck = new JButton();
-	private JButton exit = new JButton();
+	private JLabel hdPicture = new JLabel();	
+	private JButton nextButton = new JButton();
+	private JButton backButton = new JButton();
+	private JButton exitButton = new JButton();
 	private Cursor curs1 = new Cursor(Cursor.HAND_CURSOR);
 	private String url;
 	private int x = 0;
@@ -97,121 +97,116 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 	    
 	    int khoehe = (int)(y*0.9);
 	    int kbreite = (int)(x*0.4);
-	    vor.setBounds(-5, (y/2)-(khoehe/2), kbreite, khoehe);
-	    vor.setText("<<");	   
-	    vor.setCursor(curs1);	
-	    vor.addMouseWheelListener(this);
-	    vor.addKeyListener(this);
-	    vor.setHorizontalAlignment(SwingConstants.LEFT);
-	    vor.setContentAreaFilled(false);
-	    vor.setFont(new Font("Arial", Font.BOLD, 40));
-	    vor.addActionListener(this);	    
-	    cp.add(vor);
+	    nextButton.setBounds(-5, (y/2)-(khoehe/2), kbreite, khoehe);
+	    nextButton.setText("<<");	   
+	    nextButton.setCursor(curs1);	
+	    nextButton.addMouseWheelListener(this);
+	    nextButton.addKeyListener(this);
+	    nextButton.setHorizontalAlignment(SwingConstants.LEFT);
+	    nextButton.setContentAreaFilled(false);
+	    nextButton.setFont(new Font("Arial", Font.BOLD, 40));
+	    nextButton.addActionListener(this);	    
+	    cp.add(nextButton);
 	    
-	    zurueck.setBounds(x-kbreite+5, (y/2)-(khoehe/2), kbreite, khoehe);
-	    zurueck.setText(">>");	  
-	    zurueck.addMouseWheelListener(this);
-	    zurueck.setCursor(curs1);
-	    zurueck.setContentAreaFilled(false);
-	    zurueck.addKeyListener(this);
-	    zurueck.setHorizontalAlignment(SwingConstants.RIGHT);
-	    zurueck.setFont(new Font("Arial", Font.BOLD, 40));
-	    zurueck.addActionListener(this);	   
-	    cp.add(zurueck);
+	    backButton.setBounds(x-kbreite+5, (y/2)-(khoehe/2), kbreite, khoehe);
+	    backButton.setText(">>");	  
+	    backButton.addMouseWheelListener(this);
+	    backButton.setCursor(curs1);
+	    backButton.setContentAreaFilled(false);
+	    backButton.addKeyListener(this);
+	    backButton.setHorizontalAlignment(SwingConstants.RIGHT);
+	    backButton.setFont(new Font("Arial", Font.BOLD, 40));
+	    backButton.addActionListener(this);	   
+	    cp.add(backButton);
 	    
-	    exit.setBounds(x-40, 0, 40, 40);
-	    exit.setIcon(new ImageIcon(this.getClass().getResource("src/power.png")));
-	    exit.addMouseWheelListener(this);
-	    exit.setContentAreaFilled(false);
-	    exit.setCursor(curs1);		  
-	    exit.addKeyListener(this);
-	    exit.addActionListener(new ActionListener() {
+	    exitButton.setBounds(x-40, 0, 40, 40);
+	    exitButton.setIcon(new ImageIcon(this.getClass().getResource("src/power.png")));
+	    exitButton.addMouseWheelListener(this);
+	    exitButton.setContentAreaFilled(false);
+	    exitButton.setCursor(curs1);		  
+	    exitButton.addKeyListener(this);
+	    exitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				dispose();							
 			}
 		});
-	    cp.add(exit);
+	    cp.add(exitButton);
 	   
 	    int hoehe = y;
 	    int breite = x;	    
 	    int abstandoben = 0;
 	    int abstandlinks = 0;
 	  
-    	bild.addKeyListener(this);
-    	bild.addMouseWheelListener(this);
-    	bild.setHorizontalAlignment(SwingConstants.CENTER);
-    	bild.setVerticalAlignment(SwingConstants.CENTER);    	
-    	bild.setBounds(abstandlinks, abstandoben, breite, hoehe);        	    	 
+    	hdPicture.addKeyListener(this);
+    	hdPicture.addMouseWheelListener(this);
+    	hdPicture.setHorizontalAlignment(SwingConstants.CENTER);
+    	hdPicture.setVerticalAlignment(SwingConstants.CENTER);    	
+    	hdPicture.setBounds(abstandlinks, abstandoben, breite, hoehe);        	    	 
     	
     	 laden();
-    	 cp.add(bild);
+    	 cp.add(hdPicture);
     	 setVisible(true);	     	    
 	}	
 	
 	public void laden()
 	{
-		bild.setText("");
+		hdPicture.setText("");
 		geladen=false;
 		neu=true;
 	    headl.setText(modname);	
 	    headl2.setText(modname);	    
 	    url = "http://www.minecraft-installer.de/Dateien/BilderHQ/"+modname+".jpg";		 
 	    url = url.replace(" ", "%20");
-		 	
-		 try 
-	 	    {
-	 			bild.setIcon((Icon) new ImageIcon(this.getClass().getResource("src/warten.gif")));
-	 		} 
-	 	    catch (Exception e) 
-	 	    {
-	 			// TODO Auto-generated catch block
-	 			e.printStackTrace();
-	 		}
-		 Thread t1 = new Thread() 
-	 	    {
-	 	    	  @Override public void run() 
-	 	    	  {	 	    		
-					 try 
-					    {						 
-						 	BufferedImage img = ImageIO.read(new URL(url));
-						 	int dx = img.getWidth();
-						 	int dy = img.getHeight();
-						 	double verh = (double)dy/(double)dx;						 	
-						 	if(dx>x)
-						 	{
-						 		dx=x;
-						 		dy=(int)((double)x*verh);
-						 	}						 	
-						 	if(dy>y)
-						 	{
-						 		dx=(int)((double)y/verh);
-						 		dy=y;
-						 	}						 	
-						 	img = new ImageScaler().scaleImage(img, new Dimension(dx, dy));	
-							bild.setIcon((Icon) new ImageIcon(img));	
-							img.flush();
-						} 
-					    catch (Exception e) 
-					    {
-							bild.setText("Kein Bild verfügbar...");
-							bild.setIcon(null);
-						}					 
-					 geladen = true;
-					 if(!neu) laden();
-	 	    	 }
-		    };
-		    t1.start();
+		
+	    try {
+	    	hdPicture.setIcon((Icon) new ImageIcon(this.getClass().getResource("src/warten.gif")));
+	 	}
+	    catch (Exception e){
+	    }
+		new Thread() 
+		{
+			public void run() 
+			{	 	    		
+				try 
+				{						 
+					BufferedImage img = ImageIO.read(new URL(url));
+					int dx = img.getWidth();
+					int dy = img.getHeight();
+					double verh = (double)dy/(double)dx;						 	
+					if(dx>x)
+					{
+						dx=x;
+						dy=(int)((double)x*verh);
+					}						 	
+					if(dy>y)
+					{
+						x=(int)((double)y/verh);
+						dy=y;
+					}						 	
+					img = new ImageScaler().scaleImage(img, new Dimension(dx, dy));	
+					hdPicture.setIcon((Icon) new ImageIcon(img));	
+					img.flush();
+				} 
+				catch (Exception e) 
+				{
+					hdPicture.setText(Read.getTextwith("seite2", "nopic"));
+					hdPicture.setIcon(null);
+				}					 
+				geladen = true;
+				if(!neu) laden();
+			}
+		}.start();
 	}
-	
+
 	 public void actionPerformed (ActionEvent ae)
 	 {
-	        if(ae.getSource() == this.vor)
+	        if(ae.getSource() == this.nextButton)
 	        {
-	        	vor();           
+	        	next();           
 	        }	      
-	        if(ae.getSource() == this.zurueck)
+	        if(ae.getSource() == this.backButton)
 	        {
-	        	zurueck();	           
+	        	back();	           
 	        }
 	 }
 
@@ -225,16 +220,16 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 	    		Fullscreen.this.dispose();
 	            break;
 	        case KeyEvent.VK_UP:
-	        	vor();
+	        	next();
 	            break;
 	        case KeyEvent.VK_DOWN:
-	        	zurueck();
+	        	back();
 	            break;
 	        case KeyEvent.VK_LEFT:
-	        	vor();
+	        	next();
 	            break;
 	        case KeyEvent.VK_RIGHT :
-	        	zurueck();
+	        	back();
 	            break;	       
 	     }
 	}
@@ -251,7 +246,7 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 		
 	}
 	
-	public void vor()
+	public void next()
 	{
 		i--;			
 		if(i<0)
@@ -264,7 +259,7 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 		else neu=false;
 	
 	}
-	public void zurueck()
+	public void back()
 	{
 		i++;	
 		if(i>model.getSize()-1)		
@@ -278,18 +273,16 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 			neu=false;
 	}
 
-	@Override
 	public void mouseWheelMoved(MouseWheelEvent arg0) 
 	{
 		  int notches = arg0.getWheelRotation();
 	       if (notches < 0) 
 	       {
-	           vor();	                      
+	           next();	                      
 	       }
 	       else 
 	       {
-	          zurueck();
+	          back();
 	       }	
 	}
-	
 }

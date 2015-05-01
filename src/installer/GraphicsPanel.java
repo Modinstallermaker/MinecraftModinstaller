@@ -19,8 +19,8 @@ public class GraphicsPanel extends JPanel
   /**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
-private MediaTracker tracker = new MediaTracker(this);
+  private static final long serialVersionUID = 1L;
+  private MediaTracker tracker = new MediaTracker(this);
   private BufferedImage texture;
   private boolean singlePaint;
   

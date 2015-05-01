@@ -46,26 +46,22 @@ import org.spout.nbt.stream.NBTOutputStream;
 public class Start extends JFrame
 {
 	private static final long serialVersionUID = 6893761562923644768L;
-
-	private JLabel programmtext = new JLabel();
+	private JLabel modinstallerVersionLabel = new JLabel();
 	private JLabel prog = new JLabel();	
 	private JLabel logo = new JLabel();	
-	private JPanel cp;	
-	public static String Version;
-	public static String Programmnummer;
-	public static String Zusatz;
-	public static String webplace;
-	public static String mineord;
-	public static String stamm = null;
-	public static boolean online = false;
-	public static Font lcd = new Font("Dialog",Font.PLAIN,20);
-	public static String[] Versionen; 
-	List<String> OnlineList = new ArrayList<String>();
-	List<String> OfflineList = new ArrayList<String>();
-	List<String> AvialableList;
-	int versuch = 0;	
+	private JPanel cp;		
+	private String Zusatz, modinstallerVersion;
+	private List<String> OnlineList = new ArrayList<String>();
+	private List<String> OfflineList = new ArrayList<String>();
+	private List<String> AvialableList;
+	private int versuch = 0;	
 	private int hoehe =300, breite=500;
 	private String lang ="en";
+	
+	public static String mcVersion, webplace, mineord, stamm;
+	public static boolean online = false;
+	public static Font lcd = new Font("Dialog",Font.PLAIN,20);
+	public static String[] mcVersionen; 
 	
 	public Start()
 	{		
@@ -112,7 +108,7 @@ public class Start extends JFrame
 			e1.printStackTrace();
 		}
 		 
-		Programmnummer = Read.getTextwith("installer", "version");
+		modinstallerVersion = Read.getTextwith("installer", "version");
 		Zusatz = Read.getTextwith("installer", "zusatz");
 		webplace = Read.getTextwith("installer", "webplace");
 				
@@ -128,11 +124,11 @@ public class Start extends JFrame
 		cp.setLayout(null);			
 		add(cp);
 		
-		programmtext.setBounds(breite-100-15, 15, 100, 20);
-		programmtext.setText("Version " + Programmnummer + " " + Zusatz);
-		programmtext.setFont(new Font("Arial", Font.PLAIN, 14));	
-		programmtext.setHorizontalAlignment(SwingConstants.RIGHT);
-		cp.add(programmtext);
+		modinstallerVersionLabel.setBounds(breite-100-15, 15, 100, 20);
+		modinstallerVersionLabel.setText("Version " + modinstallerVersion + " " + Zusatz);
+		modinstallerVersionLabel.setFont(new Font("Arial", Font.PLAIN, 14));	
+		modinstallerVersionLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		cp.add(modinstallerVersionLabel);
 		
 		logo.setBounds(0, 0, breite, hoehe-50);
 		logo.setIcon(new ImageIcon(this.getClass().getResource("src/logo.png")));
@@ -216,7 +212,7 @@ public class Start extends JFrame
 			AvialableList = new LinkedList<String>(OnlineList);					
 			AvialableList.retainAll(OfflineList);	
 			
-			Versionen = AvialableList.toArray( new String[]{} );
+			mcVersionen = AvialableList.toArray( new String[]{} );
 			
 			LinkedList<String> SelectionList = (LinkedList<String>) AvialableList;
 			SelectionList.add("Offline");	
@@ -238,12 +234,12 @@ public class Start extends JFrame
 					}
 					else  //Online ausgewählt
 					{
-						Version = Angebot[selected];
+						mcVersion = Angebot[selected];
 					}
 				}						
 				else //Online nichts ausgewählt
 				{
-					Version = Angebot[Angebot.length-2];							
+					mcVersion = Angebot[Angebot.length-2];							
 				}
 			}
 			
@@ -258,15 +254,15 @@ public class Start extends JFrame
 	{
 		online=false;
 		Zusatz = "Offline";								
-		Versionen = OfflineList.toArray( new String[]{} );
-		int selected2 = JOptionPane.showOptionDialog(null, Read.getTextwith("OP", "modver") + " (Offline)", Read.getTextwith("OP", "modverh"), JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null,	Versionen, Versionen[Versionen.length-1]);
+		mcVersionen = OfflineList.toArray( new String[]{} );
+		int selected2 = JOptionPane.showOptionDialog(null, Read.getTextwith("OP", "modver") + " (Offline)", Read.getTextwith("OP", "modverh"), JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null,	mcVersionen, mcVersionen[mcVersionen.length-1]);
 		if(selected2 !=-1)
 		{
-			Version = Versionen[selected2];
+			mcVersion = mcVersionen[selected2];
 		}
 		else
 		{
-			Version = Versionen[Versionen.length-1];
+			mcVersion = mcVersionen[mcVersionen.length-1];
 		}
 	}
 	
@@ -402,7 +398,7 @@ public class Start extends JFrame
 					{		
 						try
 						{						
-							String jetzt = Programmnummer;
+							String jetzt = modinstallerVersion;
 							String aktuell = zeile3;
 							String s1 = normalisedVersion(jetzt);
 					        String s2 = normalisedVersion(aktuell);
@@ -412,7 +408,7 @@ public class Start extends JFrame
 						}
 						catch (Exception e)
 						{
-							String body = "Text=" + String.valueOf(e) + "; Errorcode: S1x04a&MCVers=" + Version + "&InstallerVers=" + Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString()+ "&EMail=unkn";
+							String body = "Text=" + String.valueOf(e) + "; Errorcode: S1x04a&MCVers=" + mcVersion + "&InstallerVers=" + Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString()+ "&EMail=unkn";
 							new Download().post("http://www.minecraft-installer.de/error.php", body);
 						}					
 						
@@ -450,7 +446,7 @@ public class Start extends JFrame
 			}
 			try 
 			{
-				String body = "Text=" + String.valueOf(ex) + "; Errorcode: S1x04&MCVers=" + Version + "&InstallerVers=" + Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString()+ "&EMail=unkn";
+				String body = "Text=" + String.valueOf(ex) + "; Errorcode: S1x04&MCVers=" + mcVersion + "&InstallerVers=" + Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString()+ "&EMail=unkn";
 				new Download().post("http://www.minecraft-installer.de/error.php", body);
 			} 
 			catch (Exception e) {}
@@ -494,7 +490,7 @@ public class Start extends JFrame
 			
 			String lastmc = new OP().optionReader("lastmc");
 			
-			if (!lastmc.equals("n/a")&&!lastmc.equals(Version))
+			if (!lastmc.equals("n/a")&&!lastmc.equals(mcVersion))
 			{				
 				prog.setText(Read.getTextwith("seite1", "prog8"));
 				
