@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import static installer.OP.*;
+
 /**
  * 
  * Beschreibung
@@ -18,7 +20,7 @@ public class MCLauncher
 {	
 	public MCLauncher(final String webplace, final String stamm)
 	{
-		new OP().makedirs(new File(stamm +"/Modinstaller/"));
+		makedirs(new File(stamm +"/Modinstaller/"));
 		boolean ausf = true;
 		
 		String str = System.getProperty("os.name").toLowerCase(); 
@@ -44,7 +46,7 @@ public class MCLauncher
 			 downloadort = webplace + "Launcher2.jar";
 		 }
 			
-		new OP().makedirs(speicherort.getParentFile());	
+		makedirs(speicherort.getParentFile());	
 		try 
 		{
 			if(!new Download().ident(downloadort, speicherort)||speicherort.length()==0)						
@@ -71,7 +73,7 @@ public class MCLauncher
 				{
 					try
 					{
-						new OP().copy(FC.getSelectedFile(), speicherort);		
+						copy(FC.getSelectedFile(), speicherort);		
 						ausf=true;
 					}
 					catch (Exception ex)

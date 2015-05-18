@@ -34,12 +34,14 @@ import org.spout.nbt.StringTag;
 import org.spout.nbt.stream.NBTInputStream;
 import org.spout.nbt.stream.NBTOutputStream;
 
+import static installer.OP.*;
+
 
 /**
  * 
  * Beschreibung
  * 
- * @version 2.1 vom 14.04.2013
+ * @version 4.3
  * @author Dirk Lippke
  */
 
@@ -65,52 +67,35 @@ public class Start extends JFrame
 	
 	public Start()
 	{		
-		minecraftSuchen();
+		minecraftDir();
 		
-		String lastv = new OP().optionReader("modinstaller");	
-		if(lastv.equals("n/a"))
+		if(optionReader("modinstaller").equals("n/a"))
 		{
-			new OP().del(new File(stamm + "/Modinstaller"));
-			new OP().del(new File(System.getProperty("user.home") + "/Desktop/MC Modinstaller 4.1.lnk"));
-			new OP().del(new File(System.getProperty("user.home") + "/Microsoft/Windows/Start Menu/Programs/MC Modinstaller 4.1.lnk"));			
+			del(new File(stamm + "/Modinstaller"));
+			del(new File(System.getProperty("user.home") + "/Desktop/MC Modinstaller 4.1.lnk"));
+			del(new File(System.getProperty("user.home") + "/Microsoft/Windows/Start Menu/Programs/MC Modinstaller 4.1.lnk"));	
+			del(new File(System.getProperty("user.home") + "/Desktop/MC Modinstaller 4.2.lnk"));
+			del(new File(System.getProperty("user.home") + "/Microsoft/Windows/Start Menu/Programs/MC Modinstaller 4.2.lnk"));	
 		}
-		new OP().makedirs(new File(stamm + "/Modinstaller"));
-		File configf = new File(stamm + "/Modinstaller/config.txt");
-		if(!configf.exists())
+		makedirs(new File(stamm + "/Modinstaller"));	
+			
+		if(optionReader("language").equals("n/a"))
 		{
-			String[] text = {"loadtexts:true", "design:default", "lizenz:false", "modinstaller:4.2.1"};
-			try 
+			Object[] options2 = {"Deutsch (German)", "English (Englisch)"};			
+			int selected2 = JOptionPane.showOptionDialog(null, "Welche Sprache sprichst Du?\nWhat language do you speak?", "Spache/Language?", JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null,	options2, options2[0]);
+			switch (selected2)
 			{
-				new OP().Textwriter(configf, text, false);
-			} 
-			catch (IOException e1) 
-			{						
-				e1.printStackTrace();
+				case 0: lang="de"; break;
+				case 1: lang="en"; break;
 			}
-		}		
-		try 
-		{
-			lang = new OP().optionReader("language");
-			if(lang.equals("n/a"))
-			{
-				Object[] options2 = {"Deutsch (German)", "English (Englisch)"};			
-				int selected2 = JOptionPane.showOptionDialog(null, "Welche Sprache sprichst Du?\nWhat language do you speak?", "Spache/Language?", JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null,	options2, options2[0]);
-				switch (selected2)
-				{
-					case 0: lang="de"; break;
-					case 1: lang="en"; break;
-				}
-				new OP().optionWriter("language", lang);
-			}
-		}
-		catch (IOException e1) 
-		{			
-			e1.printStackTrace();
+			optionWriter("language", lang);
 		}
 		 
 		modinstallerVersion = Read.getTextwith("installer", "version");
 		Zusatz = Read.getTextwith("installer", "zusatz");
 		webplace = Read.getTextwith("installer", "webplace");
+		
+		optionWriter("modinstaller", modinstallerVersion);
 				
 		setSize(breite, hoehe);
 		setUndecorated(true);
@@ -131,7 +116,7 @@ public class Start extends JFrame
 		cp.add(modinstallerVersionLabel);
 		
 		logo.setBounds(0, 0, breite, hoehe-50);
-		logo.setIcon(new ImageIcon(this.getClass().getResource("src/logo.png")));
+		logo.setIcon(new ImageIcon(this.getClass().getResource("src/logok.png")));
 		logo.setHorizontalAlignment(SwingConstants.CENTER);
 		cp.add(logo);
 		
@@ -143,40 +128,82 @@ public class Start extends JFrame
 		setVisible(true);	
 		
 		new Thread() 
-		{			
-			@Override
+		{
 			public void run() 
 			{					
 				try 
 				{
 					lcd = Font.createFont(Font.TRUETYPE_FONT, this.getClass().getResource("src/Comfortaa.ttf").openStream());
 				} 
-				catch (Exception e)
-				{					
-				}	
+				catch (Exception e){}	
 				
-				Serverlist();
+				del(new File(stamm+"/Modinstaller/zusatz.txt"));
+				del(new File(stamm+"/Modinstaller/Import"));
+				del(new File(stamm + "/Modinstaller/modlist.txt"));
 				
-				new OP().del(new File(stamm+"/Modinstaller/zusatz.txt"));
-				new OP().del(new File(stamm+"/Modinstaller/Import"));
-				new OP().del(new File(stamm + "/Modinstaller/modlist.txt"));
+				if(!new File(mineord).exists())
+					sucheMineord();
 				
-				versionenSuchen();
-				
-				if(updateHerunterladen())  //Online
+				if(!versionenSuchen())
 				{
-					Online();
-				}				
-				else  
-				{				
-					Offline();
-				}				
+					JOptionPane.showMessageDialog(null, "Wir konnten im Minecraft Ordner \"versions\" keine Minecraft Installation vorfinden.\nBitte installiere eine Minecraft Version z.B. 1.7.10 über die neuste Lauchner Version!");
+					optionWriter("mcfolder", mineord);
+					sucheMineord();
+					if(!versionenSuchen())
+						System.exit(0);
+				}
 				
+				if(updateHerunterladen())
+					Online();	
+				else  		
+					Offline();
+				
+				Serverlist();				
 				aktualisieren();	
-				//shortcuts();
+				shortcuts();
 				hauptmStarten();
 			}
 		}.start();
+	}
+	
+	private void sucheMineord()
+	{
+		mineord=optionReader("mcfolder");
+		if(mineord.contains("-----"))
+			mineord=mineord.replace("-----", ":");
+		File em = new File(mineord);
+		if(mineord.equals("n/a")||(!em.exists()))
+		{
+			Object[] options2 = {"Minecraft Ordner auswählen", "Hilfe anzeigen", Read.getTextwith("seite1", "inter3")};
+			int selected2 = JOptionPane.showOptionDialog(null, Read.getTextwith("seite1", "error4"), Read.getTextwith("seite1", "error4h"), JOptionPane.DEFAULT_OPTION,JOptionPane.WARNING_MESSAGE, null, options2, options2[0]);
+			switch(selected2)
+			{
+				case 0:
+				{
+					JFileChooser fc = new JFileChooser(); 
+					fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
+					int returnVal = fc.showOpenDialog(null);
+					if (returnVal != JFileChooser.APPROVE_OPTION) 
+					{
+						 System.exit(0);
+					}
+					else 
+					{
+						mineord = String.valueOf(fc.getSelectedFile()).replace("\\", "/")+"/";
+						optionWriter("mcfolder", mineord.replace(":", "-----"));
+					}
+					break;
+				}
+				case 1: 
+				{
+					new Browser(Read.getTextwith("installer", "website")+"faq.php?id=installmc");
+					System.exit(0);
+					break;
+				}					
+				case 2: System.exit(0);
+				default: System.exit(0);
+			}
+		}			
 	}
 	
 	/*
@@ -187,11 +214,11 @@ public class Start extends JFrame
 		try 
 		{
 			new Download().downloadFile(webplace+"quellen.txt", new FileOutputStream(versionendat));
-			OnlineList = new OP().Textreadera(versionendat);
+			OnlineList = Textreadera(versionendat);
 			Versionen = OnlineList.toArray( new String[]{} );	
 			
 			new Download().downloadFile(webplace+"recom.txt", new FileOutputStream(rec));			
-			String[] reco = new OP().Textreader(rec);
+			String[] reco = Textreader(rec);
 			Version = reco[0];			
 		} 
 		catch (Exception e) 
@@ -207,7 +234,7 @@ public class Start extends JFrame
 		try 
 		{
 			new Download().downloadFile(webplace+"quellen.txt", new FileOutputStream(versionendat));
-			OnlineList = new OP().Textreadera(versionendat);
+			OnlineList = Textreadera(versionendat);
 			
 			AvialableList = new LinkedList<String>(OnlineList);					
 			AvialableList.retainAll(OfflineList);	
@@ -275,7 +302,7 @@ public class Start extends JFrame
 		{										
 			try
 			{			
-				new Download().smartDownload("http://www.minecraft-installer.de//Dateien/Programme/MC%20Modinstaller%204.2.exe", installer);				
+				new Download().smartDownload("http://www.minecraft-installer.de//Dateien/Programme/MC%20Modinstaller%20"+modinstallerVersion+".exe", installer);				
 				java.io.InputStream inputStream = this.getClass().getResourceAsStream("src/links.vbs");
 
 			    File tempOutputFile = File.createTempFile("links", ".vbs"); 
@@ -297,13 +324,13 @@ public class Start extends JFrame
 			}
 			catch (Exception ex)
 			{	
-				new Error(new OP().getStackTrace(ex));
+				new Error(getError(ex));
 			}				
 		}		 		 
 	}
 	
 	
-	public void minecraftSuchen()
+	public void minecraftDir()
 	{	
 		String str = System.getProperty("os.name").toLowerCase(); // Ordner Appdata den Betriebssystemen anpassen
 		
@@ -317,48 +344,11 @@ public class Start extends JFrame
 			 mineord = System.getProperty("user.home").replace("\\", "/") + "/Library/Application Support/minecraft/";
 			 stamm =  System.getProperty("user.home").replace("\\", "/") + "/Library/Application Support/";
 		 }
-		 else if (str.contains("solaris")) 
-		 {
-			 mineord = System.getProperty("user.home").replace("\\", "/") + "/.minecraft/";
-			 stamm = System.getProperty("user.home").replace("\\", "/")+"/";
-		 }
-		 else if (str.contains("sunos")) 
-		 {
-			 mineord = System.getProperty("user.home").replace("\\", "/") + "/.minecraft/";
-			 stamm = System.getProperty("user.home").replace("\\", "/")+"/";
-		 }
-		 else if (str.contains("linux"))
-		 {
-			 mineord = System.getProperty("user.home").replace("\\", "/") + "/.minecraft/";
-			 stamm = System.getProperty("user.home").replace("\\", "/")+"/";
-		 }
-		 else if (str.contains("unix")) 
-		 {
-			 mineord = System.getProperty("user.home").replace("\\", "/") + "/.minecraft/";
-			 stamm = System.getProperty("user.home").replace("\\", "/")+"/";
-		 }
 		 else 
 		 {
 			mineord = System.getProperty("user.home").replace("\\", "/") + "/.minecraft/";
 		    stamm = System.getProperty("user.home").replace("\\", "/")+"/";
-		 }		
-			
-		if(!new File(mineord).exists())
-		{
-			 JOptionPane.showMessageDialog(null, Read.getTextwith("seite1", "error4"), Read.getTextwith("seite1", "error4h"), JOptionPane.ERROR_MESSAGE);
-			 JFileChooser fc = new JFileChooser(); 
-			 
-			 fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
-			 int returnVal = fc.showOpenDialog(null);
-			 if (returnVal != JFileChooser.APPROVE_OPTION) 
-			 { 
-				 System.exit(0);
-			 } 
-			 else 
-			 { 
-				 mineord = String.valueOf(fc.getSelectedFile()).replace("\\", "/");
-			 }
-		}		
+		 }	
 	}
 	
 
@@ -391,7 +381,7 @@ public class Start extends JFrame
 				String meld = "";
 				String textz = "";
 				
-				while ((zeile3 = in2.readLine()) != null) // Datei durchk�mmen
+				while ((zeile3 = in2.readLine()) != null) // Datei durchkaemmen
 				{
 					zahl++;
 					if (zahl == 1) 
@@ -464,8 +454,9 @@ public class Start extends JFrame
 		return online;		
 	}
 	
-	public void versionenSuchen()
-	{				
+	public boolean versionenSuchen()
+	{		
+		boolean found=false;
 		File file = new File(mineord + "versions");
 		if (file.exists()) 
 		{
@@ -477,9 +468,11 @@ public class Start extends JFrame
 				if(jarfile.exists()&&jsonfile.exists()&&(!li[i].getName().equals("Modinstaller")))
 				{					
 					OfflineList.add(li[i].getName());
+					found=true;
 				}
 			}			
 		}	
+		return found;
 	}
 	
 	public void aktualisieren()
@@ -488,16 +481,16 @@ public class Start extends JFrame
 		{ 
 			prog.setText(Read.getTextwith("seite1", "prog7"));
 			
-			String lastmc = new OP().optionReader("lastmc");
+			String lastmc = optionReader("lastmc");
 			
 			if (!lastmc.equals("n/a")&&!lastmc.equals(mcVersion))
 			{				
 				prog.setText(Read.getTextwith("seite1", "prog8"));
 				
-				new OP().del(new File(stamm + "/Modinstaller/Mods"));				
-				new OP().del(new File(stamm + "/Modinstaller/Original"));	
-				new OP().del(new File(stamm + "/Modinstaller/Mods/forge.zip"));	
-				new OP().del(new File(stamm + "/Modinstaller/Mods/Forge"));	
+				del(new File(stamm + "/Modinstaller/Mods"));				
+				del(new File(stamm + "/Modinstaller/Original"));	
+				del(new File(stamm + "/Modinstaller/Mods/forge.zip"));	
+				del(new File(stamm + "/Modinstaller/Mods/Forge"));	
 			}
 			else
 			{
@@ -522,7 +515,7 @@ public class Start extends JFrame
 			{
 				File texte = new File(stamm+"/Modinstaller/modtexts.txt");
 				new Download().downloadFile("http://www.minecraft-installer.de/api/mods.php", new FileOutputStream(texte));
-				String[] modliste = new OP().Textreaders(texte).split(";;;");
+				String[] modliste = Textreaders(texte).split(";;;");
 				
 				Mod = new Modinfo[modliste.length];
 				for(int i=0; i<modliste.length; i++)
@@ -544,7 +537,7 @@ public class Start extends JFrame
 							Mod[i].setSource(unterkat[1]);
 					}
 				}
-				new OP().del(texte);
+				del(texte);
 			} 
 			catch (Exception e) 
 			{				
@@ -555,7 +548,7 @@ public class Start extends JFrame
 			{
 				File downloadt = new File(stamm+"/Modinstaller/downloadtexts.txt");
 				new Download().downloadFile("http://www.minecraft-installer.de/api/offer.php", new FileOutputStream(downloadt));
-				String[] downloadlist = new OP().Textreaders(downloadt).split(";;;");
+				String[] downloadlist = Textreaders(downloadt).split(";;;");
 				
 				Downloadlist = new Modinfo[downloadlist.length];
 				for(int i2=0; i2<downloadlist.length; i2++)
@@ -576,7 +569,7 @@ public class Start extends JFrame
 							Downloadlist[i2].setRating(Double.parseDouble(unterkat2[1]));	
 					}				
 				}	
-				new OP().del(downloadt);
+				del(downloadt);
 			}
 			catch (Exception ex)
 			{
@@ -584,7 +577,7 @@ public class Start extends JFrame
 			}
 		}
 		
-    	String lizenz = new OP().optionReader("lizenz");
+    	String lizenz = optionReader("lizenz");
 		
 		if(lizenz.equals("n/a")||lizenz.equals("false"))
 		{
@@ -599,11 +592,11 @@ public class Start extends JFrame
 	
 	public void Serverlist()  //Serverliste modifizieren
 	{
-		if(new OP().optionReader("servermod").equals("n/a"))  
+		if(optionReader("servermod").equals("n/a"))  
 			try 
 			{
 				List<CompoundTag> list3 = new ArrayList<CompoundTag>();	  
-				File sd = new File(mineord+"servers.dat");
+				File sd = new File(mineord+"servers.dat");				
 				if(sd.exists())
 				{
 					NBTInputStream fd = new NBTInputStream(new FileInputStream(mineord+"servers.dat"), false);	
@@ -623,6 +616,10 @@ public class Start extends JFrame
 					ListTag<CompoundTag> value= (ListTag<CompoundTag>) m.getValue();   
 				    list3 = value.getValue();
 				}
+				else
+				{
+					 sd.createNewFile();
+				}
 			  			
 				CompoundMap map21 = new CompoundMap();				
 				CompoundMap map3 = new CompoundMap();
@@ -637,17 +634,16 @@ public class Start extends JFrame
 
 				map3.put(new ListTag<CompoundTag>("servers", CompoundTag.class, list2));
 				
-				NBTOutputStream os = new NBTOutputStream(new FileOutputStream(mineord+"servers.dat"), false);			
+				NBTOutputStream os = new NBTOutputStream(new FileOutputStream(sd), false);			
 				CompoundTag exit = new CompoundTag("", map3);
 				os.writeTag(exit);
 				os.close();
 				
-				new OP().optionWriter("servermod", "true");
+				optionWriter("servermod", "true");
 			} 
 			catch (IOException e1) 
 			{			
-				e1.printStackTrace();
-				
+				e1.printStackTrace();				
 			}			
 	}
 
@@ -665,9 +661,11 @@ public class Start extends JFrame
 			UIManager.put("info", white);	
 			UIManager.put("nimbusSelectionBackground", red);
 			UIManager.put("nimbusSelectedText", white);
-			UIManager.put("nimbusFocus", white);
+			UIManager.put("nimbusFocus", darkwhite);
 			UIManager.put("nimbusLightBackground", white);			
-			UIManager.put("control", darkwhite);
+			UIManager.put("control", white);
+			UIManager.getLookAndFeelDefaults().put("List[Selected].textBackground", red);
+			UIManager.getLookAndFeelDefaults().put("List[Selected].textForeground", white);
 	    } 
 	    catch (Exception e) 
 	    {
@@ -675,9 +673,7 @@ public class Start extends JFrame
 	      {
 	    	  UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
 	      }
-	      catch (Exception e2)
-	      {	    	  
-	      }
+	      catch (Exception e2) {}
 	    }
 		new Start();			
 	}	

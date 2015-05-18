@@ -23,6 +23,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import static installer.OP.*;
+
 /**
  * 
  * Beschreibung
@@ -81,8 +83,8 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 								Forgel.add(moddownloads[k].getName());
 							}
 						}
-						new OP().del(new File(stamm + "Modinstaller/Import"));
-						new OP().del(new File(stamm + "Modinstaller/zusatz.txt"));
+						del(new File(stamm + "Modinstaller/Import"));
+						del(new File(stamm + "Modinstaller/zusatz.txt"));
 					}
 					catch (Exception localException) {}
 								    
@@ -168,9 +170,9 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		if (!Modloader) 
 			Mode = "Forge";
 		
-		if ((new OP().optionReader("lastmc").equals(this.mcVersion)) && (new OP().optionReader("lastmode").equals(Mode)))
+		if ((optionReader("lastmc").equals(this.mcVersion)) && (optionReader("lastmode").equals(Mode)))
 		{
-			String alastm = new OP().optionReader("lastmods");
+			String alastm = optionReader("lastmods");
 			String[] lastm = alastm.split(";;");
 			int lange = List.getSize();
 			for (int r = 0; r < lastm.length; r++) 
@@ -234,10 +236,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 						}
 					}					
 			    }
-			    catch(Exception e)
-			    {	
-			    	 e.getStackTrace();
-			    }	
+			    catch(Exception e) {}	
 			}
 		}
 		
@@ -298,7 +297,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 				if (((String) rightListModel.getElementAt(rightList.getSelectedIndex())).substring(0, 1).equals("+")) // Importierter Mod löschen
 				{
 					String name = rightListModel.getElementAt(rightList.getSelectedIndex()).substring(2);	
-					new OP().del(new File(stamm+"Modinstaller/Import/"+name+".jar"));
+					del(new File(stamm+"Modinstaller/Import/"+name+".jar"));
 				}  
 				else  // sonst nach Liste links kopieren
 				{
@@ -358,7 +357,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		} 
 		catch (Exception ex) 
 		{	
-			new Error(new OP().getStackTrace(ex) + "\n\nErrorcode: S2x09");	
+			new Error(getError(ex) + "\n\nErrorcode: S2x09");	
 		}		
 	}
 
@@ -375,41 +374,47 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	
 	public void setImport()
 	{
-		 pane.setText(Read.getTextwith("seite2", "import"));
-         pane.setCaretPosition(0);	         
-         picture.setIcon(new ImageIcon(this.getClass().getResource("src/importbig.png")));
-         modtext.setText(Read.getTextwith("seite2", "text3"));
-         hyperlink = "http://www.minecraft-installer.de/faq.php";
-         setRating(0.0D, true);
+		
+        picture.setIcon(new ImageIcon(this.getClass().getResource("src/importbig.png")));
+         
+        if(Modloader)
+        {
+        	modtext.setText(Read.getTextwith("seite2", "importmh"));
+        	pane.setText(Read.getTextwith("seite2", "importm"));
+        }
+        else
+        {
+        	modtext.setText(Read.getTextwith("seite2", "importfh"));
+        	pane.setText(Read.getTextwith("seite2", "importf"));
+        }
+        pane.setCaretPosition(0);	         
+       
+        hyperlink = Read.getTextwith("seite2", "web")+"/faq.php";
+        setRating(0.0D, true);
 	}
 		
 	public void restore() //Letzte Modinstallation wiederherstellen
 	{
-		new OP().del(new File(mineord+"versions/Modinstaller"));
+		del(new File(mineord+"versions/Modinstaller"));
 		try 
 		{
-			new OP().copy(new File(stamm+"Modinstaller/Backup/Modinstaller.jar"), new File(mineord+"versions/Modinstaller.jar"));
-			new OP().copy(new File(stamm+"Modinstaller/Backup/Modinstaller.json"), new File(mineord+"versions/Modinstaller.json"));
-			new OP().copy(new File(stamm+"Modinstaller/Backup/mods"), new File(mineord+"mods"));
+			copy(new File(stamm+"Modinstaller/Backup/Modinstaller.jar"), new File(mineord+"versions/Modinstaller.jar"));
+			copy(new File(stamm+"Modinstaller/Backup/Modinstaller.json"), new File(mineord+"versions/Modinstaller.json"));
+			copy(new File(stamm+"Modinstaller/Backup/mods"), new File(mineord+"mods"));
 			JOptionPane.showMessageDialog(null,	Read.getTextwith("seite2", "restore"), Read.getTextwith("seite2", "restoreh"), JOptionPane.INFORMATION_MESSAGE);
 		} 
 		catch (Exception e) 
 		{			
 			e.printStackTrace();
 		} 
-		try 
-		{
-			new OP().optionWriter("lastmods", new OP().optionReader("slastmods"));
-			new OP().optionWriter("slastmods", new OP().optionReader("n/a"));
-			new OP().optionWriter("lastmc", new OP().optionReader("slastmc"));
-			new OP().optionWriter("slastmc", new OP().optionReader("n/a"));
-			new OP().optionWriter("lastmode", new OP().optionReader("slastmode"));
-			new OP().optionWriter("slastmode", new OP().optionReader("n/a"));
-		} 
-		catch (Exception e1) 
-		{			
-			e1.printStackTrace();
-		}		
+		
+		optionWriter("lastmods", optionReader("slastmods"));
+		optionWriter("slastmods", optionReader("n/a"));
+		optionWriter("lastmc", optionReader("slastmc"));
+		optionWriter("slastmc", optionReader("n/a"));
+		optionWriter("lastmode", optionReader("slastmode"));
+		optionWriter("slastmode", optionReader("n/a"));
+			
 		restoreButton.setEnabled(false);	
 	}
 	

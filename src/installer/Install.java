@@ -23,6 +23,8 @@ import argo.jdom.JsonField;
 import argo.jdom.JsonNode;
 import argo.jdom.JsonRootNode;
 import argo.jdom.JsonStringNode;
+
+import static installer.OP.*;
 /**
  * 
  * Beschreibung
@@ -67,28 +69,28 @@ public class Install extends InstallGUI
 					
 					stat.setText(Read.getTextwith("seite3", "prog3"));                              //Wiederherstellungspunkt
 					stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/restore2.png")));		
-					new OP().del(new File(sport + "Backup"));		
-					new OP().copy(new File(modsport), new File(sport + "Backup"));	
-					new OP().copy(new File(mineord +"mods"), new File(sport + "Backup/mods"));		
+					del(new File(sport + "Backup"));		
+					copy(new File(modsport), new File(sport + "Backup"));	
+					copy(new File(mineord +"mods"), new File(sport + "Backup/mods"));		
 					
 					status(value += 5); //6
 					
 					stat.setText(Read.getTextwith("seite3", "prog1"));	//Löschen								
-					new OP().del(new File(sport + "Result"));
-					new OP().del(new File(sport + "Original"));					
-					new OP().del(new File(mineord +"mods"));
-					new OP().del(new File(mineord +"coremods"));
-					new OP().del(new File(mineord +"config"));	
-					new OP().del(new File(modsport));
+					del(new File(sport + "Result"));
+					del(new File(sport + "Original"));					
+					del(new File(mineord +"mods"));
+					del(new File(mineord +"coremods"));
+					del(new File(mineord +"config"));	
+					del(new File(modsport));
 					
 					stat.setText(Read.getTextwith("seite3", "prog2"));            //Anlegen
-					new OP().makedirs(new File(sport + "Result"));
-					new OP().makedirs(new File(sport + "Backup"));	
-					new OP().makedirs(new File(modsport));
+					makedirs(new File(sport + "Result"));
+					makedirs(new File(sport + "Backup"));	
+					makedirs(new File(modsport));
 					
-					new OP().copy(new File(mineord + "versions/"+Version), new File(modsport)); //von Versions Ordner in Modinstaller Ordner kopieren
-					new OP().rename(new File(modsport + Version+".jar"), new File(modsport + "Modinstaller.jar")); //Umbenennen in Modinstaller
-					new OP().rename(new File(modsport + Version+".json"), new File(modsport + "Modinstaller.json"));
+					copy(new File(mineord + "versions/"+Version), new File(modsport)); //von Versions Ordner in Modinstaller Ordner kopieren
+					rename(new File(modsport + Version+".jar"), new File(modsport + "Modinstaller.jar")); //Umbenennen in Modinstaller
+					rename(new File(modsport + Version+".json"), new File(modsport + "Modinstaller.json"));
 					
 					status(value += 2); //8
 					
@@ -104,14 +106,14 @@ public class Install extends InstallGUI
 						String mode="Forge";
 						if(Modloader==true) mode="Modloader";
 					
-						new OP().optionWriter("slastmc", new OP().optionReader("lastmc"));
-						new OP().optionWriter("lastmc", Version);					
-						new OP().optionWriter("slastmode", new OP().optionReader("lastmode"));
-						new OP().optionWriter("lastmode", mode);	
+						optionWriter("slastmc", optionReader("lastmc"));
+						optionWriter("lastmc", Version);					
+						optionWriter("slastmode", optionReader("lastmode"));
+						optionWriter("lastmode", mode);	
 											
 						if(modnames.length!=0)
 						{
-							new OP().optionWriter("slastmods", new OP().optionReader("lastmods"));
+							optionWriter("slastmods", optionReader("lastmods"));
 							String modn="";
 							for (int e=0; e<modnames.length; e++)
 							{
@@ -119,12 +121,12 @@ public class Install extends InstallGUI
 							}
 							if(modn.endsWith(";;"))
 								modn = modn.substring(0, modn.length()-2);
-							new OP().optionWriter("lastmods", modn);
+							optionWriter("lastmods", modn);
 						}
 						else
 						{
-							new OP().optionWriter("slastmods", "n/a");
-							new OP().optionWriter("lastmods", "n/a");
+							optionWriter("slastmods", "n/a");
+							optionWriter("lastmods", "n/a");
 						}						
 					}
 					catch (Exception e)	{}
@@ -134,14 +136,14 @@ public class Install extends InstallGUI
 				catch (Exception ex) 
 				{
 					stat.setText("Errorcode: S3x01: " + String.valueOf(ex));
-					Fehler += new OP().getStackTrace(ex) + " Errorcode: S3x01\n\n";
+					Fehler += getError(ex) + " Errorcode: S3x01\n\n";
 				}
 				
 				if (online==true)																//Dateien herunterladen
 				{			
 					try 
 					{	
-						new OP().makedirs(new File(sport + "Mods")); // Ordner anlegen	
+						makedirs(new File(sport + "Mods")); // Ordner anlegen	
 						
 						double hinzu = 10;
 						try
@@ -200,17 +202,17 @@ public class Install extends InstallGUI
 								
 								if(Modloader) //Modloader
 								{
-									new OP().copy(Zeilverzeichnis, new File(sport + "Result")); //in JAR Kompressionsordner
+									copy(Zeilverzeichnis, new File(sport + "Result")); //in JAR Kompressionsordner
 								}
 								else  //Forge
 								{
-									new OP().copy(Zeilverzeichnis, new File(mineord)); //in .mincraft Ordner
+									copy(Zeilverzeichnis, new File(mineord)); //in .mincraft Ordner
 								}
 							}
 							catch (Exception ex)
 							{
 								stat.setText("Errorocde: S3x04: " + String.valueOf(ex));
-								Fehler += "Mod: "+modnames[k] + " " + Version +"\nSource: "+Downloadort+"\nFrom: "+Temporar.toString()+"\nTo: "+Zeilverzeichnis.toString()+"\nException:\n"+ new OP().getStackTrace(ex) + "\nErrorcode: S3x04\n\n";
+								Fehler += "Mod: "+modnames[k] + " " + Version +"\nSource: "+Downloadort+"\nFrom: "+Temporar.toString()+"\nTo: "+Zeilverzeichnis.toString()+"\nException:\n"+ getError(ex) + "\nErrorcode: S3x04\n\n";
 							}	
 						} 
 						status(value += hinzu*0.25);
@@ -235,7 +237,7 @@ public class Install extends InstallGUI
 								catch (Exception ex)
 								{
 									stat.setText("Errorocde: S3x04a: " + String.valueOf(ex));
-									Fehler += "Forge "+Version +"\nTo: "+libr+"\nException:\n"+ new OP().getStackTrace(ex) + "\nErrorcode: S3x04d\n\n";
+									Fehler += "Forge "+Version +"\nTo: "+libr+"\nException:\n"+ getError(ex) + "\nErrorcode: S3x04d\n\n";
 								}								
 								t2.interrupt();
 							}							
@@ -248,14 +250,14 @@ public class Install extends InstallGUI
 							}
 							catch(Exception ex)
 							{								
-								Fehler += "Forge "+Version +"\nSource: "+forgeort+"\nFrom: "+libr.toString()+"\nTo: "+mineord.toString()+"\nException:\n"+ new OP().getStackTrace(ex) + "\nErrorcode: S3x04e\n\n";
+								Fehler += "Forge "+Version +"\nSource: "+forgeort+"\nFrom: "+libr.toString()+"\nTo: "+mineord.toString()+"\nException:\n"+ getError(ex) + "\nErrorcode: S3x04e\n\n";
 							}							
 						}					
 					}					 
 					catch (Exception ex) 
 					{
 						stat.setText("Errorocde: S3x04: " + String.valueOf(ex));
-						Fehler += new OP().getStackTrace(ex) + " Errorcode: S3x04\n\n";
+						Fehler += getError(ex) + " Errorcode: S3x04\n\n";
 					}
 			    }
 				
@@ -264,7 +266,7 @@ public class Install extends InstallGUI
 				if(Modloader)
 				{
 					try {
-						new OP().copy(importord, new File(sport + "Result/"));
+						copy(importord, new File(sport + "Result/"));
 					} catch (FileNotFoundException e) {	
 						e.printStackTrace();
 					} catch (IOException e) {						
@@ -274,7 +276,7 @@ public class Install extends InstallGUI
 				else
 				{
 					try {
-						new OP().copy(importord, new File(mineord + "mods/"));
+						copy(importord, new File(mineord + "mods/"));
 					} catch (FileNotFoundException e) {
 						e.printStackTrace();
 					} catch (IOException e) {
@@ -298,12 +300,12 @@ public class Install extends InstallGUI
 					File json = new File(modsport+"Modinstaller.json");
 					if(json.exists())
 					{					
-						String[] lines = new OP().Textreader(json);
+						String[] lines = Textreader(json);
 						for (int i=0; i<lines.length; i++)
 						{												
 							lines[i] = lines[i].replaceAll("\"id\": \""+Version+"\",", "\"id\": \"Modinstaller\",");  // z.B. 1.7.4 in JSON Datei durch 1.7.10_Mods ersetzen									
 						}
-						new OP().Textwriter(json, lines, false);
+						Textwriter(json, lines, false);
 					}
 				}
 				catch (Exception e)
@@ -320,7 +322,7 @@ public class Install extends InstallGUI
 					} 
 					catch (FileNotFoundException e1) 
 					{						
-						Fehler += new OP().getStackTrace(e1) + " Errorcode: S3xpr1\n\n";
+						Fehler += getError(e1) + " Errorcode: S3xpr1\n\n";
 					}
 				    JdomParser parser = new JdomParser();
 				    try
@@ -330,7 +332,7 @@ public class Install extends InstallGUI
 				    }
 				    catch (Exception e)
 				    {
-				    	Fehler += new OP().getStackTrace(e) + " Errorcode: S3xpr2\n\n";
+				    	Fehler += getError(e) + " Errorcode: S3xpr2\n\n";
 				    }				 
 				    try 
 			    	{					    					    	
@@ -355,7 +357,7 @@ public class Install extends InstallGUI
 					}			    	
 			    	catch (Exception e) 
 			    	{						
-			    		Fehler += new OP().getStackTrace(e) + " Errorcode: S3xpr3\n\n";
+			    		Fehler += getError(e) + " Errorcode: S3xpr3\n\n";
 					}					    
 				}
 				
@@ -365,7 +367,7 @@ public class Install extends InstallGUI
 				{
 					try 
 					{
-						new OP().copy(sound, soundc);
+						copy(sound, soundc);
 					} 
 					catch (Exception e) 
 					{						

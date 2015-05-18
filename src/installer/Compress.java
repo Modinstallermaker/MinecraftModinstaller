@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
+import static installer.OP.*;
+
 public class Compress 
 {
 	private File ortkop;
@@ -17,7 +19,7 @@ public class Compress
 	{
 		ortkop = ort2;
 		
-		new OP().makedirs(ziel.getParentFile());
+		makedirs(ziel.getParentFile());
 		
 		try 
 		{
@@ -25,7 +27,7 @@ public class Compress
 		} 
 		catch (Exception ex) 
 		{
-			Install.Fehler+=new OP().getStackTrace(ex)+"\n\n";
+			Install.Fehler+=getError(ex)+"\n\n";
 		}
 		zip(ort2);
 		try 
@@ -34,7 +36,7 @@ public class Compress
 		} 
 		catch (Exception ex) 
 		{
-			Install.Fehler+=new OP().getStackTrace(ex)+"\n\n";
+			Install.Fehler+=getError(ex)+"\n\n";
 		}
 		
 	}
@@ -79,7 +81,7 @@ public class Compress
 		} 
 		catch (Exception ex) 
 		{
-			Install.Fehler+=new OP().getStackTrace(ex)+"\n\n";
+			Install.Fehler+=getError(ex)+"\n\n";
 		} 
 		finally 
 		{
@@ -89,7 +91,7 @@ public class Compress
 			} 
 			catch (Exception ex) 
 			{
-				Install.Fehler+=new OP().getStackTrace(ex)+"\n\n";
+				Install.Fehler+=getError(ex)+"\n\n";
 			}				
 		}	
 	}

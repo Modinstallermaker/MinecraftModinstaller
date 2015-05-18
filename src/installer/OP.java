@@ -28,12 +28,8 @@ import javax.swing.JOptionPane;
  */
 
 public class OP 
-{		
-	public OP()
-	{
-		
-	}
-	public boolean del(File dir)
+{
+	final static public boolean del(File dir)
 	{
 		if(dir.exists())
 		{
@@ -55,12 +51,12 @@ public class OP
 		}
 	}
 	
-	boolean del(String dir)
+	final static public boolean del(String dir)
 	{
 		return del(new File(dir));
 	}
 	
-	public void copy(File quelle, File ziel) throws FileNotFoundException, IOException 
+	final static public void copy(File quelle, File ziel) throws FileNotFoundException, IOException 
 	{
 		if(quelle.exists())
 		{
@@ -76,13 +72,13 @@ public class OP
 			}
 		}
 	}
-	public void copy(String quelle, String ziel) throws FileNotFoundException, IOException
+	final static public void copy(String quelle, String ziel) throws FileNotFoundException, IOException
 	{
 		copy(new File(quelle), new File(ziel));
 	}
 			  
 		
-	public static void copyFile(File source, File target) throws IOException
+	final static public void copyFile(File source, File target) throws IOException
 	  {
 		if(source.exists())
 		{
@@ -110,7 +106,7 @@ public class OP
 	  }
 	  
 	  
-	  public static void transfer(FileChannel inputChannel, ByteChannel outputChannel, long lengthInBytes, long chunckSizeInBytes, boolean verbose) throws IOException 
+	final static public void transfer(FileChannel inputChannel, ByteChannel outputChannel, long lengthInBytes, long chunckSizeInBytes, boolean verbose) throws IOException 
 	  {
 	    long overallBytesTransfered = 0L;
 	
@@ -123,7 +119,7 @@ public class OP
 	    }
 	  }
 	
-	public void copyDir(File quelle, File ziel) throws FileNotFoundException,IOException 
+	final static public void copyDir(File quelle, File ziel) throws FileNotFoundException,IOException 
 	{
 		if(quelle.exists())
 		{
@@ -143,17 +139,17 @@ public class OP
 		}
 	}
 	
-	public void rename(File alt, File neu) throws FileNotFoundException,IOException 
+	final static public void rename(File alt, File neu) throws FileNotFoundException,IOException 
 	{     
         alt.renameTo(neu);
 	}
 	
-	public void makedirs(File f)
+	final static public void makedirs(File f)
 	{
 		if(!f.exists())	f.mkdirs();
 	}
 		
-	public void Textwriter(File datei, String[] lines, boolean weiterschreiben) throws IOException
+	final static public void Textwriter(File datei, String[] lines, boolean weiterschreiben) throws IOException
 	{		
 		boolean umbruch = false;
 		if(datei.length()!=0&&weiterschreiben==true) umbruch = true;
@@ -168,7 +164,7 @@ public class OP
         f.close();	     	   
 	}	
 		
-	public String[] Textreader(File datei) throws IOException
+	final static public String[] Textreader(File datei) throws IOException
 	{		  	  
 	    ArrayList<String> text = new ArrayList<String>();
 	    BufferedReader f = new BufferedReader(new InputStreamReader(new FileInputStream(datei)));
@@ -181,7 +177,7 @@ public class OP
         return text.toArray(new String[text.size()]);
 	}
 	
-	public String[] Textreader(File datei, String charset) throws IOException
+	final static public String[] Textreader(File datei, String charset) throws IOException
 	{
         ArrayList<String> text = new ArrayList<String>();
 	    BufferedReader f = new BufferedReader(new InputStreamReader(new FileInputStream(datei), charset));
@@ -194,7 +190,7 @@ public class OP
         return text.toArray(new String[text.size()]);
 	}
 	
-	public String Textreaders(File datei) throws IOException
+	final static public String Textreaders(File datei) throws IOException
 	{
 		String[] x = Textreader(datei);
         
@@ -205,7 +201,7 @@ public class OP
         return inh;
 	}
 	
-	public ArrayList<String> Textreadera(File datei) throws IOException
+	final static public ArrayList<String> Textreadera(File datei) throws IOException
 	{		
 		String line="";
 	    ArrayList<String> list = new ArrayList<String>();
@@ -218,7 +214,7 @@ public class OP
         return list;
 	}
 	
-	public ArrayList<String> Textreadera(File datei, String charset) throws IOException
+	final static public ArrayList<String> Textreadera(File datei, String charset) throws IOException
 	{		
 		String line="";
 	    ArrayList<String> list = new ArrayList<String>();
@@ -231,12 +227,12 @@ public class OP
         return list;
 	}
 	
-	public int version (String[] options)
+	final static public int version (String[] options)
 	{
 		return JOptionPane.showOptionDialog(null, Read.getTextwith("OP", "modver"), Read.getTextwith("OP", "modverh"), JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);		
 	}
 	
-	public String optionReader(String attrib)
+	final static public String optionReader(String attrib)
 	{
 		File configf = new File(Start.stamm + "/Modinstaller/config.txt");
 		String rueck=null;
@@ -262,32 +258,44 @@ public class OP
 		return rueck;		
 	}
 	
-	public void optionWriter(String attrib, String content) throws IOException
+	final static public void optionWriter(String attrib, String content)
 	{
 		File configf = new File(Start.stamm + "/Modinstaller/config.txt");
-		String[] inhalt = Textreader(configf);
+		String[] inhalt = null;
 		boolean inside = false;
-		for (int i=0; i<inhalt.length; i++)
-		{
-			if(inhalt[i].split(":")[0].equals(attrib))
+		if(configf.exists())
+		{		
+			try {
+				inhalt = Textreader(configf);
+			} catch (IOException e) {}		
+		
+			for (int i=0; i<inhalt.length; i++)
 			{
-				inhalt[i]=inhalt[i].split(":")[0]+":"+content;
-				inside=true;
+				if(inhalt[i].split(":")[0].equals(attrib))
+				{
+					inhalt[i]=inhalt[i].split(":")[0]+":"+content;
+					inside=true;
+				}
 			}
 		}
-		if (inside) Textwriter(configf, inhalt, false);
+		if (inside)
+			try {
+				Textwriter(configf, inhalt, false);
+			} catch (IOException e) {}
 		else
 		{
 			String[] neu = {attrib +":"+content};
-			Textwriter(configf, neu, true);
+			try {
+				Textwriter(configf, neu, true);
+			} catch (IOException e) {}
 		}
 	}
 	
-	  public String getStackTrace(Throwable aThrowable) 
-	  {
+	static public String getError(Throwable aThrowable) 
+	{
 		final Writer result = new StringWriter();
 		final PrintWriter printWriter = new PrintWriter(result);
 		aThrowable.printStackTrace(printWriter);
 		return result.toString();
-	  }	
+	}	
 }

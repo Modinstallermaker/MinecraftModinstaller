@@ -8,6 +8,8 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static installer.OP.del;
+
 public class Extract 
 {
 	public Extract(File archive, File destDir) throws Exception 
@@ -50,7 +52,7 @@ public class Extract
 	        }
 	                zipFile.close();
 	                File meti = new File(destDir+"/META-INF");
-	                new OP().del(meti);
+	                del(meti);
 	    }
 	 
 	    private File buildDirectoryHierarchyFor(String entryName, File destDir) 

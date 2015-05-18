@@ -5,6 +5,8 @@ import java.util.Scanner;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import static installer.OP.*;
+
 
 public class Read
 {
@@ -14,7 +16,7 @@ public class Read
 
 	public Read()
 	{
-		String lang = new OP().optionReader("language");
+		String lang = optionReader("language");
 		 
 		String json="";
 		scan = new Scanner(getClass().getResourceAsStream("src/texte_"+lang+".json"), "UTF-8");

@@ -1,5 +1,8 @@
 package installer;
 
+import static installer.OP.optionReader;
+import static installer.OP.optionWriter;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -8,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.IOException;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -64,7 +66,7 @@ public class License extends JFrame
 		cp.setLayout(null);
 		add(cp);
 		
-		String lang = new OP().optionReader("language");
+		String lang = optionReader("language");
 		scan = new Scanner(getClass().getResourceAsStream("src/lizenz_"+lang+".txt"), "ISO-8859-15");
 
 		while (scan.hasNextLine()) 
@@ -130,12 +132,7 @@ public class License extends JFrame
 	{
 		Date zeitstempel = new Date();
 		
-		try {
-			new OP().optionWriter("lizenz", String.valueOf(zeitstempel));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
+		optionWriter("lizenz", String.valueOf(zeitstempel));				
 		
 		dispose();
 		new Menu(Mod, Downloadlist);

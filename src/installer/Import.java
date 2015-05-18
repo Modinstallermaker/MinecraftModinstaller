@@ -1,10 +1,16 @@
 package installer;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -14,13 +20,18 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 import layout.TableLayout;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
+import static installer.OP.*;
 
 /**
  * 
@@ -38,15 +49,16 @@ public class Import extends JFrame
 	private File sport = new File(stamm+"Modinstaller/Import/");
 	private File extr = new File(stamm+"Modinstaller/Importc/");
 	private File extr2 = new File(stamm+"Modinstaller/Importc2/");
-	private String Modname="nicht angegeben", Modversion="unbekannt", MCVersion="unbekannt", Beschreibung="nicht vorhanden", Autoren="", Webseite="", Credits="", Benoetigt="keine", Logo="";
+	private String modName="", modVersion="", mcVersion="", description="", authors="", website="", credits="", requiredMods="", modLogo="";
+	private JTable table;
 	
 	public Import(File datei)
 	{	
 		System.gc();
-		new OP().del(extr);
-		new OP().del(extr2);
-		new OP().makedirs(sport);
-		new OP().makedirs(extr);
+		del(extr);
+		del(extr2);
+		makedirs(sport);
+		makedirs(extr);
 		
 		
 		if(!Modloader)
@@ -73,7 +85,7 @@ public class Import extends JFrame
 				else
 				{
 					try {
-						new OP().copy(datei, sport);
+						copy(datei, sport);
 					} catch (Exception e) {					
 						e.printStackTrace();
 					}
@@ -82,7 +94,7 @@ public class Import extends JFrame
 			else //Modloader Ordner importiert
 			{
 				try {
-					new OP().copy(datei, sport);
+					copy(datei, sport);
 				} catch (Exception e) {					
 					e.printStackTrace();
 				}
@@ -90,7 +102,7 @@ public class Import extends JFrame
 		}		
 		if(updateCat())
 		{			
-			File importf = new File(stamm+"Modinstaller/Import/"+ Modname +".jar");
+			File importf = new File(stamm+"Modinstaller/Import/"+ modName +".jar");
 			new Compress(extr, importf);
 			Menu.nextButton.setEnabled(true);
 			make();
@@ -98,21 +110,21 @@ public class Import extends JFrame
 		else
 		{
 			if(datei.isFile())
-				Modname=datei.getName().substring(0, datei.getName().lastIndexOf("."));
+				modName=datei.getName().substring(0, datei.getName().lastIndexOf("."));
 			else
-				Modname=datei.getName();
-			File importf = new File(stamm+"Modinstaller/Import/"+ Modname +".jar");
+				modName=datei.getName();
+			File importf = new File(stamm+"Modinstaller/Import/"+ modName +".jar");
 			try {
-				new OP().copy(datei, importf);
+				copy(datei, importf);
 			} catch (Exception e) {}
 		}
-		Menu.rightListModel.addElement("+ " +Modname);
+		Menu.rightListModel.addElement("+ " +modName);
 		System.gc();
 	}
 	
 	public void sucher(File datei)
 	{	
-		new OP().del(extr);
+		del(extr);
 		if(datei.isFile())
 		{	
 			String Dateiendung = datei.getName().substring(datei.getName().lastIndexOf("."));
@@ -127,7 +139,7 @@ public class Import extends JFrame
 							File[] jars = searchFile(extr, ".jar");
 							for (int j=0; j<jars.length; j++)
 							{
-								new OP().del(extr2);
+								del(extr2);
 								new Extract(jars[j], extr2);
 							}
 						}
@@ -137,12 +149,12 @@ public class Import extends JFrame
 							File[] zips = searchFile(extr, ".zip");
 							for (int z=0; z<zips.length; z++)
 							{
-								new OP().del(extr2);
+								del(extr2);
 								new Extract(zips[z], extr2);
 							}
 						}
 						catch (Exception e){}
-						new OP().copy(extr2, extr);
+						copy(extr2, extr);
 					}				
 				} catch (Exception e) {}
 			}
@@ -166,35 +178,35 @@ public class Import extends JFrame
 			Gson gson = new Gson(); 
 	        try 
 	        {          
-	            String jsontext = new OP().Textreaders(modinfo[0]);
+	            String jsontext = Textreaders(modinfo[0]);
 	    		
 	            JsonArray jsona1 = gson.fromJson(jsontext, JsonArray.class);
 	            JsonObject jsono1 = gson.fromJson(jsona1.get(0), JsonObject.class); 
 	       
 	        	try{
-	        		Modname = jsono1.get("name").getAsString();
+	        		modName = jsono1.get("name").getAsString();
 	        	}
 	        	catch (Exception e){						
 				}
 	        	try{
-	        		Modversion = jsono1.get("version").getAsString();
+	        		modVersion = jsono1.get("version").getAsString();
 	        	}
 	        	catch (Exception e){						
 				}
 	        	try{
-	        		MCVersion = jsono1.get("mcversion").getAsString();
-	        		if(!MCVersion.equals("unbekannt")&&!MCVersion.contains(Start.mcVersion))
+	        		mcVersion = jsono1.get("mcversion").getAsString();
+	        		if(!mcVersion.equals("")&&!mcVersion.contains(Start.mcVersion))
 	        			JOptionPane.showMessageDialog(null, 
-	        					  "Die vom Modentwickler angebene Minecraft Version ("+MCVersion+") "
+	        					  "Die vom Modentwickler angebene Minecraft Version ("+mcVersion+") "
 	        					+ "stimmt nicht mit Deiner im Modinstaller ausgewählten Minecraft Version ("+Start.mcVersion+") überein.\n"
 	        					+ "Entweder wird Minecraft beim Starten abstürzen oder die Mod funktioniert dennoch (der Entwicker hat evtl. falsche Angaben gemacht)...\n\n"	        							
-	        					+ "Wenn Du sicher sein möchtest, dass die Mod funktioniert, dann wähle zuerst im Modinstaller \"Minecraft "+MCVersion+"\" aus "
+	        					+ "Wenn Du sicher sein möchtest, dass die Mod funktioniert, dann wähle zuerst im Modinstaller \"Minecraft "+mcVersion+"\" aus "
 	        					+ "und importiere die Mod dann.", "Mod funktioniert evtl. nicht", JOptionPane.WARNING_MESSAGE); 	        		
 	        	}
 	        	catch (Exception e){						
 				}
 	        	try{
-	        		Beschreibung = jsono1.get("description").getAsString();
+	        		description = stringBreak(jsono1.get("description").getAsString(), 60);	        		
 	        	}
 	        	catch (Exception e){						
 				}
@@ -204,7 +216,7 @@ public class Import extends JFrame
 	        		for (int i=0; i<Autorena.size(); i++)
 	        			neu += Autorena.get(i).getAsString() +", ";
 	        		if(neu.length()>0)
-	        			Autoren = neu.substring(0, neu.length()-2);
+	        			authors = neu.substring(0, neu.length()-2);
 	        	}
 	        	catch (Exception e){
 	        		try{
@@ -213,18 +225,18 @@ public class Import extends JFrame
 		        		for (int i=0; i<Autorena.size(); i++)
 		        			neu += Autorena.get(i).getAsString() +", ";
 		        		if(neu.length()>0)
-		        			Autoren = neu.substring(0, neu.length()-2);
+		        			authors = neu.substring(0, neu.length()-2);
 		        	}
 		        	catch (Exception e2){		        		
 		        	}
 				}
 	        	try{
-	        		Webseite = jsono1.get("url").getAsString();
+	        		website = jsono1.get("url").getAsString();
 	        	}
 	        	catch (Exception e){						
 				}
 	        	try{
-	        		Credits = jsono1.get("credits").getAsString();
+	        		credits = jsono1.get("credits").getAsString();
 	        	}
 	        	catch (Exception e){						
 				}
@@ -235,14 +247,14 @@ public class Import extends JFrame
 	        			neu += Benoetigta.get(i).getAsString() +", ";
 	        		if(neu.length()>0)
 	        		{
-	        			Benoetigt = neu.substring(0, neu.length()-2);
-	        			JOptionPane.showMessageDialog(null, "Bitte denke daran, folgende für die Mod benötigte Mods mit zu importieren:\n\n"+Benoetigt, "Mod benötigt weitere Mods", JOptionPane.INFORMATION_MESSAGE);
+	        			requiredMods = neu.substring(0, neu.length()-2);
+	        			JOptionPane.showMessageDialog(null, "Bitte denke daran, folgende für die Mod benötigte Mods mit zu importieren:\n\n"+requiredMods, "Mod benötigt weitere Mods", JOptionPane.INFORMATION_MESSAGE);
 	        		}
 	        	}
 	        	catch (Exception e){						
 				}
 	        	try{
-	        		Logo = jsono1.get("logoFile").getAsString().replace("\\", "/");
+	        		modLogo = jsono1.get("logoFile").getAsString().replace("\\", "/");
 	        	}
 	        	catch (Exception e){
 				}	        	
@@ -255,6 +267,41 @@ public class Import extends JFrame
 		}
 		else
 			return false;
+	}
+	
+	private String stringBreak(String str, int maxLength)
+	{
+		List<String> strTmp = null;
+		Pattern p = null;
+		Matcher m = null;
+		
+		strTmp = new ArrayList<String>();
+		p = Pattern.compile(".{1," + maxLength + "}$|.{1," + (maxLength - 1) + "}(\\.|,| )");
+		/*
+		 * Erklärung zum Regex
+		 *
+		 * ".{1," + maxLength + "}$" = Die zu durchsuchende Zeichenkette endet
+		 * mit einer Zeichenkette, die jedes x-beliebige Zeichen hat und eine
+		 * maximale Länge von maxLength Zeichen hat.
+		 *
+		 * "|" = oder
+		 *
+		 * ".{1," + (maxLength - 1) + "}(\\.|,| )" = Eine Zeichenkette mit einer
+		 * Länge von maxLength - 1 Zeichen, egal welche Zeichen als Inhalt und
+		 * endet mit einem Punkt, einem Komma oder einem Leerzeichen.
+		 */
+		 m = p.matcher(str);
+		 
+		 // Übereinstimmungen suchen und speichern
+		while(m.find()) {
+		    strTmp.add(m.group());
+		}
+		String sn ="";
+		// Ausgabe
+		for(int i = 0; i < strTmp.size(); i++) {
+		    sn+=strTmp.get(i)+"<br>";
+		}
+		return sn;
 	}
 	
 	public File[] searchFile(File ordner, String suche)
@@ -273,7 +320,7 @@ public class Import extends JFrame
 	{
 		File Mod = new File(stamm+"Modinstaller/Import/"+Modname+".jar");
 		try {
-			new OP().del(extr);
+			del(extr);
 			new Extract(Mod, extr);
 		} catch (Exception e) {	}
 		if(updateCat())		
@@ -282,9 +329,7 @@ public class Import extends JFrame
 
 	public void make()
 	{
-		setTitle(Modname);
-		
-		setLocationRelativeTo(null);
+		setTitle(modName);				
 		setResizable(true);	
 		setIconImage(new ImageIcon(this.getClass().getResource("src/icon.png")).getImage());	
 		 double size[][] = {{TableLayout.FILL}, // Columns
@@ -292,17 +337,17 @@ public class Import extends JFrame
 
 		setLayout(new TableLayout(size));
 		boolean text = true;
-		if(!Logo.equals(""))
+		if(!modLogo.equals(""))
 		{
 			JLabel bild = new JLabel();		
 			bild.setHorizontalAlignment(SwingConstants.CENTER);
-			String pfad = extr.toString().replace("\\", "/")+"/"+Logo;
+			String pfad = extr.toString().replace("\\", "/")+"/"+modLogo;
 			File f = new File(pfad);
 			if(!f.exists())
 			{
-				if(Logo.startsWith("mods"))
-					Logo = Logo.substring(5);
-					pfad = extr.toString().replace("\\", "/")+"/assets/"+Logo;
+				if(modLogo.startsWith("mods"))
+					modLogo = modLogo.substring(5);
+					pfad = extr.toString().replace("\\", "/")+"/assets/"+modLogo;
 					f = new File(pfad);				
 			}
 			if(f.exists())
@@ -314,7 +359,7 @@ public class Import extends JFrame
 		}
 		if(text)
 		{
-			JLabel head = new JLabel(Modname);
+			JLabel head = new JLabel(modName);
 			head.setPreferredSize(new Dimension(300, 50));
 			head.setFont(Start.lcd.deriveFont(Font.BOLD,30));
 			head.setHorizontalAlignment(SwingConstants.CENTER);
@@ -322,29 +367,66 @@ public class Import extends JFrame
 		}
 		
 		DefaultTableModel model = new DefaultTableModel();       
-		model.setColumnIdentifiers(new Object[] {"Beschreibung", "Wert"});
+		model.setColumnIdentifiers(new Object[] {"", ""});
+	    model.insertRow(0, new Object[] {Read.getTextwith("modimport", "modVersion"), modVersion}); //Modversion
+        model.insertRow(1, new Object[] {Read.getTextwith("modimport", "mcVersion"), mcVersion}); //Für Minecraft
+        model.insertRow(2, new Object[] {Read.getTextwith("modimport", "description"), "<html><body>"+description+"</body></html>"}); //Beschreibung     
+        model.insertRow(3, new Object[] {Read.getTextwith("modimport", "requiredMods"), requiredMods}); //Benötigte Mods
+        model.insertRow(4, new Object[] {Read.getTextwith("modimport", "authors"), authors}); //Autoren
+        model.insertRow(5, new Object[] {Read.getTextwith("modimport", "website"), website}); //Webseite
+        model.insertRow(6, new Object[] {Read.getTextwith("modimport", "credits"), credits}); //Webseite        
 		
-        JTable table = new JTable(model);
+        table = new JTable(model){           
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+			DefaultTableCellRenderer colortext=new DefaultTableCellRenderer();
+            {
+                colortext.setForeground(Color.decode("#9C2717"));
+            }
+            @Override
+            public TableCellRenderer getCellRenderer(int arg0, int arg1) {
+                return colortext;
+            }
+        };
        
-        model.insertRow(0, new Object[] {"Modversion",Modversion}); //Modversion
-        model.insertRow(1, new Object[] {"für Minecraft",MCVersion}); //Für Minecraft
-        model.insertRow(2, new Object[] {"Beschreibung", Beschreibung}); //Beschreibung     
-        model.insertRow(3, new Object[] {"Benötigte Mods",Benoetigt}); //Benötigte Mods
-        model.insertRow(4, new Object[] {"Modautoren", Autoren}); //Autoren
-        model.insertRow(5, new Object[] {"Entwicklerwebseite", Webseite}); //Webseite
-        model.insertRow(6, new Object[] {"Danksagung", Credits}); //Webseite        
-        
-        table.setRowHeight(30);
+        TableColumn col = table.getColumnModel().getColumn(0);
+        col.setPreferredWidth(150);
+        TableColumn col2 = table.getColumnModel().getColumn(1);
+        col2.setPreferredWidth(400); 
+        //table.setRowHeight(30);
+        updateRowHeights();
         add(new JScrollPane(table),  "0,1");   
         
-        JButton close = new JButton("Schließen");
+        JButton close = new JButton(Read.getTextwith("modimport", "exit"));
         close.addActionListener(new ActionListener() { 
   	      public void actionPerformed(ActionEvent evt) { 
   	        dispose();
   	      }
   	    });
         add(close, "0,2");
-        setSize(550, 450);
+        setSize(550, 435);
+        setLocationRelativeTo(null);
         setVisible(true); 
+	}
+	private void updateRowHeights()
+	{
+	    try
+	    {
+	        for (int row = 0; row < table.getRowCount(); row++)
+	        {
+	            int rowHeight = table.getRowHeight();
+
+	            for (int column = 0; column < table.getColumnCount(); column++)
+	            {
+	                Component comp = table.prepareRenderer(table.getCellRenderer(row, column), row, column);
+	                rowHeight = Math.max(rowHeight, comp.getPreferredSize().height)+5;
+	            }
+
+	            table.setRowHeight(row, rowHeight);
+	        }
+	    }
+	    catch(ClassCastException e) {}
 	}
 }
