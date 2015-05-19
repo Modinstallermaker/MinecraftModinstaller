@@ -21,7 +21,7 @@
     "prog7":"Has Minecraft been updated?",
     "prog8":"New Minecraft version detected",
     "prog9":"Minecraft has not been updated",
-    "prog10":"Downloading the current modlist",
+    "prog10":"Downloading the current mod list",
     "prog11":"Internet connection not established",
     "prog12":"Starting the main window",    
     "error2":"Please check, whether a file (e.g. \"1.7.10\") is located in the following file",
@@ -32,9 +32,9 @@
     "inter2":"Work offline",
     "inter3":"Exit program",
     "inter4":"Choose Minecraft folder",
-	"version":"Wir konnten im Minecraft Ordner \"versions\" keine Minecraft Installation vorfinden.\nBitte installiere eine Minecraft Version z.B. 1.7.10 über die neuste Lauchner Version!",
-	"inco":"A current mod list could not be downloaded because \nwe do not offer a mod list for your selected Minecraft version.\nWe only support release versions newer than Minecraft version 1.4.2.\nNevertheless you can import mods by using the Modinstallers, after you've downloaded them.",
-    "incoh":"No mod list avialable"
+	"version":"We could not find a valid Minecraft installation in the Minecraft folder \"versions\".\nPlease install for example Minecraft 1.7.10 using the latest Minecraft Launcher version!",
+	"inco":"A current mod list could not be downloaded because \nwe do not offer a mod list for your selected Minecraft version.\nWe only support release versions newer than Minecraft version 1.4.2.\nNevertheless you can import mods by using the Modinstaller, after you've downloaded them.",
+    "incoh":"No mod list available"
   },
   "seite2": { 
     "headline":"Please select the mods you want to install...",
@@ -56,8 +56,8 @@
 	"webi":"Description on Minecraft-Installer.com",
 	"importmh":"Import Modloader Mods",
 	"importfh":"Import Forge Mods",
-	"importm":"<html><body>Versichere Dich, dass die Mod, die Du importierst, eine Modloader Mod ist. Diese Mod wird direkt in die Minecraft.JAR installiert. Wenn die Datei jedoch z.B. in den mods Ordner kopiert werden soll, dann musst Du erst im Modinstaller die Forge Liste auswählen (wenn Forge in der Minecraft Version verfügbar ist).<br><br>Ziehe dann die Mod per Drag'n'Drop über den Text &quot;Mods importieren &quot;. Wenn eine ZIP oder auch JAR Datei ausgewählt wurde, wird diese entpackt und die enthaltenen Dateien werden in die Minecraft.JAR komprimiert. Auch kannst Du Ordner hinzufügen. Dann wird der Inhalt des Ordners (mit Unterordnern) in die Minecraft.JAR gepackt.  Einzelne Dateien (wie z.B. Java Klassendateien .class oder Bilder) können auch importiert werden.</body></html>",
-	"importf":"<html><body>Stelle sicher, dass die Mod, die Du importierst, eine Forge Mod ist. Die importierte Datei wird in den &quot;mods &quot; Order im Minecraft Ordner (mit der Minecraft Forge) automatisch installiert. Wenn die Datei bzw. der Inhalt des Archives (ZIP oder JAR Datei) direkt in die Minecraft.JAR gepackt soll, dann musst Du erst im Modinstaller die Modloder Liste auswählen (z.B. OptiFine).<br><br>Ziehe dann die Mod per Drag'n'Drop über den Text &quot;Mods importieren&quot;. Wenn eine ZIP oder auch JAR Datei ausgewählt wurde, wird diese entpackt und der Archivinhalt analysiert. Der Modinstaller erkennt automatisch, wo sich Deine Mod in dem Archiv befindet und wie sie installiert wird. Anschließend werden Dir wichtige Daten zur Mod vom Modentwickler tabellarisch aufgelistet. Du wirst gewarnt, falls Deine importierte Mod nicht mit Deiner ausgewählten Minecraft Version kompatibel sein sollte.</body></html>",
+	"importm":"<html><body>Make sure the mod you import is a Modloader Mod. This mod is installed directly into the minecraft.jar. However, if the file has to be copied into the mods folder, please select the Forge list first (if Forge is available in your Minecraft Version).<br><br>Then drag the Mod file on the big picture or the right list. If a ZIP or JAR file has been selected, the file will be unpacked and all files are compressed into the minecraft.jar. You can also add folders. Then the contents of the folder (including subfolders) are packed into the minecraft.jar. Individual files (e.g. Java class files .class or images) can also be imported.</body></html>",
+	"importf":"<html><body>Make sure the mod you import is a Forge Mod. The imported file will be automatically installed into the \"mods\" folder in Minecraft folder (with the Minecraft Forge). If you would like to pack the file or the content of the archive (ZIP or JAR file) directly into the minecraft.jar, please select the Modloader list in the Modinstaller fist (e.g. for OptiFine).<br><br>Then drag the mod file into the right list or big picture. If a ZIP or JAR file has been selected, the file will be extracted and the archive content will be analysed. The Modinstaller automatically detects where your mod in the archive is and how it is installed. Then it will show you important information from mod developer in a tabular form. You'll be warned if your imported mod should not be compatible with your selected Minecraft version.</body></html>",
     "restore":"<html><body>Minecraft was successfully restored at the time of the last installation!</body></html>",
     "restoreh":"Restore successfully!"   
   }, 
@@ -96,13 +96,13 @@
     "website":"Developer website", 
     "credits":"Credits",
     "exit":"Close",
-	"requiredModsText":"Please remember to import the following required mods:\n\n",
+	"requiredModsText":"Remember importing the following required mods:\n\n",
 	"requiredModsTexth":"Mod requires other mods",
-	"mcVersionT1":"Die vom Modentwickler angebene Minecraft Version (",
-	"mcVersionT2":") stimmt nicht mit Deiner im Modinstaller ausgewählten Minecraft Version (",
-	"mcVersionT3":") überein.\nEntweder wird Minecraft beim Starten abstürzen oder die Mod funktioniert dennoch (der Entwicker hat evtl. falsche Angaben gemacht)...\n\nWenn Du sicher sein möchtest, dass die Mod funktioniert, dann wähle zuerst im Modinstaller \"Minecraft",
-	"mcVersionT4":"\" aus und importiere die Mod dann.",
-	"mcVersionTh":"Mod funktioniert evtl. nicht"
+	"mcVersionT1":"The Minecraft version (",
+	"mcVersionT2":") specified by the mod developer does not match to the Minecraft version (",
+	"mcVersionT3":") you have selected.\nEither Minecraft crashs at startup or the mod works nevertheless (the developer has made misstatements)...\n\nIf you want to be sure that the mod works, then choose \"Minecraft ",
+	"mcVersionT4":"\" in the Modinstaller first and import the mod afterwards.",
+	"mcVersionTh":"Mod may not work"
   },
   "lizenz": { 
     "text1":"Exit",
@@ -119,7 +119,7 @@
     "errorh":"Minecraft installation not correct!"  
   },
    "Error": { 
-    "head":"Errorconsole",
+    "head":"Error console",
     "exit":"Close",    
    	"call":"Send report", 
    	"forum":"Open forum",

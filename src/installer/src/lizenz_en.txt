@@ -1,11 +1,11 @@
 <html>
 <body>
-MINECRAFT-MODINSTALLER-SOFTWARE LICENSE TERMS<br>
+MINECRAFT MODINSTALLER SOFTWARE LICENSE TERMS<br>
 <br>
-This license agreement is a contract between you and "Minecraft Installer.de".<br>
+This license agreement is a contract between you and "Minecraft Installer.com".<br>
 Please read the license agreement carefully. You apply to the software named above and possibly for the media on which you received it.<br>
 <br>
-These provisions also apply to all of "Minecraft Installer.de", unless other terms: <br>
+These provisions also apply to all of "Minecraft Installer.com", unless other terms: <br>
 - Updates<br> 
 - Additions and <br>
 - Internet-based services<br> 
@@ -13,26 +13,21 @@ These provisions also apply to all of "Minecraft Installer.de", unless other ter
 BY USING THIS SOFTWARE, YOU ACCEPT THESE TERMS. IF YOU DO NOT ACCEPT THEM, YOU ARE NOT AUTHORIZED TO USE THE SOFTWARE. AS DESCRIBED BELOW, BY USING THE SOFTWARE YOU AGREE WITH THE INTERNET-BASED SERVICES.<br>
 <br>
 1. RIGHTS FOR INSTALLATION AND USE.<br> 
-You may install one copy of the software on one device. If you want to install the program on other computers, download this from that computer over the Internet from "Minecraft-Installer.de". <br>
+You may install one copy of the software on one device. If you want to install the program on other computers, download this from that computer over the Internet from "http://www.minecraft-installer.com". <br>
 <br>
-2. REVIEW. <br>
-From time to time, a download of the validation feature of the software is required. By Validation verifies that the software is properly licensed. <br>
-A review where it is confirmed that you have a properly licensed permits you to use the software, certain features of the software or to obtain additional benefits. If, after a validation check, the software counterfeit, improperly licensed, this may have an impact on the functionality or experience of using the software. <br>
-"Minecraft Installer.de" is entitled to provide notice that the software is not properly licensed, and make the program inoperable. <br>
-<br> 
-3. INTERNET-BASED SERVICES. <br>
-"Minecraft Installer.de" introduces the software to Internet-based services. "Minecraft Installer.de" has the right to change these at any time or to terminate. <br>
+2. INTERNET-BASED SERVICES. <br>
+"Minecraft Installer.com" introduces the software to Internet-based services. "Minecraft Installer.com" has the right to change these at any time or to terminate. <br>
 <br>
 Consent for Internet-based services. <br>
-The Minecraft-Modder centers via the Internet, connect to computer systems "Minecraft Installer.de" or service provider. In some cases you will not receive a separate notice when the connection is made. In some cases, you may switch off these features or not use. <br>
+The Minecraft Modinstaller centers via the Internet, connect to computer systems "Minecraft Installer.com" or service provider. In some cases you will not receive a separate notice when the connection is made. In some cases, you may switch off these features or not use. <br>
 <br> 
 If USING THESE FEATURES, YOU CONSENT TO THE TRANSMISSION OF THIS INFORMATION.<br> 
 <br>
-"Minecraft Installer.de" does not use the information to identify you or contact you. <br>
+"Minecraft Installer.com" does not use the information to identify you or contact you. <br>
 <br>
-4. SCOPE OF LICENSE. <br>
+3. SCOPE OF LICENSE. <br>
 This agreement only gives you some rights to use the features that are included in the software edition. <br>
-"Minecraft Installer.de" reserves all other rights. <br>
+"Minecraft Installer.com" reserves all other rights. <br>
 You have to use the Software only as expressly permitted in this Agreement, unless applicable law gives you more rights despite this limitation. You must comply with any technical limitations in the software that only allow you to use special features. <br>
 <br>
 You are NOT entitled to: <br>
@@ -44,7 +39,7 @@ You are NOT entitled to: <br>
 - sell the software, rent, lease or lend it<br>
 - use the software for commercial software hosting services<br>
 <br>
-5. DISCLAIMER. <br>
-We shall be liable in any way for any damage that may occur from Modinstaller. This applies also for the possible, unintended errors in other programs such as a Black Screen of Minecraft caused by the Modinstaller. We hereby assure each user that our software does not pursue any fraudulent or other criminal activity or has the intention to spy on you. Despite our careful checks, we are also not liable for any offered modifications (short: mods) in the Minecraft Installer, on whose development we have no control.
+4. DISCLAIMER. <br>
+We accept no liability for any damage that may result from the use of Modinstaller directly or indirectly. This also applies to errors caused by the Modinstaller to other programs such as a crash of Minecraft. We hereby assure all users that our software does not pursue fraudulent or other criminal activity or has the intention to spy on you. Despite careful checks on our part, we are not liable for offering modifications (short mods) for Minecraft, whose development we cannot control (malfunction, crashes, virus attacks, etc.).
 </body>
 </html> 

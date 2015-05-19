@@ -1,6 +1,6 @@
 <html>
 <body>
-MINECRAFT-MODINSTALLER-SOFTWARE-LIZENZBESTIMMUNGEN<br>
+MINECRAFT MODINSTALLER SOFTWARE-LIZENZBESTIMMUNGEN<br>
 <br>
 Diese Lizenzbestimmungen sind ein Vertrag zwischen Ihnen und "Minecraft-Installer.de".<br>
 Bitte lesen Sie die Lizenzbestimmungen aufmerksam durch. Sie gelten für die oben genannte Software und gegebenenfalls für die Medien, auf denen Sie diese erhalten haben.<br>
@@ -12,26 +12,21 @@ Diese Bestimmungen gelten auch für alle von "Minecraft-Installer.de" diesbezügli
 <br>DURCH DIE VERWENDUNG DER SOFTWARE ERKENNEN SIE DIESE BESTIMMUNGEN AN. FALLS SIE DIE BESTIMMUNGEN NICHT AKZEPTIEREN, SIND SIE NICHT BERECHTIGT, DIE SOFTWARE ZU VERWENDEN. WIE WEITER UNTEN BESCHRIEBEN, GILT DIE VERWENDUNG DER SOFTWARE AUCH ALS IHRE ZUSTIMMUNG FÜR INTERNETBASIERTE DIENSTE. WENN SIE DIESE LIZENZBESTIMMUNGEN EINHALTEN, HABEN SIE DIE NACHFOLGEND AUFGEFÜHRTEN RECHTE FÜR JEDE LIZENZ, DIE SIE ERWERBEN.<br>
 <br>
 1. RECHTE ZUR INSTALLATION UND NUTZUNG.<br>
-Sie sind berechtigt, eine Kopie der Software auf einem Gerät zu installieren. Wenn Sie auf weiteren Computern dieses Programm installieren möchten, laden Sie dieses von jenem Computer über das Internet von "Minecraft-Installer.de" herunter.<br>
+Sie sind berechtigt, eine Kopie der Software auf einem Gerät zu installieren. Wenn Sie dieses Programm auf weiteren Computern installieren möchten, laden Sie dieses über das Internet von "http://www.minecraft-installer.de" herunter.<br>
 <br>
-2. ÜBERPRÜFUNG.<br>
-Von Zeit zu Zeit wird ein Download des Überprüfungsfeatures der Software angefordert. Durch die Überprüfung wird überprüft, ob die Software ordnungsgemäß lizenziert ist.<br>
-Eine Überprüfung, bei der bestätigt wird, dass Sie über eine ordnungsgemäße Lizenz verfügen, gestattet es Ihnen, die Software oder bestimmte Features der Software zu verwenden oder zusätzliche Vorteile zu erhalten. Wenn nach einer Überprüfung festgestellt wird, dass die Software gefälscht, nicht ordnungsgemäß lizenziert ist, hat dies möglicherweise Auswirkungen auf die Funktionalität oder das Erlebnis der Verwendung der Software.<br>
-"Minecraft-Installer.de" ist berechtigt, eine Benachrichtigung bereitzustellen, dass die Software nicht ordnungsgemäß lizenziert ist und das Programm funktionsunfähig zu machen.<br>
-<br>
-3. INTERNETBASIERTE DIENSTE.<br>
+2. INTERNETBASIERTE DIENSTE.<br>
 "Minecraft-Installer.de" stellt mit der Software internetbasierte Dienste bereit. "Minecraft-Installer.de" ist berechtigt, diese jederzeit zu ändern oder zu kündigen.<br>
 <br>
 Zustimmung für internetbasierte Dienste.<br>
-Der Minecraft-Modder stellt über das Internet eine Verbindung mit Computersystemen von "Minecraft-Installer.de" oder von Serviceprovidern her. In einigen Fällen erhalten Sie keinen gesonderten Hinweis, wenn die Verbindung hergestellt wird. In einigen Fällen können Sie diese Features abschalten oder nicht verwenden.<br>
+Der Minecraft Modinstaller stellt über das Internet eine Verbindung mit Computersystemen von "Minecraft-Installer.de" oder von Serviceprovidern her. In einigen Fällen erhalten Sie keinen gesonderten Hinweis, wenn die Verbindung hergestellt wird. In einigen Fällen können Sie diese Features abschalten oder nicht verwenden.<br>
 DURCH DIE VERWENDUNG DIESER FEATURES ERKLÄREN SIE SICH MIT DER ÜBERTRAGUNG DIESER INFORMATIONEN EINVERSTANDEN.<br>
 <br>
 "Minecraft-Installer.de" verwendet die Informationen nicht, um Sie zu identifizieren oder Kontakt mit Ihnen aufzunehmen.<br>
 <br>
-4. GÜLTIGKEITSBEREICH DER LIZENZ.<br>
+3. GÜLTIGKEITSBEREICH DER LIZENZ.<br>
 Dieser Vertrag gibt Ihnen nur einige Rechte zur Verwendung der Features, die in der von Ihnen lizenzierten Software-Edition enthalten sind.<br>
 "Minecraft-Installer.de" behält sich alle anderen Rechte vor.<br>
-Sie dürfen die Software nur wie in diesem Vertrag ausdrücklich gestattet verwenden, es sei denn, das anwendbare Recht gibt Ihnen ungeachtet dieser Einschränkung umfassendere Rechte. Dabei sind Sie verpflichtet, alle technischen Beschränkungen der Software einzuhalten, die Ihnen nur spezielle Verwendungen gestatten.<br>
+Sie dürfen die Software nur, wie in diesem Vertrag ausdrücklich gestattet, verwenden, es sei denn, das anwendbare Recht gibt Ihnen ungeachtet dieser Einschränkung umfassendere Rechte. Dabei sind Sie verpflichtet, alle technischen Beschränkungen der Software einzuhalten, die Ihnen nur spezielle Verwendungen gestatten.<br>
 <br>
 Sie sind nicht dazu berechtigt:<br>
 - technische Beschränkungen der Software zu umgehen<br>
@@ -42,7 +37,7 @@ Sie sind nicht dazu berechtigt:<br>
 - die Software zu verkaufen, vermieten, zu verleasen oder zu verleihen<br>
 - die Software für kommerzielle Software-Hostingdienste zu verwenden.<br>
 <br>
-5. HAFTUNGSAUSSCHLUSS. <br>
-Wir haften in keinerlei Hinsicht für entstandene Schäden, die durch den Modinstaller möglicherweise entstehen können. Das gilt auch für die eventuelle, nicht beabsichtigte durch den Modinstaller hervorgerufene Fehler an anderen Programmen wie z.B. einen Blackscreen von Minecraft. Wir versichern aber hiermit jedem Nutzer, dass unsere Software keine betrügerischen oder sonstigen kriminellen Tätigkeiten nachgeht oder Sie die Absicht hat Sie auszuspionieren. Trotz unserer sorgfältigen Kontrollen haften wir ebenfalls nicht für die in dem Minecraft-Modder angeboten Modifikationen (kurz Mods) für Minecraft, auf deren Entwicklung wir keinen Einfluss haben.
+4. HAFTUNGSAUSSCHLUSS. <br>
+Wir übernehmen keine Haftung für mögliche Schäden, die sich direkt oder indirekt aus der Verwendung des Modinstaller ergeben können. Das gilt auch für durch den Modinstaller hervorgerufene Fehler an anderen Programmen wie z.B. ein Absturz von Minecraft. Wir versichern hiermit jedem Nutzer, dass unsere Software keine betrügerischen oder sonstigen kriminellen Tätigkeiten nachgeht oder Sie die Absicht hat, Sie auszuspionieren. Trotz sorgfältiger Kontrollen unsererseits haften wir ebenfalls nicht für die in dem Modinstaller angeboten Modifikationen (kurz Mods) für Minecraft, auf deren Entwicklung wir keinen Einfluss haben (Fehlfunktion, Abstürze, Virenbefall, etc.).
 </body>
 </html> 

@@ -55,6 +55,8 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	JList<String> rightList = new JList<String>();	
 	JScrollPane rightListSP = new JScrollPane(rightList);
 	static DefaultListModel<String> rightListModel = new DefaultListModel<String>();	
+	
+	DragDropListener myDragDropListener = new DragDropListener();	
 			
 	JEditorPane pane;  
 	JScrollPane scroller;
@@ -228,6 +230,8 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		picture.setToolTipText(Read.getTextwith("seite2", "pici"));
 		cp.add(picture);
 		
+		new DropTarget(picture, myDragDropListener);
+		
 		HTMLEditorKit kit = new HTMLEditorKit();		
 			
 		pane = new JEditorPane(); //Beschreibungsfenster		
@@ -251,6 +255,8 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	    scroller.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 	    scroller.setBounds(mittexa, textya, picturex, texth);	
 	    cp.add(scroller);
+	    
+	    new DropTarget(pane, myDragDropListener);
 	    
 		selectArrow.setBounds(mittexa+picturex+2*rand, 300, 100, 83); // Pfeil nach rechts		
 		selectArrow.setIcon(new ImageIcon(this.getClass().getResource("src/arrowSe.png")));		
@@ -287,9 +293,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		importButton.setIcon(new ImageIcon(this.getClass().getResource("src/importkl.png")));	
 		importButton.setBounds(breite-rand-listenb+10, (int)(hoehe*0.2), listenb+20, 50); 
 		cp.add(BorderLayout.CENTER, importButton);
-		
-	    DragDropListener myDragDropListener = new DragDropListener();	    
-	    new DropTarget(importButton, myDragDropListener);	   
+		new DropTarget(importButton, myDragDropListener);	   
 		
 		rightListHeadl.setBounds(breite-rand-listenb, (int)(hoehe*0.315), listenb, 20); //Liste2 Überschrift
 		rightListHeadl.setHorizontalAlignment(SwingConstants.CENTER);
@@ -303,6 +307,8 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		rightListSP.setBounds(breite-rand-listenb,  (int)(hoehe*0.35), listenb, liste2h);
 		rightListSP.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 		cp.add(rightListSP);
+		
+		new DropTarget(rightList, myDragDropListener);
 		
 		helpButton.setBounds(2, 5, 50, 50); // FAQ anzeigen			
 		helpButton.setIcon(new ImageIcon(this.getClass().getResource("src/help.png")));

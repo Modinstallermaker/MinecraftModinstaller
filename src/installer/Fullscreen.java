@@ -212,7 +212,6 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 
 	@Override
 	public void keyPressed(KeyEvent arg0) {
-		// TODO Auto-generated method stub
 		int keyCode = arg0.getKeyCode();
 	    switch( keyCode ) 
 	    { 
@@ -236,14 +235,10 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 
 	@Override
 	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	public void next()

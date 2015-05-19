@@ -45,6 +45,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	private Modinfo[] modtexts, moddownloads;
 	private JList<String> leftList;	
 	private DefaultListModel<String> leftListModel;
+	private boolean importmod=false;
 	
 	public static boolean Modloader=true;
 
@@ -201,7 +202,8 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	}	
 	
 	private void setInfoText(final String modname) //Modbeschreibung anzeigen
-	{			
+	{	
+		importmod=false;
 		modtext.setText(modname);	
 		picture.setIcon(new ImageIcon(this.getClass().getResource("src/warten.gif")));	
 		
@@ -362,7 +364,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	}
 
 	public void importMod() //Mods importieren
-	{	
+	{			
 		setImport();
 		JFileChooser chooser = new JFileChooser();      
         int rueckgabeWert = chooser.showOpenDialog(null);      
@@ -374,7 +376,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	
 	public void setImport()
 	{
-		
+		importmod =true;
         picture.setIcon(new ImageIcon(this.getClass().getResource("src/importbig.png")));
          
         if(Modloader)
@@ -466,6 +468,9 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		}
 		else if(s==picture)
 		{
+			if(importmod)
+				importMod();
+			else
 			 if(online)
 				 new Fullscreen(leftList, leftListModel);
 		}
