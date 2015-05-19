@@ -58,8 +58,7 @@ public class Import extends JFrame
 		del(extr);
 		del(extr2);
 		makedirs(sport);
-		makedirs(extr);
-		
+		makedirs(extr);		
 		
 		if(!Modloader)
 		{	
@@ -197,11 +196,11 @@ public class Import extends JFrame
 	        		mcVersion = jsono1.get("mcversion").getAsString();
 	        		if(!mcVersion.equals("")&&!mcVersion.contains(Start.mcVersion))
 	        			JOptionPane.showMessageDialog(null, 
-	        					  "Die vom Modentwickler angebene Minecraft Version ("+mcVersion+") "
-	        					+ "stimmt nicht mit Deiner im Modinstaller ausgewählten Minecraft Version ("+Start.mcVersion+") überein.\n"
-	        					+ "Entweder wird Minecraft beim Starten abstürzen oder die Mod funktioniert dennoch (der Entwicker hat evtl. falsche Angaben gemacht)...\n\n"	        							
-	        					+ "Wenn Du sicher sein möchtest, dass die Mod funktioniert, dann wähle zuerst im Modinstaller \"Minecraft "+mcVersion+"\" aus "
-	        					+ "und importiere die Mod dann.", "Mod funktioniert evtl. nicht", JOptionPane.WARNING_MESSAGE); 	        		
+	        					Read.getTextwith("modimport", "mcVersionT1")+mcVersion+
+	        					Read.getTextwith("modimport", "mcVersionT2")+Start.mcVersion+
+	        					Read.getTextwith("modimport", "mcVersionT3")+mcVersion+
+	        					Read.getTextwith("modimport", "mcVersionT4"), 
+	        					Read.getTextwith("modimport", "mcVersionTh"), JOptionPane.WARNING_MESSAGE); 	        		
 	        	}
 	        	catch (Exception e){						
 				}
@@ -248,7 +247,7 @@ public class Import extends JFrame
 	        		if(neu.length()>0)
 	        		{
 	        			requiredMods = neu.substring(0, neu.length()-2);
-	        			JOptionPane.showMessageDialog(null, "Bitte denke daran, folgende für die Mod benötigte Mods mit zu importieren:\n\n"+requiredMods, "Mod benötigt weitere Mods", JOptionPane.INFORMATION_MESSAGE);
+	        			JOptionPane.showMessageDialog(null, Read.getTextwith("modimport", "requiredModsText")+requiredMods, Read.getTextwith("modimport", "requiredModsTexth"), JOptionPane.INFORMATION_MESSAGE);
 	        		}
 	        	}
 	        	catch (Exception e){						
@@ -276,28 +275,14 @@ public class Import extends JFrame
 		Matcher m = null;
 		
 		strTmp = new ArrayList<String>();
-		p = Pattern.compile(".{1," + maxLength + "}$|.{1," + (maxLength - 1) + "}(\\.|,| )");
-		/*
-		 * Erklärung zum Regex
-		 *
-		 * ".{1," + maxLength + "}$" = Die zu durchsuchende Zeichenkette endet
-		 * mit einer Zeichenkette, die jedes x-beliebige Zeichen hat und eine
-		 * maximale Länge von maxLength Zeichen hat.
-		 *
-		 * "|" = oder
-		 *
-		 * ".{1," + (maxLength - 1) + "}(\\.|,| )" = Eine Zeichenkette mit einer
-		 * Länge von maxLength - 1 Zeichen, egal welche Zeichen als Inhalt und
-		 * endet mit einem Punkt, einem Komma oder einem Leerzeichen.
-		 */
-		 m = p.matcher(str);
-		 
-		 // Übereinstimmungen suchen und speichern
+		p = Pattern.compile(".{1," + maxLength + "}$|.{1," + (maxLength - 1) + "}(\\.|,| )");		
+		m = p.matcher(str);		 
+		
 		while(m.find()) {
 		    strTmp.add(m.group());
 		}
-		String sn ="";
-		// Ausgabe
+		
+		String sn ="";		
 		for(int i = 0; i < strTmp.size(); i++) {
 		    sn+=strTmp.get(i)+"<br>";
 		}
@@ -410,6 +395,7 @@ public class Import extends JFrame
         setLocationRelativeTo(null);
         setVisible(true); 
 	}
+	
 	private void updateRowHeights()
 	{
 	    try

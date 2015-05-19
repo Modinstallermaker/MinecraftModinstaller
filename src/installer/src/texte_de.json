@@ -31,6 +31,8 @@
     "inter1":"Hilfe anzeigen",
     "inter2":"Offline arbeiten",
     "inter3":"Programm beenden",
+	"inter4":"Minecraft Ordner auswählen",
+	"version":"Wir konnten im Minecraft Ordner \"versions\" keine Minecraft Installation vorfinden.\nBitte installiere eine Minecraft Version z.B. 1.7.10 über die neuste Lauchner Version!",
     "inco":"Leider können wir Dir für Deine installierten Minecraft Versionen keine Mods anbieten.\nWir empfehlen Dir die Installation vom Minecraft 1.7.10 oder 1.8 mit dem Minecraft Launchner.\nStarte danach den Modinstaller wieder und wähle die neue installierte Minecraft Version aus.",
     "incoh":"Keine Modliste verfügbar"
   },
@@ -52,7 +54,6 @@
 	"pici":"Vollbild anzeigen",
 	"dev":"Entwicklerwebseite",
 	"webi":"Beschreibung auf Minecraft-Installer.de",
-    "web":"http://www.minecraft-installer.de",
     "importmh":"Modloader Mods importieren",
 	"importfh":"Forge Mods importieren",
 	"importm":"<html><body>Versichere Dich, dass die Mod, die Du importierst, eine Modloader Mod ist. Diese Mod wird direkt in die Minecraft.JAR installiert. Wenn die Datei jedoch z.B. in den mods Ordner kopiert werden soll, dann musst Du erst im Modinstaller die Forge Liste auswählen (wenn Forge in der Minecraft Version verfügbar ist).<br><br>Ziehe dann die Mod per Drag'n'Drop über den Text &quot;Mods importieren &quot;. Wenn eine ZIP oder auch JAR Datei ausgewählt wurde, wird diese entpackt und die enthaltenen Dateien werden in die Minecraft.JAR komprimiert. Auch kannst Du Ordner hinzufügen. Dann wird der Inhalt des Ordners (mit Unterordnern) in die Minecraft.JAR gepackt.  Einzelne Dateien (wie z.B. Java Klassendateien .class oder Bilder) können auch importiert werden.</body></html>",
@@ -94,7 +95,14 @@
     "authors":"Modautoren",
     "website":"Entwicklerwebseite", 
     "credits":"Danksagung",
-    "exit":"Schließen"
+    "exit":"Schließen",
+	"requiredModsText":"Bitte denke daran, folgende für die Mod benötigte Mods mit zu importieren:\n\n",
+	"requiredModsTexth":"Mod benötigt weitere Mods",
+	"mcVersionT1":"Die vom Modentwickler angebene Minecraft Version (",
+	"mcVersionT2":") stimmt nicht mit Deiner im Modinstaller ausgewählten Minecraft Version (",
+	"mcVersionT3":") überein.\nEntweder wird Minecraft beim Starten abstürzen oder die Mod funktioniert dennoch (der Entwicker hat evtl. falsche Angaben gemacht)...\n\nWenn Du sicher sein möchtest, dass die Mod funktioniert, dann wähle zuerst im Modinstaller \"Minecraft",
+	"mcVersionT4":"\" aus und importiere die Mod dann.",
+	"mcVersionTh":"Mod funktioniert evtl. nicht"
   },
   "lizenz": { 
     "text1":"Beenden",

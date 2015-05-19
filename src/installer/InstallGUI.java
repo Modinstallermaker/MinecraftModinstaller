@@ -42,7 +42,7 @@ public class InstallGUI extends JFrame implements MouseListener {
 		setResizable(false);
 		setIconImage(new ImageIcon(this.getClass().getResource("src/icon.png")).getImage());
 		
-		JPanel cp = new GraphicsPanel(false, "src/bild.png");
+		JPanel cp = new GraphicsPanel(false);
 		cp.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 		cp.setLayout(null);
 		add(cp);

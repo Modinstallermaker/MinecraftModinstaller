@@ -36,7 +36,7 @@ import static installer.OP.*;
 public class Menu extends MenuGUI implements ActionListener, MouseListener, ChangeListener
 {
 	private static final long serialVersionUID = 1L;	
-	private String mineord = Start.mineord, stamm = Start.stamm, mcVersion = Start.mcVersion, hyperlink = Read.getTextwith("seite2", "web"), linkquelle=Read.getTextwith("seite2", "web");	
+	private String mineord = Start.mineord, stamm = Start.stamm, mcVersion = Start.mcVersion, hyperlink = Read.getTextwith("installer", "website"), linkquelle=Read.getTextwith("installer", "website");	
 	private boolean online = Start.online;
 	private double proz=0,  rating = 0.;	
 	private boolean manual=false;
@@ -213,7 +213,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 			    {								
 				 	String inh = modtexts[i].getText();			
 				 	linkquelle =  modtexts[i].getSource();
-					hyperlink = Read.getTextwith("seite2", "web") + "/modinfo.php?modname=" + modname.replace(" ", "+");
+					hyperlink = Read.getTextwith("installer", "website") + "/modinfo.php?modname=" + modname.replace(" ", "+");
 					if(!inh.startsWith("<html>"))
 					{
 						inh="<html><body>"+inh+"</body></html>";
@@ -389,7 +389,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
         }
         pane.setCaretPosition(0);	         
        
-        hyperlink = Read.getTextwith("seite2", "web")+"/faq.php";
+        hyperlink = Read.getTextwith("installer", "website")+"/faq.php";
         setRating(0.0D, true);
 	}
 		
@@ -453,7 +453,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 				 restore();
 		}
 		else if(s==helpButton)
-			 new Browser(Read.getTextwith("seite2", "web")+"/faq.php");
+			 new Browser(Read.getTextwith("installer", "website")+"/faq.php");
 		else if(s==linkButton)
 		{
 			 if(linkButton.isEnabled())

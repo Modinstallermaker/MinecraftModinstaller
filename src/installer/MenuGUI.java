@@ -120,8 +120,8 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 			 } 			
 		});
 		
-		cp = new GraphicsPanel(false, "src/bild.png");		
-		cp.setBackground(Color.decode("#CEE3F6"));
+		cp = new GraphicsPanel(false);		
+		cp.setBackground(Color.decode("#CfE4F7"));
 		cp.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 		cp.setLayout(null);
 		add(cp);
@@ -253,14 +253,14 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	    cp.add(scroller);
 	    
 		selectArrow.setBounds(mittexa+picturex+2*rand, 300, 100, 83); // Pfeil nach rechts		
-		selectArrow.setIcon(new ImageIcon(this.getClass().getResource("src/hinzufügen.png")));		
+		selectArrow.setIcon(new ImageIcon(this.getClass().getResource("src/arrowSe.png")));		
 		selectArrow.setToolTipText(Read.getTextwith("seite2", "text1"));
 		selectArrow.addMouseListener(this);
 		selectArrow.setCursor(c);
 		cp.add(selectArrow);
 	
 		removeArrow.setBounds(mittexa+picturex+rand, 390, 100, 83); // Pfeil nach links		
-		removeArrow.setIcon(new ImageIcon(this.getClass().getResource("src/löschen.png")));	
+		removeArrow.setIcon(new ImageIcon(this.getClass().getResource("src/arrowRe.png")));	
 		removeArrow.setToolTipText(Read.getTextwith("seite2", "text2"));	
 		removeArrow.addMouseListener(this);
 		removeArrow.setCursor(c);
@@ -357,37 +357,23 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
     }
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 	@Override
 	public void stateChanged(ChangeEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 }

@@ -41,7 +41,7 @@ public class Install extends InstallGUI
 	private double value = 0.00;	
 	private Download dow, dowf;	
 	private String modsport = mineord + "versions/Modinstaller/";
-	private String sport = stamm + "/Modinstaller/";	
+	private String sport = stamm + "Modinstaller/";	
 	private String[] modnames;
 	private boolean Modloader;
 	

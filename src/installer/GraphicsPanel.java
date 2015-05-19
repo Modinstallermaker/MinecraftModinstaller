@@ -12,6 +12,7 @@ import java.awt.Rectangle;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class GraphicsPanel extends JPanel
@@ -24,11 +25,17 @@ public class GraphicsPanel extends JPanel
   private BufferedImage texture;
   private boolean singlePaint;
   
-  public GraphicsPanel(boolean sp, String Source)
+  public GraphicsPanel(boolean sp, String URL)
   {
     singlePaint = sp;
-    texture = loadTexture(Source);
+    texture = loadTexture(URL);
   }
+  
+  public GraphicsPanel(boolean sp)
+  {
+    singlePaint = sp;
+    texture = loadTexture("http://www.minecraft-installer.de/Dateien/modinstallerbg.png");
+  } 
   
   public void paintComponent(Graphics g)
   {
@@ -36,7 +43,6 @@ public class GraphicsPanel extends JPanel
     Graphics2D g2 = (Graphics2D)g;
     if (texture == null)
     {
-      g2.drawString("Keine Grafik gefunden",100,100);
       return;
     }
     if (singlePaint)
@@ -54,12 +60,16 @@ public class GraphicsPanel extends JPanel
     }
   }
   
-  private BufferedImage loadTexture(String location)
+  private BufferedImage loadTexture(String URL)
   {
     Image image = null;
-    BufferedImage bufferedImage = null;
-    Class<? extends GraphicsPanel> c = getClass();
-    URL url = c.getResource(location);
+    BufferedImage bufferedImage = null;  
+    URL url=null;
+	try {
+		url = new URL(URL);
+	} catch (MalformedURLException e1) {
+		e1.printStackTrace();
+	}
     if (url == null)
     return null;
     

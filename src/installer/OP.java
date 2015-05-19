@@ -291,7 +291,7 @@ public class OP
 		}
 	}
 	
-	static public String getError(Throwable aThrowable) 
+	final static public String getError(Throwable aThrowable) 
 	{
 		final Writer result = new StringWriter();
 		final PrintWriter printWriter = new PrintWriter(result);
