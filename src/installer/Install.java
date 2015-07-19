@@ -1,30 +1,26 @@
 package installer;
 
-import static argo.jdom.JsonNodeFactories.field;
-import static argo.jdom.JsonNodeFactories.object;
-import static argo.jdom.JsonNodeFactories.string;
+import static installer.OP.Textreader;
+import static installer.OP.Textreaders;
+import static installer.OP.Textwriter;
+import static installer.OP.Textwriters;
+import static installer.OP.copy;
+import static installer.OP.del;
+import static installer.OP.getError;
+import static installer.OP.makedirs;
+import static installer.OP.optionReader;
+import static installer.OP.optionWriter;
+import static installer.OP.rename;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.ImageIcon;
 
-import argo.format.PrettyJsonFormatter;
-import argo.jdom.JdomParser;
-import argo.jdom.JsonField;
-import argo.jdom.JsonNode;
-import argo.jdom.JsonRootNode;
-import argo.jdom.JsonStringNode;
-
-import static installer.OP.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 /**
  * 
  * Beschreibung
@@ -47,7 +43,7 @@ public class Install extends InstallGUI
 	
 	public static String Fehler="";
 	
-	public Install(final String[] modnames, final boolean Modloader) 
+	public Install(final String[] modnames, final boolean Modloader, final int downloadsize) 
 	{
 		this.modnames=modnames;
 		this.Modloader=Modloader;
@@ -58,14 +54,13 @@ public class Install extends InstallGUI
 	public void installation()
 	{
 		new Thread() 
-		{			
-			private JsonRootNode versionData;
+		{	
 			@Override
 			public void run() 
 			{
 				try 
 				{
-					status(value += 1); //1
+					status(value += 5);
 					
 					stat.setText(Read.getTextwith("seite3", "prog3"));                              //Wiederherstellungspunkt
 					stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/restore2.png")));		
@@ -73,7 +68,7 @@ public class Install extends InstallGUI
 					copy(new File(modsport), new File(sport + "Backup"));	
 					copy(new File(mineord +"mods"), new File(sport + "Backup/mods"));		
 					
-					status(value += 5); //6
+					status(value += 5);
 					
 					stat.setText(Read.getTextwith("seite3", "prog1"));	//Löschen								
 					del(new File(sport + "Result"));
@@ -88,11 +83,13 @@ public class Install extends InstallGUI
 					makedirs(new File(sport + "Backup"));	
 					makedirs(new File(modsport));
 					
+					status(value += 5);
+					
 					copy(new File(mineord + "versions/"+Version), new File(modsport)); //von Versions Ordner in Modinstaller Ordner kopieren
 					rename(new File(modsport + Version+".jar"), new File(modsport + "Modinstaller.jar")); //Umbenennen in Modinstaller
 					rename(new File(modsport + Version+".json"), new File(modsport + "Modinstaller.json"));
 					
-					status(value += 2); //8
+					status(value += 5);
 					
 					if(Modloader)  // Entpacken	
 					{
@@ -100,7 +97,7 @@ public class Install extends InstallGUI
 						stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));
 						new Extract(new File(modsport+"Modinstaller.jar"), new File(sport + "Result/"));  
 					}
-					
+					status(value += 5);
 					try
 					{
 						String mode="Forge";
@@ -131,7 +128,7 @@ public class Install extends InstallGUI
 					}
 					catch (Exception e)	{}
 					
-					status(value += 2);	//10	
+					status(value += 5);		
 				} 
 				catch (Exception ex) 
 				{
@@ -144,33 +141,6 @@ public class Install extends InstallGUI
 					try 
 					{	
 						makedirs(new File(sport + "Mods")); // Ordner anlegen	
-						
-						double hinzu = 10;
-						try
-						{
-							if(modnames.length>0)
-							{
-								hinzu = 75/modnames.length;	
-								if(!Modloader)
-								{
-									hinzu = 85/(modnames.length+1);
-								}
-							}
-							else
-							{								
-								if(Modloader)
-								{
-									status(value += 70);	
-								}
-								else
-								{
-									status(value += 80);	
-								}								
-							}
-						}
-						catch (Exception e)
-						{							
-						}
 						
 						for (int k = 0; k < modnames.length; k++) 
 						{
@@ -188,13 +158,13 @@ public class Install extends InstallGUI
 							{	
 								dow = new Download();
 								
-								Thread t = new Thread(new Downloadstate(dow, Temporar, stat, statt, hinzu, value)); //Prozent berechnen und anzeigen
+								Thread t = new Thread(new Downloadstate(dow, Temporar, stat, statt)); //Prozent berechnen und anzeigen
 								t.start();
 								
 								dow.downloadFile(Downloadort, new FileOutputStream(Temporar));	//ZIP Datei herunterladen
 								
 								t.interrupt();	//Downloadgrößen-Thread beenden
-								status(value+= hinzu*0.75);
+								status(value=0);
 								
 								stat.setText(Read.getTextwith("seite3", "extra2")+modnames[k]+"...");
 								stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));	
@@ -212,11 +182,11 @@ public class Install extends InstallGUI
 							catch (Exception ex)
 							{
 								stat.setText("Errorocde: S3x04: " + String.valueOf(ex));
-								Fehler += "Mod: "+modnames[k] + " " + Version +"\nSource: "+Downloadort+"\nFrom: "+Temporar.toString()+"\nTo: "+Zeilverzeichnis.toString()+"\nException:\n"+ getError(ex) + "\nErrorcode: S3x04\n\n";
+								Fehler += "Mod: "+modnames[k] + " " + Version +"\nSource: "+Downloadort+"\nFrom: "+Temporar.toString()+
+										"\nTo: "+Zeilverzeichnis.toString()+"\nException:\n"+ getError(ex) + "\nErrorcode: S3x04\n\n";
 							}	
-						} 
-						status(value += hinzu*0.25);
-						
+						} 						
+						status(value=0);
 						if (!Modloader) //Forge Modus
 						{	
 							String text = Read.getTextwith("seite3", "forge");
@@ -228,7 +198,7 @@ public class Install extends InstallGUI
 														
 							if(!dowf.ident(forgeort, libr))  //Minecraft Forge herunterladen
 							{
-								Thread t2 = new Thread(new Downloadstate(dowf, libr, stat, text, hinzu, value)); //Prozent berechnen und anzeigen
+								Thread t2 = new Thread(new Downloadstate(dowf, libr, stat, text)); //Prozent berechnen und anzeigen
 								t2.start();					
 								try
 								{
@@ -241,7 +211,7 @@ public class Install extends InstallGUI
 								}								
 								t2.interrupt();
 							}							
-							status(value += hinzu);	
+							status(value = 5);	
 							
 							stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));
 							try
@@ -250,8 +220,10 @@ public class Install extends InstallGUI
 							}
 							catch(Exception ex)
 							{								
-								Fehler += "Forge "+Version +"\nSource: "+forgeort+"\nFrom: "+libr.toString()+"\nTo: "+mineord.toString()+"\nException:\n"+ getError(ex) + "\nErrorcode: S3x04e\n\n";
-							}							
+								Fehler += "Forge "+Version +"\nSource: "+forgeort+"\nFrom: "+libr.toString()+
+										"\nTo: "+mineord.toString()+"\nException:\n"+ getError(ex) + "\nErrorcode: S3x04e\n\n";
+							}
+							status(value = 15);
 						}					
 					}					 
 					catch (Exception ex) 
@@ -303,7 +275,8 @@ public class Install extends InstallGUI
 						String[] lines = Textreader(json);
 						for (int i=0; i<lines.length; i++)
 						{												
-							lines[i] = lines[i].replaceAll("\"id\": \""+Version+"\",", "\"id\": \"Modinstaller\",");  // z.B. 1.7.4 in JSON Datei durch 1.7.10_Mods ersetzen									
+							lines[i] = lines[i].replaceAll("\"id\": \""+Version+"\",", "\"id\": \"Modinstaller\",");  
+							// z.B. 1.7.4 in JSON Datei durch 1.7.10_Mods ersetzen									
 						}
 						Textwriter(json, lines, false);
 					}
@@ -314,52 +287,29 @@ public class Install extends InstallGUI
 				
 				File profiles = new File(mineord + "launcher_profiles.json");  //Minecraft Launcher: JSON Datei präparieren: Profil Modinstaller einstellen				
 				if(profiles.exists())
-				{				
-					FileInputStream installProfile = null;
-					try 
-					{
-						installProfile = new FileInputStream(profiles);
-					} 
-					catch (FileNotFoundException e1) 
-					{						
-						Fehler += getError(e1) + " Errorcode: S3xpr1\n\n";
-					}
-				    JdomParser parser = new JdomParser();
-				    try
-				    {
-				    	versionData = parser.parse(new InputStreamReader(installProfile));
-				    	installProfile.close();
-				    }
-				    catch (Exception e)
-				    {
-				    	Fehler += getError(e) + " Errorcode: S3xpr2\n\n";
-				    }				 
-				    try 
-			    	{					    					    	
-				        JsonField[] fields = {field("name", string("Modinstaller")), field("lastVersionId", string("Modinstaller")) };
-				       
-
-				        Map<JsonStringNode, JsonNode> profileCopy = new HashMap<JsonStringNode, JsonNode>(versionData.getNode(new Object[] { "profiles" }).getFields());
-				        profileCopy.remove(string("Modinstaller"));
-				        profileCopy.put(string("Modinstaller"), object(fields));				       
-				        JsonRootNode profileJsonCopy = object(profileCopy);
-				        
-				        Map<JsonStringNode, JsonNode> rootCopy = new HashMap<JsonStringNode, JsonNode>(versionData.getFields());	    
-				        rootCopy.put(string("profiles"), profileJsonCopy);
-				        rootCopy.put(string("selectedProfile"), string("Modinstaller"));
-				     //   rootCopy.remove(string("authenticationDatabase"));			        
-
-				        JsonRootNode jsonProfileData = object(rootCopy); 
-				    	
-				        BufferedWriter newWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(profiles)));;
-				        PrettyJsonFormatter.fieldOrderPreservingPrettyJsonFormatter().format(jsonProfileData, newWriter);
-				        newWriter.close();				        									
-					}			    	
-			    	catch (Exception e) 
-			    	{						
-			    		Fehler += getError(e) + " Errorcode: S3xpr3\n\n";
-					}					    
-				}
+				{	
+					Gson gson = new Gson(); 
+			        try 
+			        {          
+			            String jsontext = Textreaders(profiles);
+			            JsonObject jfile = gson.fromJson(jsontext, JsonObject.class); 
+			            jfile.remove("selectedProfile");
+			            jfile.addProperty("selectedProfile", "Modinstaller");
+				            JsonObject jprofiles = jfile.get("profiles").getAsJsonObject();
+					        jprofiles.remove("Modinstaller");
+					        	JsonObject sub = new JsonObject();
+					            sub.addProperty("name", "Modinstaller");
+					            sub.addProperty("lastVersionId", "Modinstaller");	
+				            jprofiles.add("Modinstaller", sub);
+			            jfile.remove("profiles");
+			            jfile.add("profiles", jprofiles);			            
+			            Textwriters(profiles, gson.toJson(jfile), false);			                   
+			        }
+			        catch (Exception e)
+			        {
+			        	Fehler += getError(e) + " Errorcode: Pro\n\n";
+			        }			           
+				}				
 				
 				File sound = new File(mineord + "assets/indexes/"+Version+".json");    //Sounddateien kopieren
 				File soundc = new File(mineord + "assets/indexes/Modinstaller.json");
@@ -374,8 +324,7 @@ public class Install extends InstallGUI
 					}
 				}
 
-				startMCButton.setEnabled(true);				
-				bar.setValue(100);
+				startMCButton.setEnabled(true);
 				
 				if (!Fehler.equals("")) // alle Fehler anzeigen
 				{

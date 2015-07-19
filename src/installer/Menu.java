@@ -1,7 +1,15 @@
 package installer;
 
+import static installer.OP.copy;
+import static installer.OP.del;
+import static installer.OP.getError;
+import static installer.OP.optionReader;
+import static installer.OP.optionWriter;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -9,7 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 
 import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
@@ -23,8 +31,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import static installer.OP.*;
-
 /**
  * 
  * Beschreibung
@@ -33,10 +39,11 @@ import static installer.OP.*;
  * @author Dirk Lippke
  */
 
-public class Menu extends MenuGUI implements ActionListener, MouseListener, ChangeListener
+public class Menu extends MenuGUI implements ActionListener, MouseListener, ChangeListener, KeyListener
 {
 	private static final long serialVersionUID = 1L;	
-	private String mineord = Start.mineord, stamm = Start.stamm, mcVersion = Start.mcVersion, hyperlink = Read.getTextwith("installer", "website"), linkquelle=Read.getTextwith("installer", "website");	
+	private String mineord = Start.mineord, stamm = Start.stamm, mcVersion = Start.mcVersion, hyperlink = Read.getTextwith("installer", "website"), 
+			linkquelle=Read.getTextwith("installer", "website");	
 	private boolean online = Start.online;
 	private double proz=0,  rating = 0.;	
 	private boolean manual=false;
@@ -45,7 +52,13 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	private Modinfo[] modtexts, moddownloads;
 	private JList<String> leftList;	
 	private DefaultListModel<String> leftListModel;
+	private ArrayList<String> proposal = new ArrayList<String>();
+	private ArrayList<String> selected = new ArrayList<String>();
+	private boolean leftlist = true;
 	private boolean importmod=false;
+	private int downloadsize =0;
+	private int currentsize =0;
+	private String modx="";
 	
 	public static boolean Modloader=true;
 
@@ -58,7 +71,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	    load();	 		
 	}
 	
-	public void load()
+	private void load()
 	{
 		if(online)
 		{			
@@ -66,11 +79,14 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 			{					   
 				public void run() 
 				{ 							
-					picture.setIcon(new ImageIcon(this.getClass().getResource("src/warten.gif")));	
+					picture.setIcon(new ImageIcon(this.getClass().getResource("src/wait.gif")));	
 					tabbedPane.setEnabled(false);		
+					
 					Modloaderl.clear();
 					Forgel.clear();	
-							
+					selected.clear();
+					del(new File(stamm + "Modinstaller/Import"));
+					
 					try
 					{
 						for (int k = 0; k < moddownloads.length; k++)
@@ -83,9 +99,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 							{
 								Forgel.add(moddownloads[k].getName());
 							}
-						}
-						del(new File(stamm + "Modinstaller/Import"));
-						del(new File(stamm + "Modinstaller/zusatz.txt"));
+						}						
 					}
 					catch (Exception localException) {}
 								    
@@ -104,7 +118,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		}
 	}
 	
-	public void offline(boolean off) //Den Offline Modus vorbereiten
+	private void offline(boolean off) //Den Offline Modus vorbereiten
 	{
 		if(off==true)
 		{
@@ -120,7 +134,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		}
 	}
 	
-	public void loadText()
+	private void loadText()
 	{
 		if(leftListModel.isEmpty())  
 		{
@@ -137,35 +151,45 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
     	}
 	}
 	
-	public void ModloaderMode()
+	private void ModloaderMode()
 	{			
 		leftListModel = leftListMModel;
 	    leftList = leftListM;
-	    Modloader = true;
-	    leftListModel.removeAllElements();
-	    rightListModel.removeAllElements();
-	    for (String val : Modloaderl)
-	     leftListModel.addElement(val);	    
-	    sortOut(leftListModel);
+	    Modloader = true;	   
+	    proposal = Modloaderl;	    	 
 	    tabbedPane.setSelectedIndex(0);
-	    loadText();
+	    sortOutInstalledMods();
 	}
 
-	public void ForgeMode() 
+	private void ForgeMode() 
 	{		
 		leftListModel = leftListFModel;
 	    leftList = leftListF;
-	    Modloader = false;
-	    leftListModel.removeAllElements();
-	    rightListModel.removeAllElements();
-	    for (String val : Forgel) 
-	     leftListModel.addElement(val);
-	    sortOut(leftListModel);
+	    Modloader = false;	  
+	    proposal = Forgel;	    
 	    tabbedPane.setSelectedIndex(1);
-	    loadText();
+	    sortOutInstalledMods();
 	}
 	
-	public void sortOut(DefaultListModel<String> List)
+	private void updateLists()
+	{
+		leftListModel.removeAllElements();
+		rightListModel.removeAllElements();
+		search.reset();
+		leftList.setEnabled(true);
+		leftList.requestFocusInWindow();
+		Collections.sort(proposal);
+		 for(String mod :proposal){
+		    	leftListModel.addElement(mod);
+		    }
+		 for(String mod2 :selected){
+		    	rightListModel.addElement(mod2);
+		    }
+		 leftListMSP.getVerticalScrollBar().setValue(0);
+			leftListFSP.getVerticalScrollBar().setValue(0);	
+	}
+	
+	private void sortOutInstalledMods()
 	{
 		String Mode = "Modloader";
 		if (!Modloader) 
@@ -175,25 +199,23 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		{
 			String alastm = optionReader("lastmods");
 			String[] lastm = alastm.split(";;");
-			int lange = List.getSize();
 			for (int r = 0; r < lastm.length; r++) 
 			{
-				for (int k = 0; k < lange; k++)
+				for (int k = 0; k < proposal.size(); k++)
 				{
-					if (lastm[r].equals(((String)List.getElementAt(k)).toString()))
+					if (lastm[r].equals(proposal.get(k)))
 					{
-						rightListModel.addElement(((String)List.getElementAt(k)).toString());
-						List.remove(k);
-						lange--;
+						selected.add(proposal.get(k));
+						proposal.remove(k);						
 					}
 				}
 			}
-		}
-		leftListMSP.getVerticalScrollBar().setValue(0);
-		leftListFSP.getVerticalScrollBar().setValue(0);
+		}		
+		updateLists();
+		loadText();
 	}
 		
-	public void changeVersion() //Version ändern
+	private void changeVersion() //Version ändern
 	{	
 		pane.setText(Read.getTextwith("seite2", "wait"));
 		Start.mcVersion = Start.mcVersionen[ChVers.getSelectedIndex()];
@@ -205,7 +227,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	{	
 		importmod=false;
 		modtext.setText(modname);	
-		picture.setIcon(new ImageIcon(this.getClass().getResource("src/warten.gif")));	
+		picture.setIcon(new ImageIcon(this.getClass().getResource("src/wait.gif")));	
 		
 		for(int i=0; i<modtexts.length; i++)
 		{
@@ -232,7 +254,27 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 							if(proz > 6.5)
 							{									
 								modtext.setText(modname +" - TOP!");									
-							}		
+							}
+							currentsize = moddownloads[j].getSize();
+							double size = (double)currentsize;
+							String unit = "Byte";
+							if(size>1024)
+							{
+								size/=1024.;
+								unit="KB";
+							}
+							if(size>1024)
+							{
+								size/=1024.;
+								unit="MB";
+							}
+							if(size>1024)
+							{
+								size/=1024.;
+								unit="GB";
+							}
+							size = Math.round(size*10.)/10.;
+							sizeLabel.setText(String.valueOf(size)+" "+unit);							
 							setRating(proz, false);	
 							break;
 						}
@@ -264,98 +306,51 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	    }.start();
 	}
 	
-	public void selectMod() // Auswählen von Mods
+	private void selectMod() // Auswählen von Mods
 	{	
-		String modname = (String)leftList.getSelectedValue();
-			
-		if (searchEntry(leftListModel, modname)) 
-		{
-			rightListModel.add(rightListModel.getSize(),modname);
-			leftListModel.removeElement(modname);
-		}			
+		String listitem = (String)leftList.getSelectedValue();
+		
+		if (proposal.contains(listitem)) 
+		{		
+			proposal.remove(listitem);
+			selected.add(listitem);		
+			downloadsize +=currentsize;
+		}		
+		updateLists();		
 		nextButton.setEnabled(true);								
 	}
-	
-	public boolean searchEntry(DefaultListModel<String> model, String modname) //In ListModel einen Modeintrag finden
+		
+	private void removeMod() // Entfernen von Mods
 	{
-		boolean gefunden = false;
-		for (int i=0; i < model.getSize(); i++) 
-		{
-			if (model.getElementAt(i).equals(modname)) // überprüfen ob schon in Liste vorhanden
-			{
-				gefunden = true;
-			}
-		}
-		return gefunden;
-	}
+		String listitem = (String)rightList.getSelectedValue();		
 	
-	public void removeMod() // Entfernen von Mods
-	{
-		nextButton.setEnabled(true);
-		for (int i = 0; i < rightListModel.getSize(); i++) 
+		if (listitem.substring(0, 1).equals("+")) // Importierter Mod löschen
 		{
-			if (rightList.getSelectedIndex() == i) // Ausgewählte Stelle suchen
-			{
-				if (((String) rightListModel.getElementAt(rightList.getSelectedIndex())).substring(0, 1).equals("+")) // Importierter Mod löschen
-				{
-					String name = rightListModel.getElementAt(rightList.getSelectedIndex()).substring(2);	
-					del(new File(stamm+"Modinstaller/Import/"+name+".jar"));
-				}  
-				else  // sonst nach Liste links kopieren
-				{
-					boolean ent = false;
-					for (int j = 0; j < leftListMModel.getSize(); j++) 
-					{
-						if (rightListModel.getElementAt(rightList.getSelectedIndex()).toString().equals(leftListModel.getElementAt(j).toString())) // Überprüfen ob Mod in Downloadliste vorhanden
-						{
-							ent = true;
-						}
-					}
-					if (ent == false) //Mod in linker Liste vorhanden --> Hinzufügen in linke Liste
-					{
-						leftList.setEnabled(true);						
-						leftListModel.addElement(rightListModel.getElementAt(rightList.getSelectedIndex()));
-												
-						String[] list = new String[leftListModel.getSize()];
-						for(int i3 = 0; i3 < leftListModel.getSize(); i3++) 
-						{						  
-						    list[i3] = ((String) leftListModel.elementAt(i3));						  
-						}
-						Arrays.sort(list);	
-						
-						leftListModel.removeAllElements();
-						for (int h=0; h<list.length; h++)
-						{
-							leftListModel.addElement(list[h]);
-						}
-					}
-				}
-				rightListModel.remove(rightList.getSelectedIndex()); // Mod vom Liste2 l�schen
-				if (rightListModel.getSize() == 0) 
-				{
-					nextButton.setEnabled(false); // Wenn keine Mods in Liste2 vorhanden Installieren deaktivieren
-				}
-			}
-		}
+			String name = listitem.substring(2);	
+			del(new File(stamm+"Modinstaller/Import/"+name+".jar"));
+		}  
+		else  // sonst nach Liste links kopieren
+		{			
+			leftList.setEnabled(true);
+			proposal.add(listitem);
+			selected.remove(listitem);
+			downloadsize +=currentsize;
+		}	
+		updateLists();
+		if (rightListModel.getSize() == 0) 
+		{
+			nextButton.setEnabled(false); // Wenn keine Mods in Liste2 vorhanden Installieren deaktivieren
+		}			
 	}
 
-	public void startInstallation() // Installieren Knopf
+	private void startInstallation() // Installieren Knopf
 	{		
 		try 
-		{		
-			ArrayList<String> chnamen = new ArrayList<String>();
-			for(int i=0; i<rightListModel.getSize(); i++)
-			{
-				String eintrag = rightListModel.getElementAt(i);
-				if(eintrag.charAt(0)!='+')
-				{
-					chnamen.add(eintrag);	
-				}
-			}				
-			String[] modnames = chnamen.toArray(new String[chnamen.size()]); 
+		{						
+			String[] modnames = selected.toArray(new String[selected.size()]); 
 			
 			dispose();
-			new Install(modnames, Modloader);
+			new Install(modnames, Modloader, downloadsize);
 		} 
 		catch (Exception ex) 
 		{	
@@ -363,7 +358,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		}		
 	}
 
-	public void importMod() //Mods importieren
+	private void importMod() //Mods importieren
 	{			
 		setImport();
 		JFileChooser chooser = new JFileChooser();      
@@ -374,7 +369,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
         }		
 	}
 	
-	public void setImport()
+	private void setImport()
 	{
 		importmod =true;
         picture.setIcon(new ImageIcon(this.getClass().getResource("src/importbig.png")));
@@ -395,7 +390,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
         setRating(0.0D, true);
 	}
 		
-	public void restore() //Letzte Modinstallation wiederherstellen
+	private void restore() //Letzte Modinstallation wiederherstellen
 	{
 		del(new File(mineord+"versions/Modinstaller"));
 		try 
@@ -440,13 +435,108 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		}
 	}
 	
+	private void leftListItemSelected(MouseEvent e)
+	{
+		leftlist=true;	
+		if ((e.getClickCount() == 2) || (e.getButton() == 3))
+			selectMod();
+		else if (e.getButton() == 1) 
+		{	
+			if (leftListModel.getSize() > 0 && leftList.isEnabled())
+			{
+				String Auswahl = (String)leftListModel.getElementAt(leftList.getSelectedIndex());
+				if (!modtext.getText().equals(Auswahl)) 
+					setInfoText(Auswahl);
+			}
+		}
+	}
+	
+	private void rightListItemSelected(MouseEvent e)
+	{
+		leftlist=false;		
+		if (rightListModel.getSize() > 0 && Menu.this.rightList.isEnabled()) 
+		{			   
+			String Auswahl = (String)rightListModel.getElementAt(this.rightList.getSelectedIndex());
+			if (Auswahl.substring(0, 1).equals("+"))
+			{	
+				setImport();
+				if (e.getClickCount() == 2)
+					new Import(Auswahl.substring(2));
+			}
+			else if ((e.getClickCount() == 2) || (e.getButton() == 3))
+			{
+				removeMod();
+			}
+			else if (e.getButton() == 1)
+			{					
+				if (!modtext.getText().equals(Auswahl))
+					setInfoText(Auswahl);
+			}
+		}	
+	}
+	
+	private void enterSearchText(KeyEvent e)
+	{
+		leftListModel.removeAllElements();	
+		
+		String needle = search.getText().toLowerCase().replace(" ", "");	
+		for(int i=0; i<proposal.size(); i++)
+		{					
+			String modname = proposal.get(i).toLowerCase().replace(" ", "");			
+			if(modname.startsWith(needle))
+				leftListModel.addElement(proposal.get(i));			
+		}	
+		for(int i=0; i<proposal.size(); i++)
+		{					
+			String modname = proposal.get(i).toLowerCase().replace(" ", "");			
+			if(modname.contains(needle)&&!modname.startsWith(needle))
+				leftListModel.addElement(proposal.get(i));			
+		}
+		if(needle.length()>2)
+		{
+			String needle2 = needle.substring(0, needle.length()-1);
+			if(needle2.length()>2)
+				needle2 = needle.substring(1, needle2.length());
+			for(int i=0; i<proposal.size(); i++)
+			{					
+				String modname = proposal.get(i).toLowerCase().replace(" ", "");			
+				if(!modname.contains(needle)&&!modname.startsWith(needle)&&modname.contains(needle2))
+					leftListModel.addElement(proposal.get(i));			
+			}
+		}
+	
+		if(leftListModel.size()>0)
+		{	
+			if(!modx.equals(leftListModel.getElementAt(0)))
+			{
+				modx=leftListModel.getElementAt(0);
+				setInfoText(modx);			
+			}
+			leftList.setSelectedIndex(0);
+			leftList.setEnabled(true);
+			if(e.getKeyCode()==KeyEvent.VK_ENTER) //Enter
+			{
+				selectMod();
+			}
+		}
+		else
+		{
+			leftListModel.addElement("Keine Mod gefunden...");
+			leftList.setEnabled(false);
+		}
+	}
+	
+	@Override
 	public void mouseClicked(MouseEvent e) 
 	{
 		Object s = e.getSource();
-		if(s==selectArrow)		 
-			 selectMod();		 
-		else if(s==removeArrow)
-			 removeMod();		 
+		if(s==selectArrow||s==removeArrow)	
+		{
+			if(leftlist)
+				selectMod();
+			else
+				removeMod();	
+		}			
 		else if(s==importButton)					
 			importMod();
 		else if(s==restoreButton)
@@ -504,9 +594,9 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 			 }
 		}
 	}
-
-	public void mouseEntered(MouseEvent e) 
-	{
+	
+	@Override
+	public void mouseEntered(MouseEvent e) 	{
 		Object s = e.getSource();	
 		for(int i=0; i<ratIcons.length; i++)
 		{
@@ -516,9 +606,9 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 			 }	
 		}
 	}
-
-	public void mouseExited(MouseEvent e) 
-	{
+	
+	@Override
+	public void mouseExited(MouseEvent e) {
 		Object s = e.getSource();
 		for(int i=0; i<ratIcons.length; i++)
 		{
@@ -532,81 +622,30 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		}		
 	}
 	
-	public void mousePressed(MouseEvent e)
-	{
+	@Override
+	public void mousePressed(MouseEvent e) {
 		Object s = e.getSource();
 	    if (s == leftList)
-	    {
-	      if ((e.getClickCount() == 2) || (e.getButton() == 3))
-	        selectMod();
-	      else if (e.getButton() == 1) 
-	      {	    	  
-	        SwingUtilities.invokeLater(new Runnable()
-	        {
-	          public void run()
-	          {
-	            if ((leftListModel.getSize() > 0) && (leftList.isEnabled()))
-	            {
-	              String Auswahl = (String)leftListModel.getElementAt(leftList.getSelectedIndex());
-	              if (!modtext.getText().equals(Auswahl)) 
-	                setInfoText(Auswahl);
-	            }
-	          }
-	        });
-	      }
-	    }
+	    	leftListItemSelected(e);
 	    else if (s == rightList) 
-	    {
-	      try
-	      {
-	        if (rightListModel.getSize() <= 0) 
-	          return;
-	       
-	        String Auswahl = (String)rightListModel.getElementAt(this.rightList.getSelectedIndex());
-	        if (((String)rightListModel.getElementAt(this.rightList.getSelectedIndex())).substring(0, 1).equals("+"))
-	        {	
-	        	setImport();
-	        	if (e.getClickCount() == 2)
-	        		new Import(Auswahl.substring(2));
-	        }
-	        else if ((e.getClickCount() == 2) || (e.getButton() == 3))
-	        {
-	        	removeMod();
-	        }
-	        else if (e.getButton() == 1)
-	        {
-	          SwingUtilities.invokeLater(new Runnable()
-	          {
-	            public void run()
-	            {
-	              if ((Menu.rightListModel.getSize() > 0) && (Menu.this.rightList.isEnabled()))
-	              {
-		              String Auswahl = (String)Menu.rightListModel.getElementAt(rightList.getSelectedIndex());
-		              if (!modtext.getText().equals(Auswahl))
-		            	  setInfoText(Auswahl);	                
-	              }
-	            }
-	          });
-	        }
-	      }
-	      catch (Exception ex) {}
-	    } 
+	    	rightListItemSelected(e);
 	    else if ((s == nextButton) && (nextButton.isEnabled())) 
-	    {
 	    	startInstallation();
-	    }
-  }
-
+	}
+	
+	@Override
 	public void mouseReleased(MouseEvent arg0) {		
 	}
-
+	
+	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
 		Object s = e.getSource();
 		 if (s == ChVers) 
 			 changeVersion();		 
 	}
-
+	
+	@Override
 	public void stateChanged(ChangeEvent arg0) {
 		 if(tabbedPane.isEnabled())
 		 {
@@ -616,4 +655,17 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 				ForgeMode();
 		 }		
 	} 
+	
+	@Override
+	public void keyTyped(KeyEvent e) {				
+	}
+	
+	@Override
+	public void keyPressed(KeyEvent e) {			
+	}
+	
+	@Override
+	public void keyReleased(KeyEvent e) {
+		enterSearchText(e);				
+	}
 }

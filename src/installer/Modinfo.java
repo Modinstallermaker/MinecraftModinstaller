@@ -2,33 +2,33 @@ package installer;
 
 public class Modinfo
 {
-	private String name="", textde="", texten="", source="", lang="", MC="";
-	int cat=3;
-	private double rating=0.0;
+	private String Name="", TxtDE="", TxtEN="", Source="", MC="";
+	int Cat=3, Size=0, ID=0;
+	private double Proz=0.0;
 		
 	public void setName(String name)
 	{
-		this.name = name;
+		this.Name = name;
 	}	
 	public void setTextDe(String textde)
 	{
-		this.textde = textde;
+		this.TxtDE = textde;
 	}
 	public void setTextEn(String texten)
 	{
-		this.texten = texten;
+		this.TxtEN = texten;
 	}
 	public void setSource(String source)
 	{
-		this.source = source;
+		this.Source = source;
 	}
 	public void setRating(double rating)
 	{
-		this.rating = rating;
+		this.Proz = rating;
 	}
-	public void setLanguage(String lang)
+	public void setSize(int size)
 	{
-		this.lang = lang;
+		this.Size = size;
 	}
 	public void setMC(String MC)
 	{
@@ -36,27 +36,32 @@ public class Modinfo
 	}
 	public void setCat(int cat)
 	{
-		this.cat = cat;
+		this.Cat = cat;
 	}
 	
 	public String getName()
 	{
-		return name;
+		return Name;
 	}
 	public String getText()
 	{
-		if(lang.equals("de"))
-			return textde;
-		else
-			return texten;		
+		String name = TxtEN;		
+		if(Start.lang.equals("de"))
+			name = TxtDE;
+		
+		name = name.replace("&lt;", "<");
+		name = name.replace("&gt;", ">");
+		name = name.replace("&amp;", "&");
+		
+		return name;
 	}
 	public String getSource()
 	{
-		return source;
+		return Source;
 	}
 	public double getRating()
 	{
-		return rating;
+		return Proz;
 	}	
 	public String getMC()
 	{
@@ -64,6 +69,10 @@ public class Modinfo
 	}	
 	public int getCat()
 	{
-		return cat;
+		return Cat;
+	}	
+	public int getSize()
+	{
+		return Size;
 	}	
 }

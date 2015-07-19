@@ -1,7 +1,5 @@
 package installer;
 
-import java.util.Scanner;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -11,20 +9,13 @@ import static installer.OP.*;
 public class Read
 {
 	public static final Read INSTANCE = new Read();
-	private Scanner scan;
 	static JsonObject js1;
 
 	public Read()
 	{
 		String lang = optionReader("language");
 		 
-		String json="";
-		scan = new Scanner(getClass().getResourceAsStream("src/texte_"+lang+".json"), "UTF-8");
-		while (scan.hasNextLine()) 
-		{
-			json += scan.nextLine();
-		}
-		scan.close();
+		String json=new OP().getInternalText("src/texte_"+lang+".json");
 		
 		Gson gson = new Gson();	
 		js1 = gson.fromJson(json, JsonObject.class); 

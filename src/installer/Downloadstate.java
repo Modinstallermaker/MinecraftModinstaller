@@ -10,17 +10,13 @@ public class Downloadstate implements Runnable
 	private File Speicherort;
 	private JLabel stat;
 	private String text;
-	private double hinzu;
-	private double ges;	
 		
-	public Downloadstate(Download dow, File Speicherort, JLabel stat, String text, double hinzu, double ges)
+	public Downloadstate(Download dow, File Speicherort, JLabel stat, String text)
 	{
 		this.dow = dow;
 		this.Speicherort = Speicherort;
 		this.stat = stat;
 		this.text = text;
-		this.hinzu = hinzu;
-		this.ges = ges;
 	}
 
 	   public void run() {
@@ -37,7 +33,7 @@ public class Downloadstate implements Runnable
 						{	
 							double proz = Math.round(((double)ist/(double)soll)*1000.)/10.;
 							stat.setText(text+" - "+String.valueOf(proz)+"%");			       //Downloadstatus anzeigen	
-							Install.status((double)ges + hinzu*0.75*((double)ist/(double)soll));
+							Install.status(proz);
 						}																					
 					}
 					

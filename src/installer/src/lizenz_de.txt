@@ -3,41 +3,41 @@
 MINECRAFT MODINSTALLER SOFTWARE-LIZENZBESTIMMUNGEN<br>
 <br>
 Diese Lizenzbestimmungen sind ein Vertrag zwischen Ihnen und "Minecraft-Installer.de".<br>
-Bitte lesen Sie die Lizenzbestimmungen aufmerksam durch. Sie gelten für die oben genannte Software und gegebenenfalls für die Medien, auf denen Sie diese erhalten haben.<br>
+Bitte lesen Sie die Lizenzbestimmungen aufmerksam durch. Sie gelten fÃ¼r die oben genannte Software und gegebenenfalls fÃ¼r die Medien, auf denen Sie diese erhalten haben.<br>
 <br>
-Diese Bestimmungen gelten auch für alle von "Minecraft-Installer.de" diesbezüglich angebotenen:<br>
+Diese Bestimmungen gelten auch fÃ¼r alle von "Minecraft-Installer.de" diesbezÃ¼glich angebotenen:<br>
 - Updates<br>
-- Ergänzungen und<br>
+- ErgÃ¤nzungen und<br>
 - Internetbasierten Dienste<br>
-<br>DURCH DIE VERWENDUNG DER SOFTWARE ERKENNEN SIE DIESE BESTIMMUNGEN AN. FALLS SIE DIE BESTIMMUNGEN NICHT AKZEPTIEREN, SIND SIE NICHT BERECHTIGT, DIE SOFTWARE ZU VERWENDEN. WIE WEITER UNTEN BESCHRIEBEN, GILT DIE VERWENDUNG DER SOFTWARE AUCH ALS IHRE ZUSTIMMUNG FÜR INTERNETBASIERTE DIENSTE. WENN SIE DIESE LIZENZBESTIMMUNGEN EINHALTEN, HABEN SIE DIE NACHFOLGEND AUFGEFÜHRTEN RECHTE FÜR JEDE LIZENZ, DIE SIE ERWERBEN.<br>
+<br>DURCH DIE VERWENDUNG DER SOFTWARE ERKENNEN SIE DIESE BESTIMMUNGEN AN. FALLS SIE DIE BESTIMMUNGEN NICHT AKZEPTIEREN, SIND SIE NICHT BERECHTIGT, DIE SOFTWARE ZU VERWENDEN. WIE WEITER UNTEN BESCHRIEBEN, GILT DIE VERWENDUNG DER SOFTWARE AUCH ALS IHRE ZUSTIMMUNG FÃœR INTERNETBASIERTE DIENSTE. WENN SIE DIESE LIZENZBESTIMMUNGEN EINHALTEN, HABEN SIE DIE NACHFOLGEND AUFGEFÃœHRTEN RECHTE FÃœR JEDE LIZENZ, DIE SIE ERWERBEN.<br>
 <br>
 1. RECHTE ZUR INSTALLATION UND NUTZUNG.<br>
-Sie sind berechtigt, eine Kopie der Software auf einem Gerät zu installieren. Wenn Sie dieses Programm auf weiteren Computern installieren möchten, laden Sie dieses über das Internet von "http://www.minecraft-installer.de" herunter.<br>
+Sie sind berechtigt, eine Kopie der Software auf einem GerÃ¤t zu installieren. Wenn Sie dieses Programm auf weiteren Computern installieren mÃ¶chten, laden Sie dieses Ã¼ber das Internet von "http://www.minecraft-installer.de" herunter.<br>
 <br>
 2. INTERNETBASIERTE DIENSTE.<br>
-"Minecraft-Installer.de" stellt mit der Software internetbasierte Dienste bereit. "Minecraft-Installer.de" ist berechtigt, diese jederzeit zu ändern oder zu kündigen.<br>
+"Minecraft-Installer.de" stellt mit der Software internetbasierte Dienste bereit. "Minecraft-Installer.de" ist berechtigt, diese jederzeit zu Ã¤ndern oder zu kÃ¼ndigen.<br>
 <br>
-Zustimmung für internetbasierte Dienste.<br>
-Der Minecraft Modinstaller stellt über das Internet eine Verbindung mit Computersystemen von "Minecraft-Installer.de" oder von Serviceprovidern her. In einigen Fällen erhalten Sie keinen gesonderten Hinweis, wenn die Verbindung hergestellt wird. In einigen Fällen können Sie diese Features abschalten oder nicht verwenden.<br>
-DURCH DIE VERWENDUNG DIESER FEATURES ERKLÄREN SIE SICH MIT DER ÜBERTRAGUNG DIESER INFORMATIONEN EINVERSTANDEN.<br>
+Zustimmung fÃ¼r internetbasierte Dienste.<br>
+Der Minecraft Modinstaller stellt Ã¼ber das Internet eine Verbindung mit Computersystemen von "Minecraft-Installer.de" oder von Serviceprovidern her. In einigen FÃ¤llen erhalten Sie keinen gesonderten Hinweis, wenn die Verbindung hergestellt wird. In einigen FÃ¤llen kÃ¶nnen Sie diese Features abschalten oder nicht verwenden.<br>
+DURCH DIE VERWENDUNG DIESER FEATURES ERKLÃ„REN SIE SICH MIT DER ÃœBERTRAGUNG DIESER INFORMATIONEN EINVERSTANDEN.<br>
 <br>
 "Minecraft-Installer.de" verwendet die Informationen nicht, um Sie zu identifizieren oder Kontakt mit Ihnen aufzunehmen.<br>
 <br>
-3. GÜLTIGKEITSBEREICH DER LIZENZ.<br>
+3. GÃœLTIGKEITSBEREICH DER LIZENZ.<br>
 Dieser Vertrag gibt Ihnen nur einige Rechte zur Verwendung der Features, die in der von Ihnen lizenzierten Software-Edition enthalten sind.<br>
-"Minecraft-Installer.de" behält sich alle anderen Rechte vor.<br>
-Sie dürfen die Software nur, wie in diesem Vertrag ausdrücklich gestattet, verwenden, es sei denn, das anwendbare Recht gibt Ihnen ungeachtet dieser Einschränkung umfassendere Rechte. Dabei sind Sie verpflichtet, alle technischen Beschränkungen der Software einzuhalten, die Ihnen nur spezielle Verwendungen gestatten.<br>
+"Minecraft-Installer.de" behÃ¤lt sich alle anderen Rechte vor.<br>
+Sie dÃ¼rfen die Software nur, wie in diesem Vertrag ausdrÃ¼cklich gestattet, verwenden, es sei denn, das anwendbare Recht gibt Ihnen ungeachtet dieser EinschrÃ¤nkung umfassendere Rechte. Dabei sind Sie verpflichtet, alle technischen BeschrÃ¤nkungen der Software einzuhalten, die Ihnen nur spezielle Verwendungen gestatten.<br>
 <br>
 Sie sind nicht dazu berechtigt:<br>
-- technische Beschränkungen der Software zu umgehen<br>
-- die Software zurückzuentwickeln (Reverse Engineering), zu dekompilieren oder zu disassemblieren, es sei denn, dass (und nur insoweit) es das anwendbare Recht ungeachtet dieser Einschränkung ausdrücklich gestattet<br>
-- eine größere Anzahl von Kopien der Software als in diesem Vertrag angegeben oder vom anwendbaren Recht ungeachtet dieser Einschränkung ausdrücklich gestattet anzufertigen<br>
-- die Software zu veröffentlichen, damit andere sie kopieren können<br>
-- die Software auf eine Weise zu verwenden, die gegen das Gesetz verstößt<br>
+- technische BeschrÃ¤nkungen der Software zu umgehen<br>
+- die Software zurÃ¼ckzuentwickeln (Reverse Engineering), zu dekompilieren oder zu disassemblieren, es sei denn, dass (und nur insoweit) es das anwendbare Recht ungeachtet dieser EinschrÃ¤nkung ausdrÃ¼cklich gestattet<br>
+- eine grÃ¶ÃŸere Anzahl von Kopien der Software als in diesem Vertrag angegeben oder vom anwendbaren Recht ungeachtet dieser EinschrÃ¤nkung ausdrÃ¼cklich gestattet anzufertigen<br>
+- die Software zu verÃ¶ffentlichen, damit andere sie kopieren kÃ¶nnen<br>
+- die Software auf eine Weise zu verwenden, die gegen das Gesetz verstÃ¶ÃŸt<br>
 - die Software zu verkaufen, vermieten, zu verleasen oder zu verleihen<br>
-- die Software für kommerzielle Software-Hostingdienste zu verwenden.<br>
+- die Software fÃ¼r kommerzielle Software-Hostingdienste zu verwenden.<br>
 <br>
 4. HAFTUNGSAUSSCHLUSS. <br>
-Wir übernehmen keine Haftung für mögliche Schäden, die sich direkt oder indirekt aus der Verwendung des Modinstaller ergeben können. Das gilt auch für durch den Modinstaller hervorgerufene Fehler an anderen Programmen wie z.B. ein Absturz von Minecraft. Wir versichern hiermit jedem Nutzer, dass unsere Software keine betrügerischen oder sonstigen kriminellen Tätigkeiten nachgeht oder Sie die Absicht hat, Sie auszuspionieren. Trotz sorgfältiger Kontrollen unsererseits haften wir ebenfalls nicht für die in dem Modinstaller angeboten Modifikationen (kurz Mods) für Minecraft, auf deren Entwicklung wir keinen Einfluss haben (Fehlfunktion, Abstürze, Virenbefall, etc.).
+Wir Ã¼bernehmen keine Haftung fÃ¼r mÃ¶gliche SchÃ¤den, die sich direkt oder indirekt aus der Verwendung des Modinstaller ergeben kÃ¶nnen. Das gilt auch fÃ¼r durch den Modinstaller hervorgerufene Fehler an anderen Programmen wie z.B. ein Absturz von Minecraft. Wir versichern hiermit jedem Nutzer, dass unsere Software keine betrÃ¼gerischen oder sonstigen kriminellen TÃ¤tigkeiten nachgeht oder Sie die Absicht hat, Sie auszuspionieren. Trotz sorgfÃ¤ltiger Kontrollen unsererseits haften wir ebenfalls nicht fÃ¼r die in dem Modinstaller angeboten Modifikationen (kurz Mods) fÃ¼r Minecraft, auf deren Entwicklung wir keinen Einfluss haben (Fehlfunktion, AbstÃ¼rze, Virenbefall, etc.).
 </body>
 </html> 

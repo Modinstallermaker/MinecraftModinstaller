@@ -102,8 +102,7 @@ public class Import extends JFrame
 		if(updateCat())
 		{			
 			File importf = new File(stamm+"Modinstaller/Import/"+ modName +".jar");
-			new Compress(extr, importf);
-			Menu.nextButton.setEnabled(true);
+			new Compress(extr, importf);			
 			make();
 		}
 		else
@@ -117,6 +116,7 @@ public class Import extends JFrame
 				copy(datei, importf);
 			} catch (Exception e) {}
 		}
+		Menu.nextButton.setEnabled(true);
 		Menu.rightListModel.addElement("+ " +modName);
 		System.gc();
 	}
@@ -247,7 +247,8 @@ public class Import extends JFrame
 	        		if(neu.length()>0)
 	        		{
 	        			requiredMods = neu.substring(0, neu.length()-2);
-	        			JOptionPane.showMessageDialog(null, Read.getTextwith("modimport", "requiredModsText")+requiredMods, Read.getTextwith("modimport", "requiredModsTexth"), JOptionPane.INFORMATION_MESSAGE);
+	        			JOptionPane.showMessageDialog(null, Read.getTextwith("modimport", "requiredModsText")+requiredMods, 
+	        					Read.getTextwith("modimport", "requiredModsTexth"), JOptionPane.INFORMATION_MESSAGE);
 	        		}
 	        	}
 	        	catch (Exception e){						

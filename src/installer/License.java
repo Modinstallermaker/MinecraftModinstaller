@@ -12,7 +12,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Date;
-import java.util.Scanner;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -43,7 +42,6 @@ public class License extends JFrame
 	private Cursor c = new Cursor(Cursor.HAND_CURSOR);
 	private String Lizenztext = "";
 	private JEditorPane tp = new JEditorPane();
-	private Scanner scan;
 	private int hoehe = 345, breite=550;
 	private Modinfo[] Mod, Downloadlist;
 
@@ -54,7 +52,8 @@ public class License extends JFrame
 		
 		setUndecorated(true);			
 		setSize(breite, hoehe);
-		JPanel cp = new GraphicsPanel(false, "src/bild.png");
+		JPanel cp = new GraphicsPanel(false);		
+		cp.setBackground(Color.decode("#CfE4F7"));
 		cp.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 
 		
@@ -67,12 +66,8 @@ public class License extends JFrame
 		add(cp);
 		
 		String lang = optionReader("language");
-		scan = new Scanner(getClass().getResourceAsStream("src/lizenz_"+lang+".txt"), "ISO-8859-15");
-
-		while (scan.hasNextLine()) 
-		{
-			Lizenztext += scan.nextLine();
-		}
+		
+		Lizenztext = new OP().getInternalText("src/lizenz_"+lang+".txt");
 		
 		tp.setEditable(false);
 		tp.setContentType("text/html");

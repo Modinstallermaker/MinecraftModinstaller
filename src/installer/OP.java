@@ -15,6 +15,7 @@ import java.io.Writer;
 import java.nio.channels.ByteChannel;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
@@ -148,6 +149,12 @@ public class OP
 	{
 		if(!f.exists())	f.mkdirs();
 	}
+	
+	final static public void Textwriters(File datei, String line, boolean weiterschreiben) throws IOException
+	{		
+		String lines[] = {line};
+		Textwriter(datei, lines, weiterschreiben);
+	}	
 		
 	final static public void Textwriter(File datei, String[] lines, boolean weiterschreiben) throws IOException
 	{		
@@ -289,6 +296,18 @@ public class OP
 				Textwriter(configf, neu, true);
 			} catch (IOException e) {}
 		}
+	}
+	
+	public String getInternalText(String dir)
+	{
+		String json="";
+		Scanner scan = new Scanner(getClass().getResourceAsStream(dir), "UTF-8");
+		while (scan.hasNextLine()) 
+		{
+			json += scan.nextLine();
+		}
+		scan.close();
+		return json;
 	}
 	
 	final static public String getError(Throwable aThrowable) 

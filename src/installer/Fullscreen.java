@@ -87,11 +87,12 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 	 
 	    cp.add(headl);	
 	    
-	    headl2.setBounds(3, 27, x-3, 50); 	   	 
+	    headl2.setBounds(3, 24, x, 50); 	   	 
 	    headl2.setBackground(null);
 	    headl2.setForeground(Color.WHITE);
 	    headl2.setHorizontalAlignment(SwingConstants.CENTER); 
 	    headl2.setFont(Start.lcd.deriveFont(Font.BOLD,40));
+	    headl2.setVisible(false);
 	 
 	    cp.add(headl2);	
 	    
@@ -151,6 +152,7 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 	public void laden()
 	{
 		hdPicture.setText("");
+		headl2.setVisible(false);
 		geladen=false;
 		neu=true;
 	    headl.setText(modname);	
@@ -159,7 +161,7 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 	    url = url.replace(" ", "%20");
 		
 	    try {
-	    	hdPicture.setIcon((Icon) new ImageIcon(this.getClass().getResource("src/warten.gif")));
+	    	hdPicture.setIcon((Icon) new ImageIcon(this.getClass().getResource("src/wait3.gif")));
 	 	}
 	    catch (Exception e){
 	    }
@@ -185,6 +187,7 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 					}						 	
 					img = new ImageScaler().scaleImage(img, new Dimension(dx, dy));	
 					hdPicture.setIcon((Icon) new ImageIcon(img));	
+					 headl2.setVisible(true);
 					img.flush();
 				} 
 				catch (Exception e) 

@@ -9,6 +9,8 @@ import java.awt.Point;
 import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -36,7 +38,7 @@ import javax.swing.text.Document;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
-public class MenuGUI extends JFrame implements ActionListener, MouseListener, ChangeListener
+public class MenuGUI extends JFrame implements ActionListener, MouseListener, ChangeListener, KeyListener
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -71,17 +73,19 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	JLabel removeArrow = new JLabel();
 	JLabel importButton = new JLabel();
 	JLabel restoreButton = new JLabel();
+	JLabel sizeLabel = new JLabel();
 	JLabel helpButton = new JLabel();
 	JLabel linkButton = new JLabel();
 	JLabel sourceButton = new JLabel();
 	JLabel exitButton = new JLabel();
 	JLabel maximizeButton = new JLabel();
 	JLabel minimizeButton = new JLabel();
+	HintTextField search = new HintTextField("Mod suchen...");
 	static JLabel nextButton = new JLabel();
 	
 	private Cursor c = new Cursor(Cursor.HAND_CURSOR);		
 	private String stamm = Start.stamm, mcVersion = Start.mcVersion;		
-	private int hoehe =600, breite=1024;
+	private int hoehe =600, breite=1024;	
 	
 	public void GUI() 
 	{
@@ -187,8 +191,20 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		tabbedPane.addTab("Forge", leftListFSP);
 		tabbedPane.setEnabled(false);
 		tabbedPane.addChangeListener(this);
-		tabbedPane.setBounds(rand, listeya, listenb, listenh);							
-	    cp.add(tabbedPane);        
+		tabbedPane.setBounds(rand, listeya, listenb, listenh-30);							
+	    cp.add(tabbedPane);   
+	    
+	    search.setBounds(rand, listeya+listenh-25, listenb, 25);	
+	    search.addKeyListener(this);
+	    search.addMouseListener(this);
+	    search.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
+	    search.setBorder(BorderFactory.createCompoundBorder(search.getBorder(), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
+	    cp.add(search);
+	    
+	    sizeLabel.setBounds(mittexa+picturex-180, infol+5, 90, 40); // Downloadgröße		
+	    sizeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		sizeLabel.setFont(new Font("Dialog", Font.PLAIN, 18));
+		cp.add(sizeLabel);
 		
 		modtext.setBounds(mittexa, modtexty, picturex, 30);           //Modname
 		modtext.setText(Read.getTextwith("seite2", "text7"));		
@@ -208,7 +224,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		sourceButton.addMouseListener(this); 
 		sourceButton.setToolTipText(Read.getTextwith("seite2", "dev"));
 		sourceButton.setCursor(c);
-		cp.add(sourceButton);
+		cp.add(sourceButton);		
 		
 		for (int i=0; i<5; i++) //Sterne für Bewertung
 		{
@@ -226,7 +242,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		picture.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 		picture.addMouseListener(this);
 		picture.setCursor(c);    	
-		picture.setIcon(new ImageIcon(this.getClass().getResource("src/warten.gif")));	
+		picture.setIcon(new ImageIcon(this.getClass().getResource("src/wait.gif")));	
 		picture.setToolTipText(Read.getTextwith("seite2", "pici"));
 		cp.add(picture);
 		
@@ -381,5 +397,14 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	}
 	@Override
 	public void stateChanged(ChangeEvent e) {
+	}
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
+	@Override
+	public void keyPressed(KeyEvent e) {
+	}
+	@Override
+	public void keyReleased(KeyEvent e) {
 	}
 }
