@@ -12,15 +12,16 @@ import java.util.List;
 
 class DragDropListener implements DropTargetListener 
 {	
+	MenuGUI men;
+	public DragDropListener(MenuGUI men)
+	{
+		this.men=men;
+	}
 		@Override
-	    public void drop(DropTargetDropEvent event) {		      
-	      
-	      event.acceptDrop(DnDConstants.ACTION_COPY);		      
-	     
-	      Transferable transferable = event.getTransferable();		      
-	    
-	      DataFlavor[] flavors = transferable.getTransferDataFlavors();
-	    
+	    public void drop(DropTargetDropEvent event) {	
+	      event.acceptDrop(DnDConstants.ACTION_COPY);	
+	      Transferable transferable = event.getTransferable();
+	      DataFlavor[] flavors = transferable.getTransferDataFlavors();	    
 	      for (DataFlavor flavor : flavors) 
 	      {		        
 	        try 
@@ -32,10 +33,9 @@ class DragDropListener implements DropTargetListener
 		            
 			       for (File filex : files) 
 			       {				    	   
-			    	   new Import(filex);
+			    	   new Import(filex, men);
 		           }		            
-	          }
-	          
+	          }	          
 	        } 
 	        catch (Exception e) 
 	        {		          

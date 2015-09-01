@@ -11,25 +11,25 @@ import static installer.OP.*;
 
 public class Compress 
 {
-	private File ortkop;
+	private File sourcecpy;
 	private BufferedInputStream buffinstr;
 	private JarOutputStream zipOut;
 	
-	public Compress(File ort2, File ziel)
+	public Compress(File source, File target)
 	{
-		ortkop = ort2;
+		sourcecpy = source;
 		
-		makedirs(ziel.getParentFile());
+		makedirs(target.getParentFile());
 		
 		try 
 		{
-			zipOut = new JarOutputStream(new FileOutputStream(ziel));
+			zipOut = new JarOutputStream(new FileOutputStream(target));
 		} 
 		catch (Exception ex) 
 		{
 			Install.Fehler+=getError(ex)+"\n\n";
 		}
-		zip(ort2);
+		zip(source);
 		try 
 		{
 			zipOut.close(); // Jar Datei schlie�en
@@ -44,11 +44,11 @@ public class Compress
 	{	
 	}
 	
-	public void zip(File ort)
+	public void zip(File source)
 	{
 		try 
 		{
-			File[] files = ort.listFiles();
+			File[] files = source.listFiles();
 			if (files != null) 
 			{
 				for (int i = 0; i < files.length; i++) // Alle Dateien und Unterordner auflisten
@@ -66,7 +66,7 @@ public class Compress
 						{
 							buffinstr.read(buffer, 0, avail);
 						}
-						String eintragname = files[i].getAbsolutePath().substring(ortkop.getAbsolutePath().length()).replace("\\", "/").substring(1);
+						String eintragname = files[i].getAbsolutePath().substring(sourcecpy.getAbsolutePath().length()).replace("\\", "/").substring(1);
 						if (eintragname.equals("_aux.class")) 
 						{
 							eintragname = "aux.class";

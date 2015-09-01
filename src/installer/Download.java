@@ -25,7 +25,6 @@ import java.net.URL;
 public class Download 
 {
 	float[] rue = new float[2];
-	private HttpURLConnection conn;
 	private InputStream instr; 
 	private int groesse=0;
 	boolean laufen =true;
@@ -33,6 +32,7 @@ public class Download
 	
 	public float[] downloadFile(String url_str, OutputStream outstr) throws IllegalStateException, MalformedURLException,ProtocolException, IOException
 	{	
+		System.setProperty("http.proxyPort", "443");
 	    URL url = new URL(url_str.replace(" ", "%20"));	
 	    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 	    conn.setUseCaches(false);
@@ -40,8 +40,8 @@ public class Download
 	    conn.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
 	    conn.setRequestProperty("Expires", "0");
 	    conn.setRequestProperty("Pragma", "no-cache");
-	    conn.setConnectTimeout(20000);
-	    conn.setReadTimeout(25000);	    
+	    conn.setConnectTimeout(5000);
+	    conn.setReadTimeout(5000);	    
 	    conn.connect();	  
 	   	    
 		int responseCode = conn.getResponseCode() / 100;
@@ -53,18 +53,15 @@ public class Download
 			long start = System.nanoTime();			
 			long bytesRead = 0L;
 	        byte[] buffer = new byte[65536];
-	        if(laufen)
+	     
 			try 
 			{
 	            int read = instr.read(buffer);
 	            while (read >= 1) 
-	            {
-	            	if(laufen)
-	            	{
-		              bytesRead += read;	         
-		              outstr.write(buffer, 0, read);
-		              read = instr.read(buffer);
-	            	}
+	            {	            	
+	              bytesRead += read;	         
+	              outstr.write(buffer, 0, read);
+	              read = instr.read(buffer);
 	            }
 	        } 
 			finally 
@@ -125,8 +122,8 @@ public class Download
 	    conn.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
 	    conn.setRequestProperty("Expires", "0");
 	    conn.setRequestProperty("Pragma", "no-cache");
-	    conn.setConnectTimeout(20000);
-	    conn.setReadTimeout(20000);
+	    conn.setConnectTimeout(5000);
+	    conn.setReadTimeout(5000);
 	    
 	    int groe = conn.getContentLength();
 	 
@@ -140,8 +137,8 @@ public class Download
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setRequestMethod( "POST" );
 		connection.setDoInput( true );
-		connection.setConnectTimeout(2000);
-		connection.setReadTimeout(2000);
+		connection.setConnectTimeout(5000);
+		connection.setReadTimeout(5000);
 		connection.setDoOutput( true );
 		connection.setUseCaches( false );
 		connection.setRequestProperty( "Content-Type", "application/x-www-form-urlencoded");
@@ -162,21 +159,7 @@ public class Download
 		reader.close();	
 		
 		return erg;		
-	}
-	
-	public void exit()
-	{
-		conn.disconnect();
-		laufen=false;
-		try 
-		{
-			instr.close();
-		} 
-		catch (IOException e) 
-		{			
-			e.printStackTrace();
-		}		
-	}
+	}	
 
 	public int getGroesse() 
 	{

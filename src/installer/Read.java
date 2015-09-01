@@ -3,8 +3,6 @@ package installer;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import static installer.OP.*;
-
 
 public class Read
 {
@@ -13,9 +11,7 @@ public class Read
 
 	public Read()
 	{
-		String lang = optionReader("language");
-		 
-		String json=new OP().getInternalText("src/texte_"+lang+".json");
+		String json=new OP().getInternalText("src/texte_"+Start.lang+".json");
 		
 		Gson gson = new Gson();	
 		js1 = gson.fromJson(json, JsonObject.class); 

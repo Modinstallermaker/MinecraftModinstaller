@@ -30,6 +30,9 @@ import javax.swing.JOptionPane;
 
 public class OP 
 {
+	private static FileOutputStream fileOutputStream;
+	private static FileInputStream fileInputStream;
+
 	final static public boolean del(File dir)
 	{
 		if(dir.exists())
@@ -90,8 +93,10 @@ public class OP
 		    FileChannel targetChannel = null;
 		    try
 		    {
-		      sourceChannel = new FileInputStream(source).getChannel();
-		      targetChannel = new FileOutputStream(target).getChannel();
+		      fileInputStream = new FileInputStream(source);
+		      sourceChannel = fileInputStream.getChannel();
+		      fileOutputStream = new FileOutputStream(target);
+		      targetChannel = fileOutputStream.getChannel();
 		      targetChannel.transferFrom(sourceChannel, 0L, sourceChannel.size());
 		    }
 		    finally

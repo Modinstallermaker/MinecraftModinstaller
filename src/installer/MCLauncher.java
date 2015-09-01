@@ -18,14 +18,14 @@ import static installer.OP.*;
 
 public class MCLauncher 
 {	
-	public MCLauncher(final String webplace, final String stamm)
+	public MCLauncher()
 	{
-		makedirs(new File(stamm +"/Modinstaller/"));
+		makedirs(new File(Start.stamm +"/Modinstaller/"));
 		boolean ausf = true;
 		
 		String str = System.getProperty("os.name").toLowerCase(); 
 		File speicherort;
-		String downloadort = webplace + "Launcher2.jar";
+		String downloadort = Start.webplace + "Launcher2.jar";
 		
 		 if (str.contains("win"))	
 		 {
@@ -37,13 +37,13 @@ public class MCLauncher
 			if(spo2.exists())
 				runExe(spo);
 			
-			speicherort = new File(stamm +"/Modinstaller/MCLauncher.exe");
-		 	downloadort = webplace + "Launcher2.exe";
+			speicherort = new File(Start.stamm +"/Modinstaller/MCLauncher.exe");
+		 	downloadort = Start.webplace + "Launcher2.exe";
 		 }
 		 else
 		 {
-			 speicherort = new File(stamm +"/Modinstaller/MCLauncher.jar");	
-			 downloadort = webplace + "Launcher2.jar";
+			 speicherort = new File(Start.stamm +"/Modinstaller/MCLauncher.jar");	
+			 downloadort = Start.webplace + "Launcher2.jar";
 		 }
 			
 		makedirs(speicherort.getParentFile());	

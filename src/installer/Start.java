@@ -1,6 +1,6 @@
 package installer;
 
-import static installer.OP.Textreadera;
+import static installer.OP.Textreader;
 import static installer.OP.Textreaders;
 import static installer.OP.del;
 import static installer.OP.getError;
@@ -19,7 +19,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -64,31 +63,20 @@ public class Start extends JFrame
 	private JLabel logo = new JLabel();	
 	private JPanel cp;		
 	private String Zusatz, modinstallerVersion;
-	private List<String> OnlineList = new ArrayList<String>();
-	private List<String> OfflineList = new ArrayList<String>();
-	private List<String> AvialableList;
+	private ArrayList<String> OnlineList = new ArrayList<String>();
+	private ArrayList<String> OfflineList = new ArrayList<String>();
+	private ArrayList<String> AvialableList = new ArrayList<String>();
 	private int versuch = 0;	
 	private int hoehe =300, breite=500;
 	
-	public static String mcVersion, webplace, mineord, stamm, lang ="en";
+	public static String mcVersion=null, webplace, mineord, stamm, lang ="n/a";
+	public static ArrayList<String> sent = new ArrayList<String>();
 	public static boolean online = false;
-	public static Font lcd = new Font("Dialog",Font.PLAIN,20);
 	public static String[] mcVersionen; 
 	
 	public Start()
 	{		
 		minecraftDir();
-		
-		if(optionReader("modinstaller").equals("n/a"))
-		{
-			del(new File(stamm + "Modinstaller"));
-			del(new File(System.getProperty("user.home") + "/Desktop/MC Modinstaller 4.1.lnk"));
-			del(new File(System.getProperty("user.home") + "/Microsoft/Windows/Start Menu/Programs/MC Modinstaller 4.1.lnk"));	
-			del(new File(System.getProperty("user.home") + "/Desktop/MC Modinstaller 4.2.lnk"));
-			del(new File(System.getProperty("user.home") + "/Microsoft/Windows/Start Menu/Programs/MC Modinstaller 4.2.lnk"));	
-		}
-		makedirs(new File(stamm + "Modinstaller"));	
-		
 		lang = optionReader("language");
 		if(lang.equals("n/a"))
 		{
@@ -99,14 +87,26 @@ public class Start extends JFrame
 			{
 				case 0: lang="de"; break;
 				case 1: lang="en"; break;
-			}
-			optionWriter("language", lang);
+			}			
 		}	
-		 
+		
 		modinstallerVersion = Read.getTextwith("installer", "version");
 		Zusatz = Read.getTextwith("installer", "zusatz");
-		webplace = Read.getTextwith("installer", "webplace");
+		webplace = Read.getTextwith("installer", "webplace");		
 		
+		if(!optionReader("modinstaller").equals(modinstallerVersion))
+		{
+			del(new File(stamm + "Modinstaller"));
+			del(new File(System.getProperty("user.home") + "/Desktop/MC Modinstaller 4.1.lnk"));
+			del(new File(System.getProperty("user.home") + "/Microsoft/Windows/Start Menu/Programs/MC Modinstaller 4.1.lnk"));	
+			del(new File(System.getProperty("user.home") + "/Desktop/MC Modinstaller 4.2.lnk"));
+			del(new File(System.getProperty("user.home") + "/Microsoft/Windows/Start Menu/Programs/MC Modinstaller 4.2.lnk"));	
+			del(new File(System.getProperty("user.home") + "/Desktop/MC Modinstaller 4.3.lnk"));
+			del(new File(System.getProperty("user.home") + "/Microsoft/Windows/Start Menu/Programs/MC Modinstaller 4.3.lnk"));	
+		}
+		makedirs(new File(stamm + "Modinstaller"));	
+		
+		optionWriter("language", lang);
 		optionWriter("modinstaller", modinstallerVersion);
 				
 		setSize(breite, hoehe);
@@ -122,7 +122,7 @@ public class Start extends JFrame
 		cp.setLayout(null);			
 		add(cp);
 		
-		modinstallerVersionLabel.setBounds(breite-100-15, 15, 100, 20);
+		modinstallerVersionLabel.setBounds(breite-150-15, 15, 150, 20);
 		modinstallerVersionLabel.setText("Version " + modinstallerVersion + " " + Zusatz);
 		modinstallerVersionLabel.setFont(new Font("Arial", Font.PLAIN, 14));	
 		modinstallerVersionLabel.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -144,37 +144,31 @@ public class Start extends JFrame
 		{
 			public void run() 
 			{					
-				try 
-				{
-					lcd = Font.createFont(Font.TRUETYPE_FONT, this.getClass().getResource("src/Comfortaa.ttf").openStream());
-				} 
-				catch (Exception e){}	
-				
 				del(new File(stamm+"Modinstaller/zusatz.txt"));
-				del(new File(stamm+"Modinstaller/Import"));
-				del(new File(stamm + "Modinstaller/modlist.txt"));
+				del(new File(stamm+"Modinstaller/Importn/"));
+				del(new File(stamm + "Modinstaller/modlist.txt"));				
 				
 				if(!new File(mineord).exists())
 					sucheMineord();
 				
-				if(!versionenSuchen())
+				if(!searchMCVersions())
 				{
 					JOptionPane.showMessageDialog(null, Read.getTextwith("seite1", "version"));
 					optionWriter("mcfolder", mineord);
 					sucheMineord();
-					if(!versionenSuchen())
+					if(!searchMCVersions())
 						System.exit(0);
 				}
 				
-				if(updateHerunterladen())
-					Online();	
+				if(update())
+					online();	
 				else  		
-					Offline();
+					offline();
 				
-				Serverlist();				
-				aktualisieren();	
+				modifyServerlist();				
+				removeOldModFiles();	
 				shortcuts();
-				hauptmStarten();
+				startMenu();
 			}
 		}.start();
 	}
@@ -187,7 +181,7 @@ public class Start extends JFrame
 		File em = new File(mineord);
 		if(mineord.equals("n/a")||(!em.exists()))
 		{
-			Object[] options2 = {Read.getTextwith("seite1", "inter4"), Read.getTextwith("seite1", "inter1"), Read.getTextwith("seite1", "inter3")};
+			Object[] options2 = {Read.getTextwith("seite1", "mcdir"), Read.getTextwith("seite1", "inter1"), Read.getTextwith("seite1", "inter3")};
 			int selected2 = JOptionPane.showOptionDialog(null, Read.getTextwith("seite1", "error4"), Read.getTextwith("seite1", "error4h"), 
 					JOptionPane.DEFAULT_OPTION,JOptionPane.WARNING_MESSAGE, null, options2, options2[0]);
 			switch(selected2)
@@ -220,79 +214,114 @@ public class Start extends JFrame
 		}			
 	}
 	
-	/*
-	public void Online()
-	{
-		File versionendat = new File(stamm+"Modinstaller/versionen.txt");
-		File rec = new File(stamm+"Modinstaller/recom.txt");		
+	public void online()
+	{		
+		prog.setText(Read.getTextwith("seite1", "prog15"));
 		try 
 		{
-			new Download().downloadFile(webplace+"quellen.txt", new FileOutputStream(versionendat));
-			OnlineList = Textreadera(versionendat);
-			Versionen = OnlineList.toArray( new String[]{} );	
+			File versionendat = new File(stamm+"Modinstaller/versions.txt");
+			new Download().downloadFile(webplace+"versions.txt", new FileOutputStream(versionendat));
+			String[] onlVers = Textreader(versionendat);
+			String[] offVers = OfflineList.toArray(new String[OfflineList.size()]);			
+			int pos=1000, posn=1000;
 			
-			new Download().downloadFile(webplace+"recom.txt", new FileOutputStream(rec));			
-			String[] reco = Textreader(rec);
-			Version = reco[0];			
-		} 
-		catch (Exception e) 
-		{						
-			Offline();
-		} 
-	}
-	*/
-	
-	public void Online()
-	{
-		File versionendat = new File(stamm+"Modinstaller/versionen.txt");
-		try 
-		{
-			new Download().downloadFile(webplace+"quellen.txt", new FileOutputStream(versionendat));
-			OnlineList = Textreadera(versionendat);
-			
-			AvialableList = new LinkedList<String>(OnlineList);					
-			AvialableList.retainAll(OfflineList);	
-			
+			for(int i =0; i<onlVers.length; i++)
+			{				
+				String[] modi = onlVers[i].split(";");
+				String onVers = modi[0];				
+				OnlineList.add(onVers);
+				if(modi.length==1)
+					pos = 1000;
+				else
+					pos = Integer.parseInt(onlVers[i].split(";")[1]);
+				
+				for(int j=0; j<offVers.length; j++)
+				{	
+					if(offVers[j].equals(onVers))
+					{	
+						if(pos<posn)
+						{
+							posn=pos;							
+							mcVersion = onVers;
+						}
+						AvialableList.add(onVers);
+					}				
+				}
+			}			
 			mcVersionen = AvialableList.toArray( new String[]{} );
 			
-			LinkedList<String> SelectionList = (LinkedList<String>) AvialableList;
-			SelectionList.add("Offline");	
-			
-			String[] Angebot = SelectionList.toArray( new String[]{} );
-			
-			if(Angebot.length==1) //nur Offline
-			{
-				Offline();
+			if(AvialableList.size()==0) //keine MC Version gefunden, für die online Mods verfügbar sind. --> Offline Modus
+			{				
+				String[] ques = {Read.getTextwith("seite1", "inter1"), Read.getTextwith("seite1", "inter2"), Read.getTextwith("seite1", "inter5")};
+				int sel = JOptionPane.showOptionDialog(null, Read.getTextwith("seite1", "lessmc1")+Read.getTextwith("seite1", "lessmc"), Read.getTextwith("seite1", "lessmc1h"), 
+						JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, ques, ques[ques.length-1]);
+				switch (sel)
+				{
+					case 0:
+					{
+						new Browser(Read.getTextwith("installer", "website")+"faq.php?id=noonlinemods");
+						System.exit(0);
+						break;
+					}
+					case 1: default: 
+					{
+						offline();
+						break;
+					}
+					case 2:
+					{
+						new MCLauncher();
+						System.exit(0);
+						break;
+					}						
+				}		
 			}
 			else
 			{
-				int selected = JOptionPane.showOptionDialog(null, Read.getTextwith("OP", "modver"), Read.getTextwith("OP", "modverh"), 
-						JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null, Angebot, Angebot[Angebot.length-1]);
-				if(selected !=-1)
+				if(mcVersion==null)
 				{
-					if(selected==Angebot.length-1)  //Offline ausgewählt
+					String[] ques = {Read.getTextwith("seite1", "inter1"), Read.getTextwith("seite1", "inter6"), Read.getTextwith("seite1", "inter5")};
+					int sel = JOptionPane.showOptionDialog(null, Read.getTextwith("seite1", "lessmc2") + Read.getTextwith("seite1", "lessmc"), 
+							Read.getTextwith("seite1", "lessmc2h"), JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, 
+							null, ques, ques[ques.length-1]);
+					switch (sel)
 					{
-						Offline();
-					}
-					else  //Online ausgewählt
-					{
-						mcVersion = Angebot[selected];
-					}
-				}						
-				else //Online nichts ausgewählt
-				{
-					mcVersion = Angebot[Angebot.length-2];							
+						case 0:
+						{
+							new Browser(Read.getTextwith("installer", "website")+"faq.php?id=lessmods");
+							System.exit(0);
+							break;
+						}
+						case 1: default: 
+						{
+							int selected = JOptionPane.showOptionDialog(null, Read.getTextwith("OP", "modver"), Read.getTextwith("OP", "modverh"), 
+									JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null, offVers, offVers[offVers.length-1]);
+							if(selected !=-1)
+							{
+								mcVersion = offVers[selected];
+							}						
+							else
+							{
+								mcVersion = offVers[offVers.length-1];							
+							}
+							break;
+						}
+						case 2:
+						{
+							new MCLauncher();
+							System.exit(0);
+							break;
+						}						
+					}		
 				}
 			}
-			
-		} 
-		catch (Exception e) 
-		{						
-			Offline();
-		} 
+		}
+		catch (Exception e){	
+			new Error(getError(e));
+		}			
 	}
 	
-	public void Offline()
+	public void offline()
 	{
 		online=false;
 		Zusatz = "Offline";								
@@ -311,39 +340,38 @@ public class Start extends JFrame
 	
 	public void shortcuts()
 	{
-		String str = System.getProperty("os.name").toLowerCase(); // Ordner Appdata den Betriebssystemen anpassen
-		File installer = new File(stamm+"Modinstaller/MCModinstaller.exe");
-		 
-		if (str.contains("win") && !installer.exists())
-		{										
-			try
-			{			
-				new Download().smartDownload("http://www.minecraft-installer.de//Dateien/Programme/MC%20Modinstaller%20"+modinstallerVersion+".exe",
+		try
+		{	
+			String str = System.getProperty("os.name").toLowerCase(); // Ordner Appdata den Betriebssystemen anpassen
+			File installer = new File(stamm+"Modinstaller/MCModinstaller.exe");
+			 
+			if (str.contains("win") && !installer.exists())
+			{	
+				new Download().smartDownload("http://www.minecraft-installer.de//Dateien/Programme/MC%20Modinstaller%20"+modinstallerVersion+".exe", 
 						installer);				
 				java.io.InputStream inputStream = this.getClass().getResourceAsStream("src/links.vbs");
-
+	
 			    File tempOutputFile = File.createTempFile("links", ".vbs"); 
 			    tempOutputFile.deleteOnExit();
-
+	
 			    FileOutputStream out = new FileOutputStream( tempOutputFile );
-
+	
 			    byte buffer[] = new byte[1024];
 			    int len;
 			    while( ( len = inputStream.read( buffer ) ) > 0 ) 
 			    {
 			      out.write( buffer, 0, len );
 			    }
-
+	
 			    out.close();
 			    inputStream.close();
-
-			    Desktop.getDesktop().open(tempOutputFile);	
+	
+			    Desktop.getDesktop().open(tempOutputFile);								
 			}
-			catch (Exception ex)
-			{	
-				new Error(getError(ex));
-			}				
-		}		 		 
+		}
+		catch (Exception ex){	
+			new Error(getError(ex));
+		}	
 	}	
 	
 	public void minecraftDir()
@@ -380,7 +408,7 @@ public class Start extends JFrame
         return sb.toString();
     }
 	
-	public boolean updateHerunterladen()
+	public boolean update()
 	{		
 		prog.setText(Read.getTextwith("seite1", "prog4"));
 		try // Update testen
@@ -445,14 +473,15 @@ public class Start extends JFrame
 			    	
 				}
 			}			
-			online=true;			
+			online=true;	
+			del(updatetxt);
 		}		 
 		catch (Exception ex) 
 		{
 			if(versuch<2)
 			{
 				versuch++;				
-				return updateHerunterladen();				
+				return update();				
 			}
 			try 
 			{
@@ -477,7 +506,7 @@ public class Start extends JFrame
 		return online;		
 	}
 	
-	public boolean versionenSuchen()
+	public boolean searchMCVersions()
 	{		
 		boolean found=false;
 		File file = new File(mineord + "versions");
@@ -498,7 +527,7 @@ public class Start extends JFrame
 		return found;
 	}
 	
-	public void aktualisieren()
+	public void removeOldModFiles()
 	{
 		try 												// Wenn Minecraft aktueller
 		{ 
@@ -527,9 +556,8 @@ public class Start extends JFrame
 		}		
 	}
 	
-	public void hauptmStarten()
-	{
-		prog.setText(Read.getTextwith("seite1", "prog12"));
+	public void startMenu()
+	{		
 		Modinfo[] Modlist = null;
 		Modinfo[] Downloadlist = null;
 			    
@@ -537,7 +565,8 @@ public class Start extends JFrame
 		{
 			try 
 			{
-				File texte = new File(stamm+"Modinstaller/modtexts.txt");
+				prog.setText(Read.getTextwith("seite1", "prog12"));
+				File texte = new File(stamm+"Modinstaller/modtexts.json");
 				new Download().downloadFile("http://www.minecraft-installer.de/api/mods2.php", new FileOutputStream(texte));
 				
 				Gson gson = new Gson(); 
@@ -552,19 +581,21 @@ public class Start extends JFrame
 			
 			try 
 			{
-				File downloadt = new File(stamm+"Modinstaller/downloadtexts.txt");
+				prog.setText(Read.getTextwith("seite1", "prog13"));
+				File downloadt = new File(stamm+"Modinstaller/downloadtexts.json");
 				new Download().downloadFile("http://www.minecraft-installer.de/api/offer2.php", new FileOutputStream(downloadt));
 				
 				Gson gson = new Gson(); 
 				String jsontext= Textreaders(downloadt);
 		    	Downloadlist = gson.fromJson(jsontext, Modinfo[].class);
-				del(downloadt);
+		    	del(downloadt);
 			}
 			catch (Exception ex)
 			{
 				ex.printStackTrace();
 			}
 		}
+		prog.setText(Read.getTextwith("seite1", "prog14"));
 		
     	String lizenz = optionReader("lizenz");
 		
@@ -579,9 +610,16 @@ public class Start extends JFrame
 	    dispose();
 	}
 	
-	public void Serverlist()  //Serverliste modifizieren
+	public void modifyServerlist()  //Serverliste modifizieren
 	{
-		if(optionReader("servermod").equals("n/a"))  
+		if(optionReader("servermod").equals("n/a"))
+		{
+			File jsonfile = new File(stamm+"Modinstaller/serverlist.json");
+			try {
+				new Download().downloadFile("http://www.minecraft-installer.de/api/serverlist.json", new FileOutputStream(jsonfile));
+			} catch (Exception e) {				
+				e.printStackTrace();
+			} 
 			try 
 			{
 				List<CompoundTag> oldserverentries = new ArrayList<CompoundTag>();	  
@@ -611,7 +649,7 @@ public class Start extends JFrame
 				ArrayList<CompoundTag> serverentries = new ArrayList<CompoundTag>();
 				 
 				Gson gson = new Gson(); 
-				String jsontext= new OP().getInternalText("src/serverlist.json");
+				String jsontext= Textreaders(jsonfile);
 				String Servername="", Serverip="", Servericon="";  
 		        JsonArray jsona1 = gson.fromJson(jsontext, JsonArray.class);
 		        
@@ -649,15 +687,18 @@ public class Start extends JFrame
 				os.close();
 				
 				optionWriter("servermod", "true");
+				del(jsonfile);
 			} 
 			catch (IOException e1) 
 			{			
 				e1.printStackTrace();				
-			}			
+			}	
+		}
 	}
 
 	public static void main(String[] args) 
-	{			
+	{		
+		System.setProperty("java.net.preferIPv4Stack", "true");
 		try 
 	    {	
 			Color red = Color.decode("#9C2717");

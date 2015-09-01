@@ -23,7 +23,7 @@ public class InstallGUI extends JFrame implements MouseListener {
 	public JLabel stateIcon = new JLabel();	
 	public JLabel startMCButton = new JLabel();
 	public JLabel banner = new JLabel();
-	public JLabel[] socialIcons = new JLabel[3];	
+	public JLabel[] socialIcons;	
 	public JLabel stat = new JLabel();		
 	public static JProgressBar bar = new JProgressBar();
 	
@@ -31,7 +31,6 @@ public class InstallGUI extends JFrame implements MouseListener {
 	private Cursor c = new Cursor(Cursor.HAND_CURSOR);		
 	private int breite = 600, hoehe=350, rand = 20;
 	private JLabel exitButton = new JLabel();
-	private String webplace = Start.webplace, stamm = Start.stamm;
 
 	public void GUI()
 	{		
@@ -51,7 +50,7 @@ public class InstallGUI extends JFrame implements MouseListener {
 		headlineLabel.setText(Read.getTextwith("installer", "name"));
 		headlineLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		headlineLabel.setVerticalAlignment(SwingConstants.CENTER);
-		headlineLabel.setFont(Start.lcd.deriveFont(Font.PLAIN,40));
+		headlineLabel.setFont(headlineLabel.getFont().deriveFont(Font.BOLD,45));
 		cp.add(headlineLabel);
 		
 		banner.setBackground(null);
@@ -77,7 +76,7 @@ public class InstallGUI extends JFrame implements MouseListener {
 		
 		info.setBounds(0, 70, (int)(breite), (int)(hoehe*0.2));                             //Info
 		info.setHorizontalAlignment(SwingConstants.CENTER);
-		info.setFont(Start.lcd.deriveFont(Font.PLAIN,30));
+		info.setFont(exitButton.getFont().deriveFont(Font.PLAIN, 30));
 		cp.add(info);
 		
 		exitButton.setBounds(rand, hoehe-40-rand, 150, 40); //exitButton	
@@ -102,10 +101,11 @@ public class InstallGUI extends JFrame implements MouseListener {
 		
 		setVisible(true);
 		
-		String[] Bilder = {"src/facebook.png", "src/google.png", "src/mail.png"};
-		int abstand = 30;
+		String[] Bilder = {"src/facebook.png", "src/google.png", "src/twitter.png", "src/proposal.png", "src/support.png"};
+		int abstand = 20;
 		int lange = 70;
-		int anz = socialIcons.length;
+		socialIcons = new JLabel[Bilder.length];
+		int anz = Bilder.length;
 		
 		for (int i=0; i<anz; i++)
 		{
@@ -115,7 +115,7 @@ public class InstallGUI extends JFrame implements MouseListener {
 			socialIcons[i].setCursor(c);
 			socialIcons[i].setVisible(false);
 			socialIcons[i].addMouseListener(this);
-			cp.add(socialIcons[i]);	
+			cp.add(socialIcons[i]);
 		}	
 	}
 	public void mouseClicked(MouseEvent e) 
@@ -126,11 +126,15 @@ public class InstallGUI extends JFrame implements MouseListener {
 		else if(s==socialIcons[1])
 			new Browser("https://plus.google.com/+MinecraftinstallerDeMod");
 		else if(s==socialIcons[2])
-			new Browser("http://www.minecraft-installer.de/faq.php");
+			new Browser("https://twitter.com/Modinstaller");
+		else if(s==socialIcons[3])
+			new Browser(Read.getTextwith("installer", "website")+"/proposal.php");
+		else if(s==socialIcons[4])
+			new Browser(Read.getTextwith("installer", "website")+"/faq.php");
 		else if(s==banner)
 			new Browser("http://server.nitrado.net/deu/gameserver-mieten?pk_campaign=MinecraftInstaller");
 		else if(s==startMCButton)
-			new MCLauncher(webplace, stamm);	
+			new MCLauncher();	
 		else if(s==exitButton)
 			System.exit(0);
 	}

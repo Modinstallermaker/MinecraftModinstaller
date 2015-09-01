@@ -18,15 +18,14 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
-import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.SwingConstants;
 
 public class Fullscreen extends JFrame implements ActionListener, KeyListener, MouseWheelListener
@@ -45,23 +44,27 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 	private String url;
 	private int x = 0;
 	private int y = 0, i=0;	
+	private Modinfo[] modtexts;
 	private String modname;
-	private DefaultListModel<String> model;
+	private ArrayList<Modinfo> proposals;
 	private boolean geladen = false, neu=true;
 	
 	
-	public Fullscreen(JList<String> list, DefaultListModel<String> model) 
-	{ 	   
+	public Fullscreen(Modinfo[] modtexts, String modname, ArrayList<Modinfo> proposals) 
+	{ 	
 		super(Read.getTextwith("installer", "name"));			
-	    this.model=model;
+		this.modtexts=modtexts;
+		this.modname=modname;
+		this.proposals=proposals;
 		addWindowListener(new WindowAdapter() {
 		    public void windowClosing(WindowEvent event) {
 		    	Fullscreen.this.dispose();
 		    }
 		});		
 		
-		modname = (String) model.getElementAt(list.getSelectedIndex());
-		i = list.getSelectedIndex();
+		for(int j=0; j<modtexts.length; j++)
+			if(modtexts[j].getName().equals(modname))
+				i = j;
 		
 		setUndecorated(true);
 		setResizable(false);
@@ -80,18 +83,18 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 	    cp.setBackground(Color.BLACK);	    
 	    cp.addKeyListener(this);
 	    
-	    headl.setBounds(0, 25, x, 50); 	   	 
+	    headl.setBounds(0, 25, x, 60); 	   	 
 	    headl.setBackground(Color.decode("#FFF9E9"));	  
 	    headl.setHorizontalAlignment(SwingConstants.CENTER); 
-	    headl.setFont(Start.lcd.deriveFont(Font.BOLD,40));
+	    headl.setFont(getFont().deriveFont(Font.BOLD,45));
 	 
 	    cp.add(headl);	
 	    
-	    headl2.setBounds(3, 24, x, 50); 	   	 
+	    headl2.setBounds(3, 24, x, 60); 	   	 
 	    headl2.setBackground(null);
 	    headl2.setForeground(Color.WHITE);
 	    headl2.setHorizontalAlignment(SwingConstants.CENTER); 
-	    headl2.setFont(Start.lcd.deriveFont(Font.BOLD,40));
+	    headl2.setFont(getFont().deriveFont(Font.BOLD,45));
 	    headl2.setVisible(false);
 	 
 	    cp.add(headl2);	
@@ -105,7 +108,7 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 	    nextButton.addKeyListener(this);
 	    nextButton.setHorizontalAlignment(SwingConstants.LEFT);
 	    nextButton.setContentAreaFilled(false);
-	    nextButton.setFont(new Font("Arial", Font.BOLD, 40));
+	    nextButton.setFont(getFont().deriveFont(Font.BOLD, 40));
 	    nextButton.addActionListener(this);	    
 	    cp.add(nextButton);
 	    
@@ -116,7 +119,7 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 	    backButton.setContentAreaFilled(false);
 	    backButton.addKeyListener(this);
 	    backButton.setHorizontalAlignment(SwingConstants.RIGHT);
-	    backButton.setFont(new Font("Arial", Font.BOLD, 40));
+	    backButton.setFont(getFont().deriveFont(Font.BOLD, 40));
 	    backButton.addActionListener(this);	   
 	    cp.add(backButton);
 	    
@@ -245,26 +248,34 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 	}
 	
 	public void next()
-	{
+	{		
 		i--;			
 		if(i<0)
-			i=model.getSize()-1;	
-		modname = (String) model.getElementAt(i);	
+			i=modtexts.length-1;	
+		modname = modtexts[i].getName();
+		boolean gef=false;
+		for(Modinfo prop: proposals)
+			if(prop.getName().equals(modname)) gef=true;
+		if(!gef)next();
 		headl.setText(modname);	
-		   headl2.setText(modname);	    
+		headl2.setText(modname);	    
 		if(geladen)
 			laden();
-		else neu=false;
-	
+		else neu=false;	
 	}
+	
 	public void back()
 	{
 		i++;	
-		if(i>model.getSize()-1)		
-			i=0;	
-		modname = (String) model.getElementAt(i);	
+		if(i>modtexts.length-1)		
+			i=0;
+		modname = modtexts[i].getName();
+		boolean gef=false;
+		for(Modinfo prop: proposals)
+			if(prop.getName().equals(modname)) gef=true;
+		if(!gef)back();
 		headl.setText(modname);	
-		   headl2.setText(modname);	    
+		headl2.setText(modname);	    
 		if(geladen)
 			laden();
 		else
