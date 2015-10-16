@@ -44,6 +44,7 @@ import org.spout.nbt.stream.NBTInputStream;
 import org.spout.nbt.stream.NBTOutputStream;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -72,10 +73,26 @@ public class Start extends JFrame
 	public static String mcVersion=null, webplace, mineord, stamm, lang ="n/a";
 	public static ArrayList<String> sent = new ArrayList<String>();
 	public static boolean online = false;
-	public static String[] mcVersionen; 
+	public static String[] mcVersionen;
+	Modinfo[] Modlist = null;
+	Modinfo[] Downloadlist = null;
+	public static String mac ="";
 	
 	public Start()
-	{		
+	{	
+		/* MAC Adresse
+		try { 
+            NetworkInterface ni = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()); 
+            byte[] hwa = ni.getHardwareAddress(); 
+           
+            for (int i = 0; i < hwa.length; i++) { 
+                mac += String.format("%x:", hwa[i]); 
+            } 
+            if (mac.length() > 0 && !ni.isLoopback()) { 
+                System.out.println(mac.toLowerCase().substring(0, mac.length() - 1)); 
+            } 
+        } catch (Exception e) {} 
+		*/
 		minecraftDir();
 		lang = optionReader("language");
 		if(lang.equals("n/a"))
@@ -103,6 +120,31 @@ public class Start extends JFrame
 			del(new File(System.getProperty("user.home") + "/Microsoft/Windows/Start Menu/Programs/MC Modinstaller 4.2.lnk"));	
 			del(new File(System.getProperty("user.home") + "/Desktop/MC Modinstaller 4.3.lnk"));
 			del(new File(System.getProperty("user.home") + "/Microsoft/Windows/Start Menu/Programs/MC Modinstaller 4.3.lnk"));	
+			del(new File(System.getProperty("user.home") + "/Desktop/MC Modinstaller 4.4.lnk"));
+			del(new File(System.getProperty("user.home") + "/Microsoft/Windows/Start Menu/Programs/MC Modinstaller 4.4.lnk"));
+		}
+		else
+		{
+			if(!new File(stamm + "Modinstaller/Importo/").exists()&&
+					!optionReader("lastmods").equals(optionReader("slastmods"))&&
+					optionReader("changed").equals("true"))
+			{
+				optionWriter("changed", "false");
+				String[] ques = {Read.getTextwith("seite1", "compe"), Read.getTextwith("seite1", "compn"), Read.getTextwith("seite1", "compk"), 
+						Read.getTextwith("seite1", "compj")};
+				int sel = JOptionPane.showOptionDialog(null, Read.getTextwith("seite1", "compt"), 
+						"Mods ok?", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, 
+						null, ques, ques[ques.length-1]);
+				if(sel!=-1)
+				{
+					String body = "Mods=" + optionReader("lastmods") + "&" + "Rate=" + sel;		        	
+					try {
+						new Download().post("http://www.minecraft-installer.de/api/compSet.php", body);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 		makedirs(new File(stamm + "Modinstaller"));	
 		
@@ -168,6 +210,7 @@ public class Start extends JFrame
 				modifyServerlist();				
 				removeOldModFiles();	
 				shortcuts();
+				downloadInfo();
 				startMenu();
 			}
 		}.start();
@@ -445,7 +488,7 @@ public class Start extends JFrame
 							String body = "Text=" + String.valueOf(e) + "; Errorcode: S1x04a&MCVers=" + mcVersion + "&InstallerVers=" + 
 									Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + 
 									System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString()+ "&EMail=unkn";
-							new Download().post("http://www.minecraft-installer.de/error.php", body);
+							new Download().post("http://www.minecraft-installer.de/api/errorreceiver.php", body);
 						}					
 						
 						meld = zeile3;
@@ -556,11 +599,8 @@ public class Start extends JFrame
 		}		
 	}
 	
-	public void startMenu()
-	{		
-		Modinfo[] Modlist = null;
-		Modinfo[] Downloadlist = null;
-			    
+	public void downloadInfo()
+	{			    
 		if(online)
 		{
 			try 
@@ -569,32 +609,36 @@ public class Start extends JFrame
 				File texte = new File(stamm+"Modinstaller/modtexts.json");
 				new Download().downloadFile("http://www.minecraft-installer.de/api/mods2.php", new FileOutputStream(texte));
 				
-				Gson gson = new Gson(); 
+				Gson gson = new Gson();
 				String jsontext= Textreaders(texte);
 				Modlist = gson.fromJson(jsontext, Modinfo[].class);
 				del(texte);
 			} 
 			catch (Exception e) 
 			{				
-				e.printStackTrace();
+				new Error(getError(e));
 			} 
 			
 			try 
 			{
 				prog.setText(Read.getTextwith("seite1", "prog13"));
 				File downloadt = new File(stamm+"Modinstaller/downloadtexts.json");
-				new Download().downloadFile("http://www.minecraft-installer.de/api/offer2.php", new FileOutputStream(downloadt));
+				new Download().downloadFile("http://www.minecraft-installer.de/api/offer3.php", new FileOutputStream(downloadt));
 				
-				Gson gson = new Gson(); 
+				Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 				String jsontext= Textreaders(downloadt);
 		    	Downloadlist = gson.fromJson(jsontext, Modinfo[].class);
 		    	del(downloadt);
 			}
-			catch (Exception ex)
+			catch (Exception e)
 			{
-				ex.printStackTrace();
+				new Error(getError(e));
 			}
 		}
+	}
+	
+	public void startMenu()
+	{	
 		prog.setText(Read.getTextwith("seite1", "prog14"));
 		
     	String lizenz = optionReader("lizenz");

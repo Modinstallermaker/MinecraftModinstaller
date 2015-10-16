@@ -9,9 +9,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 
 
 /**
@@ -30,7 +30,7 @@ public class Download
 	boolean laufen =true;
 	
 	
-	public float[] downloadFile(String url_str, OutputStream outstr) throws IllegalStateException, MalformedURLException,ProtocolException, IOException
+	public float[] downloadFile(String url_str, OutputStream outstr) throws IOException
 	{	
 		System.setProperty("http.proxyPort", "443");
 	    URL url = new URL(url_str.replace(" ", "%20"));	
@@ -40,8 +40,8 @@ public class Download
 	    conn.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
 	    conn.setRequestProperty("Expires", "0");
 	    conn.setRequestProperty("Pragma", "no-cache");
-	    conn.setConnectTimeout(5000);
-	    conn.setReadTimeout(5000);	    
+	    conn.setConnectTimeout(10000);
+	    conn.setReadTimeout(10000);	    
 	    conn.connect();	  
 	   	    
 		int responseCode = conn.getResponseCode() / 100;
@@ -86,7 +86,11 @@ public class Download
 	{
 		try
 		{
-			downloadFile(url, new FileOutputStream(speicherort));
+			ReadableByteChannel rbc=Channels.newChannel(new URL(url).openStream());
+			FileOutputStream fileOutputStream = new FileOutputStream(speicherort);		
+			fileOutputStream.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+			fileOutputStream.close();
+			rbc.close();
 			return true;
 		}
 		catch (Exception e)
@@ -95,7 +99,7 @@ public class Download
 		}
 	}
 	
-	public boolean ident (String url_str, File copy) throws IllegalStateException, MalformedURLException,ProtocolException, IOException //Wenn nicht gleich false zurück
+	public boolean ident (String url_str, File copy) throws IOException //Wenn nicht gleich false zurück
 	{	    
 	    int groe = size(url_str);
 	    int ist = (int) copy.length();
@@ -107,13 +111,13 @@ public class Download
 		return identisch;
 	}
 	
-	public int groesse (File copy) throws IllegalStateException, MalformedURLException,ProtocolException, IOException
+	public int groesse (File copy) throws IOException
 	{	    	   
 	    int ist = (int) copy.length();	  
 		return ist;
 	}
 	
-	public int size(String url_str) throws IllegalStateException, MalformedURLException,ProtocolException, IOException
+	public int size(String url_str) throws IOException
 	{
 	    URL url = new URL(url_str.replace(" ", "%20"));
 	    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -122,8 +126,8 @@ public class Download
 	    conn.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
 	    conn.setRequestProperty("Expires", "0");
 	    conn.setRequestProperty("Pragma", "no-cache");
-	    conn.setConnectTimeout(5000);
-	    conn.setReadTimeout(5000);
+	    conn.setConnectTimeout(10000);
+	    conn.setReadTimeout(10000);
 	    
 	    int groe = conn.getContentLength();
 	 
@@ -137,8 +141,8 @@ public class Download
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setRequestMethod( "POST" );
 		connection.setDoInput( true );
-		connection.setConnectTimeout(5000);
-		connection.setReadTimeout(5000);
+		connection.setConnectTimeout(10000);
+		connection.setReadTimeout(10000);
 		connection.setDoOutput( true );
 		connection.setUseCaches( false );
 		connection.setRequestProperty( "Content-Type", "application/x-www-form-urlencoded");

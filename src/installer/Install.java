@@ -60,13 +60,21 @@ public class Install extends InstallGUI
 			{
 				try 
 				{
-					status(value += 5);
+					status(value += 5);					
 					
-					stat.setText(Read.getTextwith("seite3", "prog3"));                              //Wiederherstellungspunkt
-					stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/restore2.png")));		
-					del(new File(sport + "Backup"));		
-					copy(new File(modsport), new File(sport + "Backup"));	
-					copy(new File(mineord +"mods"), new File(sport + "Backup/mods"));		
+					try
+					{	
+						stat.setText(Read.getTextwith("seite3", "prog3")); //Wiederherstellungspunkt
+						stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/restore2.png")));		
+						del(new File(sport + "Backup"));					
+						copy(new File(modsport), new File(sport + "Backup"));	
+						copy(new File(mineord +"mods"), new File(sport + "Backup/mods"));	
+					}
+					catch (Exception e)
+					{
+						stat.setText("Errorocde: S3x0a: " + String.valueOf(e));
+						Fehler += getError(e) + " Errorcode: S3x0a\n\n";
+					}
 					
 					status(value += 5);
 					
@@ -107,6 +115,7 @@ public class Install extends InstallGUI
 						optionWriter("lastmc", mcVersion);					
 						optionWriter("slastmode", optionReader("lastmode"));
 						optionWriter("lastmode", mode);	
+						optionWriter("changed", "true");	
 											
 						if(mods.size()!=0)
 						{
@@ -126,7 +135,10 @@ public class Install extends InstallGUI
 							optionWriter("lastmods", "n/a");
 						}						
 					}
-					catch (Exception e)	{}
+					catch (Exception e)	{
+						stat.setText("Errorocde: S3x00: " + String.valueOf(e));
+						Fehler += getError(e) + " Errorcode: S3x00\n\n";
+					}
 					
 					status(value += 5);		
 				} 
@@ -148,7 +160,7 @@ public class Install extends InstallGUI
 							stat.setText(infotext);
 							stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));
 							
-							String DownloadURL = "http://www.minecraft-installer.de/api/download2.php?id="+mod.getID();
+							String DownloadURL = "http://www.minecraft-installer.de/api/download3.php?id="+mod.getID();
 							//Downloadlink für ZIP Datei
 											
 							File ZIPFile= new File(sport + "Mods/"+ mod.getID()+".zip");
@@ -162,19 +174,19 @@ public class Install extends InstallGUI
 									del(ZIPExtract);
 									dow = new Download();
 									
-									Thread t = new Thread(new Downloadstate(dow, ZIPFile, stat, infotext)); //Prozent berechnen und anzeigen
+									Thread t = new Thread(new Downloadstate(dow, ZIPFile, Install.this)); //Prozent berechnen und anzeigen
 									t.start();
 									
 									dow.downloadFile(DownloadURL, new FileOutputStream(ZIPFile));	//ZIP Datei herunterladen
 									
-									t.interrupt();	//Downloadgrößen-Thread beenden
-									status(value=0);
+									t.interrupt();	//Downloadgrößen-Thread beenden									
 								}
-								
+								status(value=90);
 								stat.setText(Read.getTextwith("seite3", "extra2")+mod.getName()+"..."); //Heruntergeladene ZIP Datei entpacken
 								stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));	
+								status(value+=2);
 								new Extract(ZIPFile, ZIPExtract); 
-								
+								status(value=95);
 								if(isModloader) //Modloader
 								{
 									copy(ZIPExtract, new File(sport + "Result")); //in JAR Kompressionsordner
@@ -183,6 +195,7 @@ public class Install extends InstallGUI
 								{
 									copy(ZIPExtract, new File(mineord)); //in .mincraft Ordner
 								}
+								status(value=100);
 							}
 							catch (Exception ex)
 							{
@@ -197,17 +210,18 @@ public class Install extends InstallGUI
 							String text = Read.getTextwith("seite3", "forge");
 							stat.setText(text);  
 							stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));	
-							File libr = new File(sport + "forge_"+mcVersion+".zip");                //Downloadort Forge
+							new File(sport + "Forge/").mkdirs();
+							File libr = new File(sport + "Forge/"+mcVersion+".zip");                //Downloadort Forge
 							dowf = new Download();	
-							String forgeort = webplace + mcVersion +"/"+ "forge2.zip";
+							String forgeURL = webplace + mcVersion +"/"+ "forge2.zip";
 														
-							if(!dowf.ident(forgeort, libr))  //Minecraft Forge herunterladen
+							if(!dowf.ident(forgeURL, libr))  //Minecraft Forge herunterladen
 							{
-								Thread t2 = new Thread(new Downloadstate(dowf, libr, stat, text)); //Prozent berechnen und anzeigen
+								Thread t2 = new Thread(new Downloadstate(dowf, libr, Install.this)); //Prozent berechnen und anzeigen
 								t2.start();					
 								try
 								{
-									dowf.downloadFile(forgeort, new FileOutputStream(libr));	//ZIP Datei herunterladen
+									dowf.downloadFile(forgeURL, new FileOutputStream(libr));	//ZIP Datei herunterladen
 								}
 								catch (Exception ex)
 								{
@@ -216,7 +230,7 @@ public class Install extends InstallGUI
 								}								
 								t2.interrupt();
 							}							
-							status(value = 5);	
+							status(value = 90);	
 							
 							stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));
 							try
@@ -225,10 +239,10 @@ public class Install extends InstallGUI
 							}
 							catch(Exception ex)
 							{								
-								Fehler += "Forge "+mcVersion +"\nSource: "+forgeort+"\nFrom: "+libr.toString()+
+								Fehler += "Forge "+mcVersion +"\nSource: "+forgeURL+"\nFrom: "+libr.toString()+
 										"\nTo: "+mineord.toString()+"\nException:\n"+ getError(ex) + "\nErrorcode: S3x04e\n\n";
 							}
-							status(value = 15);
+							status(value = 100);
 						}					
 					}					 
 					catch (Exception ex) 
@@ -237,29 +251,34 @@ public class Install extends InstallGUI
 						Fehler += getError(ex) + " Errorcode: S3x04\n\n";
 					}
 			    }
-				
-				stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/import.png")));  // Importiertes kopieren
-				File importord = new File(stamm+"Modinstaller/Import/");
-				if(isModloader)
-				{
-					try 
-					{
-						for(File modim : importord.listFiles())
-							copy(modim, new File(sport + "Result/"));
-					} 
-					catch (Exception e) {							
+							
+				File impf = new File(stamm + "Modinstaller/Import/");
+				if (impf.exists()) {
+					stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/import.png")));  // Importiertes kopieren
+					if (isModloader) {
+						try {
+							for (File modim : impf.listFiles())
+								copy(modim, new File(sport + "Result/"));
+						} catch (Exception e) {
+							stat.setText("Errorocde: S3x05: " + String.valueOf(e));
+							Fehler += getError(e) + " Errorcode: S3x05\n\n";
+						}
+					} else {
+						try {
+							copy(impf, new File(mineord + "mods/"));
+						} catch (Exception e) {
+							stat.setText("Errorocde: S3x06: " + String.valueOf(e));
+							Fehler += getError(e) + " Errorcode: S3x06\n\n";
+						}
+					}
+					File impo = new File(stamm + "Modinstaller/Importo/");
+					del(impo);
+					try {
+						rename(impf, impo);
+					} catch (Exception e) {
+
 					}
 				}
-				else
-				{
-					try 
-					{
-						copy(importord, new File(mineord + "mods/"));
-					} 
-					catch (Exception e) {						
-					}
-				}
-				
 				stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/install.png")));
 				
 				if(isModloader)     //Dateien in Minecraft JAR bei Modloader Modus komprimieren
@@ -285,7 +304,9 @@ public class Install extends InstallGUI
 						Textwriter(json, lines, false);
 					}
 				}
-				catch (Exception e){					
+				catch (Exception e){	
+					stat.setText("Errorocde: S3x07: " + String.valueOf(e));
+					Fehler += getError(e) + " Errorcode: S3x07\n\n";
 				}
 				
 				File profiles = new File(mineord + "launcher_profiles.json");  
@@ -295,7 +316,8 @@ public class Install extends InstallGUI
 					try {
 						profiles.createNewFile();
 					} catch (IOException e) {
-						e.printStackTrace();
+						stat.setText("Errorocde: S3xPR: " + String.valueOf(e));
+						Fehler += getError(e) + " Errorcode: S3xPR\n\n";
 					}
 				}
 					
@@ -327,7 +349,9 @@ public class Install extends InstallGUI
 						copy(sound, soundc);
 					} 
 					catch (Exception e) 
-					{						
+					{	
+						stat.setText("Errorocde: S3xSS: " + String.valueOf(e));
+						Fehler += getError(e) + " Errorcode: S3xSS\n\n";
 					}
 				}
 
@@ -346,15 +370,17 @@ public class Install extends InstallGUI
 						socialIcons[i].setVisible(true);
 					stateIcon.setVisible(false);
 					stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/play.png")));
-					stat.setText("");	
+					stat.setText("");
+					startinfo.setVisible(true);
 					info.setText(Read.getTextwith("seite3", "prog13"));					
 				}
 			}
 		}.start();
 	}
 
-	public static void status(double zahl) // Statusbar einstellen
+	public void status(double zahl) // Statusbar einstellen
 	{
 		bar.setValue((int) zahl);
+		bar.setStringPainted(true);
 	}
 }

@@ -1,11 +1,14 @@
 package installer;
 
+import java.sql.Timestamp;
+
 public class Modinfo
 {
-	private String Name="", TxtDE="", TxtEN="", Source="", MC="", YTDE="", YTEN="";
+	private String Name="", TxtDE="", TxtEN="", Source="", MC="";
 	private boolean selected = false;
-	int Cat=3, Size=0, ID=0;
+	private int Cat=3, Size=0, ID=0;
 	private double Proz=0.0;
+	private Timestamp Date=null;
 	
 	public void setID(int ID)
 	{
@@ -22,14 +25,6 @@ public class Modinfo
 	public void setTextEn(String texten)
 	{
 		this.TxtEN = texten;
-	}
-	public void setYTDe(String ytde)
-	{
-		this.YTDE = ytde;
-	}
-	public void setYTEn(String yten)
-	{
-		this.YTEN = yten;
 	}
 	public void setSource(String source)
 	{
@@ -55,6 +50,9 @@ public class Modinfo
 	{
 		this.selected = sel;
 	}
+	public void setDate(Timestamp date) {
+		Date = date;
+	}
 	
 	public int getID()
 	{
@@ -75,13 +73,6 @@ public class Modinfo
 		name = name.replace("&amp;", "&");
 		
 		return name;
-	}
-	public String getYT()
-	{
-		String yt = YTEN;		
-		if(Start.lang.equals("de"))
-			yt = YTDE;	
-		return yt;
 	}
 	public String getSource()
 	{
@@ -106,5 +97,8 @@ public class Modinfo
 	public boolean getSelect()
 	{
 		return selected;
+	}
+	public Timestamp getDate() {
+		return Date;
 	}
 }

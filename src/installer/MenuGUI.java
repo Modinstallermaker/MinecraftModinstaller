@@ -29,6 +29,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
@@ -43,20 +44,20 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	private static final long serialVersionUID = 1L;
 	
 	JTabbedPane tabbedPane = new JTabbedPane();
-	JComboBox<String> ChVers;
+	JComboBox ChVers;
 	JPanel cp;
 	
-	JList<String> leftListM = new JList<String>();
+	JList leftListM = new JList();
 	JScrollPane  leftListMSP = new JScrollPane(leftListM);
-	DefaultListModel<String> leftListMModel = new DefaultListModel<String>();
+	DefaultListModel leftListMModel = new DefaultListModel();
 	
-	JList<String> leftListF = new JList<String>();
+	JList leftListF = new JList();
 	JScrollPane leftListFSP = new JScrollPane(leftListF);
-	DefaultListModel<String> leftListFModel = new DefaultListModel<String>();
+	DefaultListModel leftListFModel = new DefaultListModel();
 	
-	JList<String> rightList = new JList<String>();	
+	JList rightList = new JList();	
 	JScrollPane rightListSP = new JScrollPane(rightList);
-	DefaultListModel<String> rightListModel = new DefaultListModel<String>();	
+	DefaultListModel rightListModel = new DefaultListModel();
 	
 	DragDropListener myDragDropListener = new DragDropListener(this);	
 			
@@ -77,12 +78,15 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	JLabel helpButton = new JLabel();
 	JLabel linkButton = new JLabel();
 	JLabel specImg = new JLabel();
+	JLabel videoButton = new JLabel();
 	JLabel sourceButton = new JLabel();
 	JLabel exitButton = new JLabel();
 	JLabel maximizeButton = new JLabel();
 	JLabel minimizeButton = new JLabel();
 	HintTextField search = new HintTextField(Read.getTextwith("seite2", "search"));
 	JLabel nextButton = new JLabel();
+	
+	JProgressBar bar = new JProgressBar();
 	
 	private Cursor c = new Cursor(Cursor.HAND_CURSOR);		
 	private String stamm = Start.stamm, mcVersion = Start.mcVersion;		
@@ -145,7 +149,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		int pictureya = infol+(int)(2.5*rand);		
 		int textya = picturey+pictureya+20;		
 		int texth = listeya+listenh-textya;
-		int liste2h= (int)(listenh*0.55);
+		int liste2h= (int)(listenh*0.54);
 	
 		headerLabel.setBounds(0, 0, (int)(breite), (int)(hoehe*0.1));                              //Überschrift
 		headerLabel.setText(Read.getTextwith("installer", "name"));
@@ -156,7 +160,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	
 		if(Start.mcVersionen!=null&&Start.mcVersionen.length>0)  //MC Version ändern
 		{
-			ChVers = new JComboBox<String>(Start.mcVersionen);
+			ChVers = new JComboBox(Start.mcVersionen);
 			for (int ka =0; ka<Start.mcVersionen.length; ka++)	
 			{
 				if(Start.mcVersionen[ka].equals(mcVersion))
@@ -222,10 +226,19 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		specImg.setVisible(false);
 		cp.add(specImg);
 		
-		sizeLabel.setBounds(mittexa+picturex-180, infol+5, 90, 40); // Downloadgröße		
+		sizeLabel.setBounds(mittexa+picturex-160-50-10, infol+5, 40+50, 40); // Downloadgröße		
 		sizeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		sizeLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
 		sizeLabel.setFont(new Font("Dialog", Font.PLAIN, 18));
 		cp.add(sizeLabel);
+		
+		videoButton.setBounds(mittexa+picturex-120, infol+5, 40, 40); // Link zu Video	
+		videoButton.setIcon(new ImageIcon(this.getClass().getResource("src/video.png")));
+		videoButton.addMouseListener(this); 
+		videoButton.setToolTipText(Read.getTextwith("seite2", "video"));
+		videoButton.setCursor(c);
+		videoButton.setVisible(false);
+		cp.add(videoButton);	
 		
 		linkButton.setBounds(mittexa+picturex-80, infol+5, 40, 40); // Link zu Modinstallerweb	
 		linkButton.setIcon(new ImageIcon(this.getClass().getResource("src/infokl.png")));
@@ -329,6 +342,13 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		rightListSP.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 		cp.add(rightListSP);
 		
+	
+		bar.setBounds(breite-rand-listenb, (int)(hoehe*0.35)+liste2h-1, listenb, 15);
+		bar.setOpaque(false);
+		bar.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
+		bar.setUI(new GradientPalletProgressBarUI());
+		cp.add(bar);
+		
 		new DropTarget(rightList, myDragDropListener);
 		
 		helpButton.setBounds(2, 5, 50, 50); // FAQ anzeigen			
@@ -372,7 +392,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	{   
 		private static final long serialVersionUID = 1L;
 
-		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) 
+		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) 
 	    {  
            super.getListCellRendererComponent( list, value, index, isSelected, cellHasFocus );  
            list.setFixedCellHeight(25);     

@@ -3,7 +3,7 @@
     "name":"Minecraft Modinstaller",
     "desc":"... makes modding easier!",
    	"lang":"de",
-   	"version":"4.4",	
+   	"version":"4.5",	
     "zusatz": "",
     "webplace":"http://files.minecraft-mods.de/installer/",
 	"website": "http://www.minecraft-installer.de/"	
@@ -44,7 +44,12 @@
     "lessmc2h":"Wenige Mods für Deine Minecraft Versionen",
     "version":"Wir konnten im Minecraft Ordner \"versions\" keine Minecraft Installation vorfinden.\nBitte installiere eine Minecraft Version z.B. 1.7.10 über die neuste Launcher Version!",
     "inco":"Leider können wir Dir für Deine installierten Minecraft Versionen keine Mods anbieten.\nWir empfehlen Dir die Installation vom Minecraft 1.7.10 oder 1.8 mit dem Minecraft Launcher.\nStarte danach den Modinstaller wieder und wähle die neue installierte Minecraft Version aus.",
-    "incoh":"Keine Modliste verfügbar"
+    "incoh":"Keine Modliste verfügbar",    
+    "compt":"Funktionierte(n) die Mod(s), die Du zuletzt mit dem Modinstaller installiert hast?",
+    "compe":"Fehler bei der Modinstallation",
+    "compn":"NEIN, Minecraft startet nicht",
+    "compk":"Teilweise, kleine Bugs",
+    "compj":"JA, Einwandfrei"
   },
   "seite2": { 
     "headline":"Bitte wähle aus, welche Mods Du installieren willst...",
@@ -62,6 +67,7 @@
     "wait2":"Bitte warten...",
 	"nopic":"Kein Bild verfügbar...",
 	"pici":"Vollbild anzeigen",
+	"video":"Video ansehen",
 	"dev":"Entwicklerwebseite",
 	"webi":"Beschreibung auf Minecraft-Installer.de",
 	"search":"Mod suchen...",
@@ -97,7 +103,9 @@
     "prog14h":"Minecraft starten?",
     "cancel":"Möchtest Du die Installation wirklich abbrechen?",
     "cancelh":"Installation abbrechen?",
-    "forge":"<html><body>Die <b>Minecraft Forge</b> wird installiert"   
+    "forge":"<html><body>Die <b>Minecraft Forge</b> wird installiert",
+    "facebook":"https://www.facebook.com/mcmodinstaller",
+    "startinfo":"Starte bitte die Minecraft Version \"Modinstaller\" (statt "
   }, 
   "modimport": { 
     "modVersion":"Modversion",

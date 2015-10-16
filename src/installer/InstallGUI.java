@@ -24,7 +24,8 @@ public class InstallGUI extends JFrame implements MouseListener {
 	public JLabel startMCButton = new JLabel();
 	public JLabel banner = new JLabel();
 	public JLabel[] socialIcons;	
-	public JLabel stat = new JLabel();		
+	public JLabel stat = new JLabel();
+	public JLabel startinfo = new JLabel();	
 	public static JProgressBar bar = new JProgressBar();
 	
 	private JLabel headlineLabel = new JLabel();
@@ -79,6 +80,13 @@ public class InstallGUI extends JFrame implements MouseListener {
 		info.setFont(exitButton.getFont().deriveFont(Font.PLAIN, 30));
 		cp.add(info);
 		
+		startinfo.setBounds(0, (int)(hoehe*0.31), (int)(breite), (int)(hoehe*0.2));                             //Info
+		startinfo.setHorizontalAlignment(SwingConstants.CENTER);
+		startinfo.setText(Read.getTextwith("seite3", "startinfo")+Start.mcVersion+")");
+		startinfo.setFont(exitButton.getFont().deriveFont(Font.PLAIN, 16));
+		startinfo.setVisible(false);
+		cp.add(startinfo);
+		
 		exitButton.setBounds(rand, hoehe-40-rand, 150, 40); //exitButton	
 		exitButton.setText(Read.getTextwith("seite3", "text2"));		
 		exitButton.setIcon(new ImageIcon(this.getClass().getResource("src/power.png")));			
@@ -111,18 +119,18 @@ public class InstallGUI extends JFrame implements MouseListener {
 		{
 			socialIcons[i] = new JLabel();
 			socialIcons[i].setIcon(new ImageIcon(this.getClass().getResource(Bilder[i])));
-			socialIcons[i].setBounds((breite-anz*(lange+abstand)+abstand)/2 + i*(lange+abstand), 155, lange, lange);
+			socialIcons[i].setBounds((breite-anz*(lange+abstand)+abstand)/2 + i*(lange+abstand), (int)(hoehe*0.52), lange, lange);
 			socialIcons[i].setCursor(c);
 			socialIcons[i].setVisible(false);
 			socialIcons[i].addMouseListener(this);
 			cp.add(socialIcons[i]);
-		}	
+		}
 	}
 	public void mouseClicked(MouseEvent e) 
 	{
 		Object s = e.getSource();
 		if(s==socialIcons[0])
-			new Browser("https://www.facebook.com/mcmodinstaller");
+			new Browser(Read.getTextwith("seite3", "facebook"));
 		else if(s==socialIcons[1])
 			new Browser("https://plus.google.com/+MinecraftinstallerDeMod");
 		else if(s==socialIcons[2])

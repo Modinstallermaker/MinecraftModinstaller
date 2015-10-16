@@ -10,9 +10,12 @@ import java.awt.dnd.DropTargetListener;
 import java.io.File;
 import java.util.List;
 
+import javax.swing.ImageIcon;
+
 class DragDropListener implements DropTargetListener 
 {	
 	MenuGUI men;
+	private String vorher;
 	public DragDropListener(MenuGUI men)
 	{
 		this.men=men;
@@ -31,9 +34,19 @@ class DragDropListener implements DropTargetListener
 				@SuppressWarnings("unchecked")
 				List<File>  files = (List<File>) transferable.getTransferData(flavor);
 		            
-			       for (File filex : files) 
-			       {				    	   
-			    	   new Import(filex, men);
+			       for (final File filex : files) 
+			       {	
+			    	   vorher = men.modtext.getText();
+			    	   men.modtext.setText("Loading Mod...");	
+			    	   men.picture.setIcon(new ImageIcon(this.getClass().getResource("src/wait.gif")));
+						new Thread(){
+							public void run()
+							{
+								  new Import(filex, men);
+									men.modtext.setText(vorher);
+									men.picture.setIcon(new ImageIcon(this.getClass().getResource("src/importbig.png")));
+							}
+						}.start();					
 		           }		            
 	          }	          
 	        } 

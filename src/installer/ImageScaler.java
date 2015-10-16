@@ -22,7 +22,7 @@ public class ImageScaler {
         w *= factor;
         h *= factor;
         BufferedImage scaled = new BufferedImage(w, h,
-                BufferedImage.TYPE_INT_RGB);
+                BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D g = scaled.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                 RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
@@ -38,7 +38,7 @@ public class ImageScaler {
         int w = (int) (img.getWidth() * factor);
         int h = (int) (img.getHeight() * factor);
         BufferedImage scaled = new BufferedImage(w, h,
-                BufferedImage.TYPE_INT_RGB);
+                BufferedImage.TYPE_4BYTE_ABGR);//TYPE_INT_RGB
 
         Graphics2D g = scaled.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,

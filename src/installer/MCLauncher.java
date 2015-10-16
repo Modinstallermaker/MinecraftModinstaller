@@ -1,10 +1,12 @@
 package installer;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import static installer.OP.*;
 
@@ -43,7 +45,7 @@ public class MCLauncher
 		 else
 		 {
 			 speicherort = new File(Start.stamm +"/Modinstaller/MCLauncher.jar");	
-			 downloadort = Start.webplace + "Launcher2.jar";
+			 downloadort = Start.webplace.replace("\\", "/") + "Launcher2.jar";
 		 }
 			
 		makedirs(speicherort.getParentFile());	
@@ -67,7 +69,8 @@ public class MCLauncher
 				JFileChooser FC = new JFileChooser();
 				FC.setDialogTitle(Read.getTextwith("startLauncher", "prog2"));
 				FC.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				FC.addChoosableFileFilter(new SimpleGraphicFileFilter());
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("MC Launcher (.JAR)", "jar");
+				FC.setFileFilter(filter);
 				FC.setMultiSelectionEnabled(false);
 				if (FC.showOpenDialog(FC) == JFileChooser.APPROVE_OPTION) // Ordner �ffnen
 				{
@@ -96,11 +99,11 @@ public class MCLauncher
 	void runExe(File exe)
 	{
 		try 
-		{				
-			Runtime.getRuntime().exec(exe.toString());				
+		{	
+			Desktop.getDesktop().open(exe);			
 		} 
 		catch (Exception ex) 
-		{					
+		{			
 		}
 		System.exit(0);
 	}
@@ -109,7 +112,7 @@ public class MCLauncher
 	{
 		try 
 		{				
-			Runtime.getRuntime().exec("java -jar " + jar.toString());			
+			Runtime.getRuntime().exec("java -jar " + jar.toString().replace("\\", "/"));			
 		} 
 		catch (Exception ex) 
 		{			

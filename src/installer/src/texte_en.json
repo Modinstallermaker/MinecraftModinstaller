@@ -3,7 +3,7 @@
     "name":"Minecraft Modinstaller",
     "desc":"... makes modding easier!",
    	"lang":"en",
-   	"version":"4.4",
+   	"version":"4.5",
     "zusatz":"",
 	"webplace":"http://files.minecraft-mods.de/installer/",
 	"website":"http://www.minecraft-installer.com/"		
@@ -44,7 +44,12 @@
     "lessmc2h":"Only a few mods are available",
 	"version":"We could not find a valid Minecraft installation in the Minecraft folder \"versions\".\nPlease install for example Minecraft 1.7.10 using the latest Minecraft Launcher version!",
 	"inco":"A current mod list could not be downloaded because \nwe do not offer a mod list for your selected Minecraft version.\nWe only support release versions newer than Minecraft version 1.4.2.\nNevertheless you can import mods by using the Modinstaller, after you've downloaded them.",
-    "incoh":"No mod list available"
+    "incoh":"No mod list available",
+    "compt":"Did the mods function properly you installed with the Modinstaller?",
+    "compe":"Error during mod installation",
+    "compn":"NO, Minecraft Blackscreen",
+    "compk":"Partly, little bugs",
+    "compj":"YES, impeccable"
   },
   "seite2": { 
     "headline":"Please select the mods you want to install...",
@@ -62,6 +67,7 @@
     "wait2":"Please wait...",
 	"nopic":"No picture available...",
 	"pici":"Show full screen",
+	"video":"Watch video",
 	"dev":"Developer website",
 	"webi":"Description on Minecraft-Installer.com",
 	"search":"Search Mod...",
@@ -96,8 +102,10 @@
     "prog14":"<html><body>Start out the set profile \"Modinstaller\"!</body></html>", 
     "prog14h":"Start Minecraft?",
     "cancel":"Do you really want to cancel the process?",
-    "cancelh":"Cancel the operation?",  
-    "forge":"<html><body>Installing the <b>Minecraft Forge</b>"
+    "cancelh":"Cancel the operation?",
+    "forge":"<html><body>Installing the <b>Minecraft Forge</b>",
+    "facebook":"https://www.facebook.com/modinstalleren",   
+    "startinfo":"Please run the Minecraft version \"Modinstaller\" (instead of "
   }, 
   "modimport": { 
     "modVersion":"Mod version",

@@ -75,15 +75,10 @@ public class OP
 				copyFile(quelle, ziel);
 			}
 		}
-	}
-	final static public void copy(String quelle, String ziel) throws FileNotFoundException, IOException
-	{
-		copy(new File(quelle), new File(ziel));
-	}
-			  
+	}			  
 		
 	final static public void copyFile(File source, File target) throws IOException
-	  {
+	{
 		if(source.exists())
 		{
 		    if (!target.exists()) {
@@ -321,5 +316,5 @@ public class OP
 		final PrintWriter printWriter = new PrintWriter(result);
 		aThrowable.printStackTrace(printWriter);
 		return result.toString();
-	}	
+	}
 }
