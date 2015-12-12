@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
@@ -12,8 +13,8 @@ import static installer.OP.*;
 public class Compress 
 {
 	private File sourcecpy;
-	private BufferedInputStream buffinstr;
-	private JarOutputStream zipOut;
+	private BufferedInputStream bis = null;
+	private JarOutputStream zipOut = null;
 	
 	public Compress(File source, File target)
 	{
@@ -24,24 +25,20 @@ public class Compress
 		try 
 		{
 			zipOut = new JarOutputStream(new FileOutputStream(target));
-		} 
+			zip(source);		
+		}
 		catch (Exception ex) 
 		{
 			Install.Fehler+=getError(ex)+"\n\n";
 		}
-		zip(source);
-		try 
+		finally
 		{
-			zipOut.close(); // Jar Datei schlie�en
+			try 
+			{
+				zipOut.close();
+			}
+			catch (IOException e) {} 
 		} 
-		catch (Exception ex) 
-		{
-			Install.Fehler+=getError(ex)+"\n\n";
-		}
-		
-	}
-	public Compress() 
-	{	
 	}
 	
 	public void zip(File source)
@@ -59,12 +56,12 @@ public class Compress
 					} 
 					else 
 					{
-						buffinstr = new BufferedInputStream(new FileInputStream(files[i])); // Datei einlesen
-						int avail = buffinstr.available();
+						bis = new BufferedInputStream(new FileInputStream(files[i])); // Datei einlesen
+						int avail = bis.available();
 						byte[] buffer = new byte[avail];
 						if (avail > 0) 
 						{
-							buffinstr.read(buffer, 0, avail);
+							bis.read(buffer, 0, avail);
 						}
 						String eintragname = files[i].getAbsolutePath().substring(sourcecpy.getAbsolutePath().length()).replace("\\", "/").substring(1);
 						if (eintragname.equals("_aux.class")) 
@@ -87,12 +84,9 @@ public class Compress
 		{
 			try 
 			{
-				if(buffinstr != null)	buffinstr.close(); // Inputstream beenden				
+				if(bis != null)	bis.close();		
 			} 
-			catch (Exception ex) 
-			{
-				Install.Fehler+=getError(ex)+"\n\n";
-			}				
+			catch (Exception ex) {}				
 		}	
 	}
 }

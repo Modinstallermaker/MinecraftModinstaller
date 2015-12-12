@@ -3,10 +3,11 @@
     "name":"Minecraft Modinstaller",
     "desc":"... makes modding easier!",
    	"lang":"de",
-   	"version":"4.5",	
+   	"version":"4.6",	
     "zusatz": "",
     "webplace":"http://files.minecraft-mods.de/installer/",
-	"website": "http://www.minecraft-installer.de/"	
+	"website": "http://www.minecraft-installer.de/",
+	"exitmc":"Bitte beende Minecraft, damit die Mods korrekt installiert werden!"
   },   
   "seite1": {     
     "update1":"Update auf Version ",
@@ -27,7 +28,7 @@
 	"prog13":"Lade Moddownloads",
 	"prog14":"Starte das Hauptfenster",	
 	"prog15":"Analysiere MC Versionen",	
-    "error4":"<html><body><b>Wir konnte Deinen Minecraft Speicherort nicht finden!</b><br><br>Entweder wurde Minecraft noch nicht (korrekt) installiert<br>oder Minecraft wurde an einen anderen Ort installiert.</body></html>",    
+    "error4":"<html><body><b>Wir konnten Deinen Minecraft Speicherort nicht finden!</b><br><br>Entweder wurde Minecraft noch nicht (korrekt) installiert<br>oder Minecraft wurde an einen anderen Ort installiert.</body></html>",    
     "error4h":"Minecraft Ordner nicht gefunden!", 
     "mcdir":"Minecraft Ordner auswählen",
     "inter1":"Hilfe anzeigen",
@@ -47,9 +48,9 @@
     "incoh":"Keine Modliste verfügbar",    
     "compt":"Funktionierte(n) die Mod(s), die Du zuletzt mit dem Modinstaller installiert hast?",
     "compe":"Fehler bei der Modinstallation",
-    "compn":"NEIN, Minecraft startet nicht",
-    "compk":"Teilweise, kleine Bugs",
-    "compj":"JA, Einwandfrei"
+    "compn":"<html><body><b>NEIN</b>,<br>Minecraft startet nicht</body></html>",
+    "compk":"<html><body><b>Teilweise</b>,<br>kleine Bugs</body></html>",
+    "compj":"<html><body><b>JA</b>,<br>Einwandfrei</body></html>"
   },
   "seite2": { 
     "headline":"Bitte wähle aus, welche Mods Du installieren willst...",
@@ -75,7 +76,7 @@
     "importmh":"Modloader Mods importieren",
 	"importfh":"Forge Mods importieren",
 	"importm":"<html><body>Versichere Dich, dass die Mod, die Du importierst, eine Modloader Mod ist. Diese Mod wird direkt in die Minecraft.JAR installiert. Wenn die Datei jedoch z.B. in den mods Ordner kopiert werden soll, dann musst Du erst im Modinstaller die Forge Liste auswählen (wenn Forge in der Minecraft Version verfügbar ist).<br><br>Ziehe dann die Mod per Drag'n'Drop in die rechte Liste oder in das gro&szlig;e Bild. Wenn eine ZIP oder auch JAR Datei ausgewählt wurde, wird diese entpackt und die enthaltenen Dateien werden in die Minecraft.JAR komprimiert. Auch kannst Du Ordner hinzufügen. Dann wird der Inhalt des Ordners (mit Unterordnern) in die Minecraft.JAR gepackt.  Einzelne Dateien (wie z.B. Java Klassendateien .class oder Bilder) können auch importiert werden.</body></html>",
-	"importf":"<html><body>Stelle sicher, dass die Mod, die Du importierst, eine Forge Mod ist. Die importierte Datei wird in den &quot;mods &quot; Order im Minecraft Ordner (mit der Minecraft Forge) automatisch installiert. Wenn die Datei bzw. der Inhalt des Archives (ZIP oder JAR Datei) direkt in die Minecraft.JAR gepackt soll, dann musst Du erst im Modinstaller die Modloader Liste ausw&auml;hlen (z.B. OptiFine).<br><br>Ziehe dann die Mod per Drag'n'Drop in die rechte Liste oder in das gro&szlig;e Bild. Wenn eine ZIP oder auch JAR Datei ausgewählt wurde, wird diese entpackt und der Archivinhalt analysiert. Der Modinstaller erkennt automatisch, wo sich Deine Mod in dem Archiv befindet und wie sie installiert wird. Anschließend werden Dir wichtige Daten zur Mod vom Modentwickler tabellarisch aufgelistet. Du wirst gewarnt, falls Deine importierte Mod nicht mit Deiner ausgewählten Minecraft Version kompatibel sein sollte.</body></html>",
+	"importf":"<html><body>Stelle sicher, dass die Mod, die Du importierst, eine Forge Mod ist. Die importierte Datei wird in den &quot;mods &quot; Order im Minecraft Ordner (mit der Minecraft Forge) automatisch installiert. Wenn die Datei bzw. der Inhalt des Archives (ZIP oder JAR Datei) direkt in die Minecraft.JAR gepackt soll, dann musst Du erst im Modinstaller die Modloader Liste ausw&auml;hlen (z.B. OptiFine).<br><br>Ziehe dann die Mod per Drag'n'Drop in die rechte Liste oder in das gro&szlig;e Bild. Wenn eine ZIP oder auch JAR Datei ausgewählt wurde, wird diese entpackt und der Archivinhalt analysiert. Der Modinstaller erkennt automatisch, wo sich Deine Mod in dem Archiv befindet und wie sie installiert wird. Anschließend werden Dir wichtige Daten zur Mod vom Modentwickler aufgelistet. Du wirst gewarnt, falls Deine importierte Mod nicht mit Deiner ausgewählten Minecraft Version kompatibel sein sollte.</body></html>",
     "restore":"<html><body>Minecraft wurde erfolgreich zum Zeitpunkt<br>der letzten Installation wiederhergestellt!</body></html>",
     "restoreh":"Restore erfolgreich!"  
   }, 
@@ -115,15 +116,8 @@
     "authors":"Modautoren",
     "website":"Entwicklerwebseite", 
     "credits":"Danksagung",
-    "exit":"Schließen",
-	"requiredModsText":"Bitte denke daran, folgende für die Mod benötigte Mods mit zu importieren:\n\n",
-	"requiredModsTexth":"Mod benötigt weitere Mods",
 	"nomodinfo":"Wir konnten keine Informationen über Deine importierte Mod finden.\nBitte überprüfe, ob die hinzugefügte Mod mit Forge kompatibel ist!\nWir werden die Mod dennoch in den \"mods\" Ordner hinzufügen.",
-	"mcVersionT1":"Die vom Modentwickler angegebene Minecraft Version (",
-	"mcVersionT2":") stimmt nicht mit Deiner im Modinstaller ausgewählten Minecraft Version (",
-	"mcVersionT3":") überein.\nEntweder wird Minecraft beim Starten abstürzen oder die Mod funktioniert dennoch (der Entwickler hat evtl. falsche Angaben gemacht)...\n\nWenn Du sicher sein möchtest, dass die Mod funktioniert, dann wähle zuerst im Modinstaller \"Minecraft ",
-	"mcVersionT4":"\" aus und importiere die Mod dann.",
-	"mcVersionTh":"Mod funktioniert evtl. nicht"
+	"warning1":"<b>WARNUNG: Mod funktioniert laut Entwickler mit nur mit MC "
   },
   "lizenz": { 
     "text1":"Beenden",
@@ -132,7 +126,7 @@
    	"text4":"Lizenzvereinbarung",
     "errorh":"Minecraft nicht gefunden!"
   },
-  "OP": { 
+  "OP": {
     "modver":"Welche Minecraft Version möchtest Du modifizieren?",
     "modverh":"Version?",    
    	"prog2":"Wähle den Minecraft Launcher aus...", 

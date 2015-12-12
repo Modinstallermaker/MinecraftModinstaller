@@ -15,7 +15,6 @@ import javax.swing.ImageIcon;
 class DragDropListener implements DropTargetListener 
 {	
 	MenuGUI men;
-	private String vorher;
 	public DragDropListener(MenuGUI men)
 	{
 		this.men=men;
@@ -36,15 +35,13 @@ class DragDropListener implements DropTargetListener
 		            
 			       for (final File filex : files) 
 			       {	
-			    	   vorher = men.modtext.getText();
-			    	   men.modtext.setText("Loading Mod...");	
+			    	   men.modNameLabel.setText("Loading Mod...");
+			    	   men.modDescPane.setText("Loading mod file \""+filex.getName()+"\"...");
 			    	   men.picture.setIcon(new ImageIcon(this.getClass().getResource("src/wait.gif")));
 						new Thread(){
 							public void run()
 							{
-								  new Import(filex, men);
-									men.modtext.setText(vorher);
-									men.picture.setIcon(new ImageIcon(this.getClass().getResource("src/importbig.png")));
+								  new Import(filex, men);									
 							}
 						}.start();					
 		           }		            

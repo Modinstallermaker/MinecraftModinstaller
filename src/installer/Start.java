@@ -11,11 +11,9 @@ import static installer.OP.optionWriter;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Font;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -77,6 +75,7 @@ public class Start extends JFrame
 	Modinfo[] Modlist = null;
 	Modinfo[] Downloadlist = null;
 	public static String mac ="";
+	public static MinecraftOpenListener mol;
 	
 	public Start()
 	{	
@@ -122,30 +121,10 @@ public class Start extends JFrame
 			del(new File(System.getProperty("user.home") + "/Microsoft/Windows/Start Menu/Programs/MC Modinstaller 4.3.lnk"));	
 			del(new File(System.getProperty("user.home") + "/Desktop/MC Modinstaller 4.4.lnk"));
 			del(new File(System.getProperty("user.home") + "/Microsoft/Windows/Start Menu/Programs/MC Modinstaller 4.4.lnk"));
+			del(new File(System.getProperty("user.home") + "/Desktop/MC Modinstaller 4.5.lnk"));
+			del(new File(System.getProperty("user.home") + "/Microsoft/Windows/Start Menu/Programs/MC Modinstaller 4.5.lnk"));
 		}
-		else
-		{
-			if(!new File(stamm + "Modinstaller/Importo/").exists()&&
-					!optionReader("lastmods").equals(optionReader("slastmods"))&&
-					optionReader("changed").equals("true"))
-			{
-				optionWriter("changed", "false");
-				String[] ques = {Read.getTextwith("seite1", "compe"), Read.getTextwith("seite1", "compn"), Read.getTextwith("seite1", "compk"), 
-						Read.getTextwith("seite1", "compj")};
-				int sel = JOptionPane.showOptionDialog(null, Read.getTextwith("seite1", "compt"), 
-						"Mods ok?", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, 
-						null, ques, ques[ques.length-1]);
-				if(sel!=-1)
-				{
-					String body = "Mods=" + optionReader("lastmods") + "&" + "Rate=" + sel;		        	
-					try {
-						new Download().post("http://www.minecraft-installer.de/api/compSet.php", body);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
+		
 		makedirs(new File(stamm + "Modinstaller"));	
 		
 		optionWriter("language", lang);
@@ -207,6 +186,7 @@ public class Start extends JFrame
 				else  		
 					offline();
 				
+				mol = new MinecraftOpenListener(); // Check if Minecraft is open 
 				modifyServerlist();				
 				removeOldModFiles();	
 				shortcuts();
@@ -267,6 +247,8 @@ public class Start extends JFrame
 			String[] onlVers = Textreader(versionendat);
 			String[] offVers = OfflineList.toArray(new String[OfflineList.size()]);			
 			int pos=1000, posn=1000;
+			
+			//new MCVersions().setVisible(true);
 			
 			for(int i =0; i<onlVers.length; i++)
 			{				
@@ -390,8 +372,7 @@ public class Start extends JFrame
 			 
 			if (str.contains("win") && !installer.exists())
 			{	
-				new Download().smartDownload("http://www.minecraft-installer.de//Dateien/Programme/MC%20Modinstaller%20"+modinstallerVersion+".exe", 
-						installer);				
+				new Download().smartDownload("http://www.minecraft-installer.de//Dateien/Programme/MC%20Modinstaller%20"+modinstallerVersion+".exe", installer);				
 				java.io.InputStream inputStream = this.getClass().getResourceAsStream("src/links.vbs");
 	
 			    File tempOutputFile = File.createTempFile("links", ".vbs"); 
@@ -451,65 +432,57 @@ public class Start extends JFrame
         return sb.toString();
     }
 	
-	public boolean update()
+	public boolean update()  // Update testen
 	{		
 		prog.setText(Read.getTextwith("seite1", "prog4"));
-		try // Update testen
+		try 
 		{			
-			File updatetxt = new File(stamm + "Modinstaller/update.txt");		
-			new Download().downloadFile("http://www.minecraft-installer.de/request.php?target=update&lang="+Read.getTextwith("installer", "lang"), 
-					new FileOutputStream(updatetxt)); // update_de.txt herunterladen
+			File updatetxt = new File(stamm + "Modinstaller/update.txt");
+			String quellenurl = "http://www.minecraft-installer.de/request.php?target=update&lang="+Read.getTextwith("installer", "lang");
+			new Download().downloadFile(quellenurl ,new FileOutputStream(updatetxt)); // update_de.txt herunterladen
 			if(updatetxt.exists())
 			{
-				BufferedReader in2 = new BufferedReader(new FileReader(updatetxt)); // Datei einlesen
-				String zeile3 = null;
-				int zahl = 0;
-				boolean antw = false;				
-				String meld = "";
-				String textz = "";
+				String[] cont = Textreader(updatetxt);
 				
-				while ((zeile3 = in2.readLine()) != null) // Datei durchkaemmen
-				{
-					zahl++;
-					if (zahl == 1) 
-					{		
-						try
-						{						
-							String jetzt = modinstallerVersion;
-							String aktuell = zeile3;
-							String s1 = normalisedVersion(jetzt);
-					        String s2 = normalisedVersion(aktuell);
-					        int cmp = s1.compareTo(s2);
-					        if(cmp<0)
-					        	antw = true;
-						}
-						catch (Exception e)
-						{
-							String body = "Text=" + String.valueOf(e) + "; Errorcode: S1x04a&MCVers=" + mcVersion + "&InstallerVers=" + 
-									Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + 
-									System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString()+ "&EMail=unkn";
-							new Download().post("http://www.minecraft-installer.de/api/errorreceiver.php", body);
-						}					
-						
-						meld = zeile3;
-					} 
-					else // alle anderen Zeilen in text speichern
-					{
-						textz += zeile3;
-					}
+				boolean newVersAvail = false;				
+				String newVers ="";
+							
+				try
+				{						
+					String currVers = modinstallerVersion;
+					newVers = cont[0];
+					String s1 = normalisedVersion(currVers);
+			        String s2 = normalisedVersion(newVers);
+			        int cmp = s1.compareTo(s2); //Vergleich beider Modinstaller Versionen
+			        if(cmp<0)
+			        	newVersAvail = true;
 				}
-				in2.close();
-				if (antw) // Wenn Programmnummer nicht identisch ist
+				catch (Exception e)
+				{
+					String body = "Text=" + String.valueOf(e) + "; Errorcode: S1x04a&MCVers=" + mcVersion + "&InstallerVers=" + 
+							Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + 
+							System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString()+ "&EMail=unkn";
+					new Download().post("http://www.minecraft-installer.de/api/errorreceiver.php", body);
+				}					
+								
+				if (newVersAvail) // Wenn Programmnummer nicht identisch ist
 				{
 					prog.setText(Read.getTextwith("seite1", "prog5"));
-					int eingabe = JOptionPane.showConfirmDialog(null,"<html><body><span style=\"font-weight:bold\">"+Read.getTextwith("seite1", "update1")+
-							meld+ Read.getTextwith("seite1", "update2")+ textz+ Read.getTextwith("seite1", "update3"), Read.getTextwith("seite1", "update1"), 
-							JOptionPane.YES_NO_OPTION);
+					
+					String desc ="";
+					for (int i=1; i<cont.length; i++)
+					{
+						desc+=cont[i];
+					}
+					int eingabe = JOptionPane.showConfirmDialog(null,
+							"<html><body><span style=\"font-weight:bold\">"+Read.getTextwith("seite1", "update1")+
+							newVers + Read.getTextwith("seite1", "update2")+ desc+ Read.getTextwith("seite1", "update3"), 
+							Read.getTextwith("seite1", "update1"), JOptionPane.YES_NO_OPTION);
 					if (eingabe == 0) 
 					{
 						new Browser(Read.getTextwith("installer", "website"));
-					} // end of if
-				} // end of if
+					}
+				}
 				else
 				{
 					prog.setText(Read.getTextwith("seite1", "prog6"));
@@ -529,15 +502,15 @@ public class Start extends JFrame
 			try 
 			{
 				String body = "Text=" + String.valueOf(ex) + "; Errorcode: S1x04&MCVers=" + mcVersion + "&InstallerVers=" +
-			Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + 
+						Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + 
 						System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString()+ "&EMail=unkn";
 				new Download().post("http://www.minecraft-installer.de/error.php", body);
 			} 
 			catch (Exception e) {}
 
 			Object[] options2 = {Read.getTextwith("seite1", "inter1"), Read.getTextwith("seite1", "inter2"), Read.getTextwith("seite1", "inter3")};
-			int selected2 = JOptionPane.showOptionDialog(null, Read.getTextwith("seite1", "inter4")+ex.toString(), Read.getTextwith("seite1", "inter4h"), 
-					JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null, options2, options2[0]);
+			int selected2 = JOptionPane.showOptionDialog(null, Read.getTextwith("seite1", "inter4")+ex.toString(), 
+					Read.getTextwith("seite1", "inter4h"), JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null, options2, options2[0]);
 			switch(selected2)
 			{
 				case 0: new Browser(Read.getTextwith("seite1", "intercon"));
@@ -670,19 +643,29 @@ public class Start extends JFrame
 				File sd = new File(mineord+"servers.dat");				
 				if(sd.exists())
 				{
-					NBTInputStream fd = new NBTInputStream(new FileInputStream(mineord+"servers.dat"), false);	
+					FileInputStream fis = null;
+					NBTInputStream nis = null;	
 					
-					CompoundTag master = (CompoundTag) fd.readTag();
-					fd.close();
-					
-					CompoundMap map = master.getValue();
-					Set<Entry<String, Tag>> s=map.entrySet();
-					Iterator<Entry<String, Tag>> it=s.iterator();
-				    
-					Map.Entry<String, Tag> m =it.next();
-					@SuppressWarnings("unchecked")
-					ListTag<CompoundTag> value= (ListTag<CompoundTag>) m.getValue();   
-				    oldserverentries = value.getValue(); //Alte Serverlisteinträge
+					try
+					{
+						fis = new FileInputStream(mineord+"servers.dat");
+						nis = new NBTInputStream(fis, false);						
+						
+						CompoundTag master = (CompoundTag) nis.readTag();						
+						CompoundMap map = master.getValue();
+						Set<Entry<String, Tag>> s=map.entrySet();
+						Iterator<Entry<String, Tag>> it=s.iterator();
+					    
+						Map.Entry<String, Tag> m =it.next();
+						@SuppressWarnings("unchecked")
+						ListTag<CompoundTag> value= (ListTag<CompoundTag>) m.getValue();   
+					    oldserverentries = value.getValue(); //Alte Serverlisteinträge
+					}
+					finally
+					{
+						if(nis!=null) nis.close();
+						if(fis!=null) fis.close();
+					}
 				}
 				else
 				{
@@ -725,10 +708,21 @@ public class Start extends JFrame
 		        }		        
 		        serverentries.addAll(oldserverentries);
 		        map3.put(new ListTag<CompoundTag>("servers", CompoundTag.class, serverentries));
-				NBTOutputStream os = new NBTOutputStream(new FileOutputStream(sd), false);			
-				CompoundTag exit = new CompoundTag("", map3);
-				os.writeTag(exit);
-				os.close();
+		       
+		        FileOutputStream fos = null;
+		        NBTOutputStream nos = null;		        
+		        try
+		        {		        	
+					fos = new FileOutputStream(sd);
+					nos = new NBTOutputStream(fos, false);			
+					CompoundTag exit = new CompoundTag("", map3);
+					nos.writeTag(exit);
+				}
+		        finally
+		        {
+		        	if(nos!=null) nos.close();
+		        	if(fos!=null) fos.close();
+		        }
 				
 				optionWriter("servermod", "true");
 				del(jsonfile);
@@ -739,6 +733,7 @@ public class Start extends JFrame
 			}	
 		}
 	}
+
 
 	public static void main(String[] args) 
 	{		

@@ -142,9 +142,12 @@ public class InstallGUI extends JFrame implements MouseListener {
 		else if(s==banner)
 			new Browser("http://server.nitrado.net/deu/gameserver-mieten?pk_campaign=MinecraftInstaller");
 		else if(s==startMCButton)
+		{
 			new MCLauncher();	
+			dispose();
+		}
 		else if(s==exitButton)
-			System.exit(0);
+			dispose();
 	}
 
 	public void mousePressed(MouseEvent e) {

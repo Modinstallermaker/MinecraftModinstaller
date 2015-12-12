@@ -3,10 +3,11 @@
     "name":"Minecraft Modinstaller",
     "desc":"... makes modding easier!",
    	"lang":"en",
-   	"version":"4.5",
+   	"version":"4.6",
     "zusatz":"",
 	"webplace":"http://files.minecraft-mods.de/installer/",
-	"website":"http://www.minecraft-installer.com/"		
+	"website":"http://www.minecraft-installer.com/",
+	"exitmc":"Please exit Minecraft so that mods are installed correctly!"
   },   
   "seite1": {     
     "update1":"Update to version ",
@@ -47,9 +48,9 @@
     "incoh":"No mod list available",
     "compt":"Did the mods function properly you installed with the Modinstaller?",
     "compe":"Error during mod installation",
-    "compn":"NO, Minecraft Blackscreen",
-    "compk":"Partly, little bugs",
-    "compj":"YES, impeccable"
+    "compn":"<html><body><b>NO</b>,<br>Minecraft Blackscreen</body></html>",
+    "compk":"<html><body><b>Partly</b>,<br>little bugs</body></html>",
+    "compj":"<html><body><b>YES</b>,<br>impeccable</body></html>"
   },
   "seite2": { 
     "headline":"Please select the mods you want to install...",
@@ -115,15 +116,8 @@
     "authors":"Mod authors",
     "website":"Developer website", 
     "credits":"Credits",
-    "exit":"Close",
-	"requiredModsText":"Remember importing the following required mods:\n\n",
-	"requiredModsTexth":"Mod requires other mods",
-	"nomodinfo":"We could not find information about the mod you imported.\nPlease ensure if the mod is compatible with Forge API!\nWe will add the mod to the \"mods\" folder nevertheless.",
-	"mcVersionT1":"The Minecraft version (",
-	"mcVersionT2":") specified by the mod developer does not match to the Minecraft version (",
-	"mcVersionT3":") you have selected.\nEither Minecraft crashs at startup or the mod works nevertheless (the developer has made misstatements)...\n\nIf you want to be sure that the mod works, then choose \"Minecraft ",
-	"mcVersionT4":"\" in the Modinstaller first and import the mod afterwards.",
-	"mcVersionTh":"Mod may not work"
+	"nomodinfo":"We could not find information about the mod you imported.<br>Please ensure if the mod is compatible with Forge API!<br>We will add the mod to the \"mods\" folder nevertheless.",
+	"warning1":"<b>Attention: Mod works according to developer with MC "
   },
   "lizenz": { 
     "text1":"Exit",
@@ -132,9 +126,9 @@
    	"text4":"License Agreement",
     "errorh":"Minecraft not found!"
   },
-  "OP": { 
+  "OP": {
     "modver":"Which Minecraft version would you like to modify?",
-    "modverh":"Version?",    
+    "modverh":"Version?", 
    	"prog2":"Choose the Minecraft Launcher...", 
    	"error":"Please check if the there is a folder (e.g. \"1.7.10\") in the following directory",
     "errorh":"Minecraft installation not correct!"  

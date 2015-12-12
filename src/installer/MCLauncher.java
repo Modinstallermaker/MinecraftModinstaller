@@ -20,10 +20,12 @@ import static installer.OP.*;
 
 public class MCLauncher 
 {	
+	boolean hasstarted =false;
+	
 	public MCLauncher()
 	{
 		makedirs(new File(Start.stamm +"/Modinstaller/"));
-		boolean ausf = true;
+		boolean ausf = true;		
 		
 		String str = System.getProperty("os.name").toLowerCase(); 
 		File speicherort;
@@ -34,11 +36,12 @@ public class MCLauncher
 			File spo = new File(System.getenv("programfiles(x86)")+"/Minecraft/MinecraftLauncher.exe");			
 			if(spo.exists())
 				runExe(spo);
-			
-			File spo2 = new File(System.getenv("programfiles")+"/Minecraft/MinecraftLauncher.exe");
-			if(spo2.exists())
-				runExe(spo);
-			
+			else
+			{
+				File spo2 = new File(System.getenv("programfiles")+"/Minecraft/MinecraftLauncher.exe");
+				if(spo2.exists())
+					runExe(spo);
+			}
 			speicherort = new File(Start.stamm +"/Modinstaller/MCLauncher.exe");
 		 	downloadort = Start.webplace + "Launcher2.exe";
 		 }
@@ -47,76 +50,84 @@ public class MCLauncher
 			 speicherort = new File(Start.stamm +"/Modinstaller/MCLauncher.jar");	
 			 downloadort = Start.webplace.replace("\\", "/") + "Launcher2.jar";
 		 }
-			
-		makedirs(speicherort.getParentFile());	
-		try 
+		if(!hasstarted)	
 		{
-			if(!new Download().ident(downloadort, speicherort)||speicherort.length()==0)						
-			{		
-				new Download().downloadFile(downloadort, new FileOutputStream(speicherort));		
-				ausf =true;				
-			}
-		} 
-		catch (Exception e) 
-		{
-			ausf =false;
-		} 
-		if(ausf ==false)
-		{
-			int eingabe = JOptionPane.showConfirmDialog(null, Read.getTextwith("startLauncher", "prog1"), Read.getTextwith("startLauncher", "prog1h"), JOptionPane.YES_NO_OPTION);
-			if(eingabe == 0)
+			makedirs(speicherort.getParentFile());	
+			try 
 			{
-				JFileChooser FC = new JFileChooser();
-				FC.setDialogTitle(Read.getTextwith("startLauncher", "prog2"));
-				FC.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("MC Launcher (.JAR)", "jar");
-				FC.setFileFilter(filter);
-				FC.setMultiSelectionEnabled(false);
-				if (FC.showOpenDialog(FC) == JFileChooser.APPROVE_OPTION) // Ordner �ffnen
+				if(!new Download().ident(downloadort, speicherort)||speicherort.length()==0)						
+				{		
+					new Download().downloadFile(downloadort, new FileOutputStream(speicherort));		
+					ausf =true;				
+				}
+			} 
+			catch (Exception e) 
+			{
+				ausf =false;
+			} 
+			if(ausf ==false)
+			{
+				int eingabe = JOptionPane.showConfirmDialog(null, Read.getTextwith("startLauncher", "prog1"), Read.getTextwith("startLauncher", "prog1h"), JOptionPane.YES_NO_OPTION);
+				if(eingabe == 0)
 				{
-					try
+					JFileChooser FC = new JFileChooser();
+					FC.setDialogTitle(Read.getTextwith("startLauncher", "prog2"));
+					FC.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					FileNameExtensionFilter filter = new FileNameExtensionFilter("MC Launcher (.JAR)", "jar");
+					FC.setFileFilter(filter);
+					FC.setMultiSelectionEnabled(false);
+					if (FC.showOpenDialog(FC) == JFileChooser.APPROVE_OPTION) // Ordner �ffnen
 					{
-						copy(FC.getSelectedFile(), speicherort);		
-						ausf=true;
-					}
-					catch (Exception ex)
-					{	
-						JOptionPane.showMessageDialog(null, ex + "\n\nErrorcode: STx02");
-					}
-				}        
+						try
+						{
+							copy(FC.getSelectedFile(), speicherort);		
+							ausf=true;
+						}
+						catch (Exception ex)
+						{	
+							JOptionPane.showMessageDialog(null, ex + "\n\nErrorcode: STx02");
+						}
+					}        
+				}
 			}
 		}
-	 
+			 
 		if(ausf==true)
 		{
 			 if (str.contains("win"))	
 				 runExe(speicherort);
 			 else
 				 runJar(speicherort);
-		}	
+		}
+	}
+
+	private void runExe(File exe)
+	{
+		if(!hasstarted)
+		{
+			try 
+			{	
+				Desktop.getDesktop().open(exe);	
+				hasstarted = true;
+			} 
+			catch (Exception ex) 
+			{			
+			}
+		}
 	}
 	
-	void runExe(File exe)
+	private void runJar(File jar)
 	{
-		try 
-		{	
-			Desktop.getDesktop().open(exe);			
-		} 
-		catch (Exception ex) 
-		{			
+		if(!hasstarted)
+		{
+			try 
+			{				
+				Runtime.getRuntime().exec("java -jar " + jar.toString().replace("\\", "/"));
+				hasstarted = true;
+			} 
+			catch (Exception ex) 
+			{			
+			}
 		}
-		System.exit(0);
-	}
-	
-	void runJar(File jar)
-	{
-		try 
-		{				
-			Runtime.getRuntime().exec("java -jar " + jar.toString().replace("\\", "/"));			
-		} 
-		catch (Exception ex) 
-		{			
-		}
-		System.exit(0);
 	}
 }

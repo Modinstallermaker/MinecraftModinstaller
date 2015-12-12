@@ -1,5 +1,7 @@
 package installer;
 
+import static installer.OP.getError;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -19,7 +21,16 @@ public class Read
   
 	public static String getTextwith(String vor, String nach)
 	{
-		JsonObject js2 = js1.getAsJsonObject(vor); 	 
-		return js2.get(nach).getAsString();
+		String back="";
+		try
+		{
+			JsonObject js2 = js1.getAsJsonObject(vor); 	 
+			back = js2.get(nach).getAsString();
+		}
+		catch (Exception e)
+		{
+			new Error("Text NOT found/readable: "+vor+", "+nach+" \n"+getError(e));
+		}
+		return back;
 	}
 }

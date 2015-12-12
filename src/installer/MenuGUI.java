@@ -44,7 +44,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	private static final long serialVersionUID = 1L;
 	
 	JTabbedPane tabbedPane = new JTabbedPane();
-	JComboBox ChVers;
+	JComboBox mcVersDrop;
 	JPanel cp;
 	
 	JList leftListM = new JList();
@@ -61,12 +61,12 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	
 	DragDropListener myDragDropListener = new DragDropListener(this);	
 			
-	JEditorPane pane;  
+	JEditorPane modDescPane;  
 	JScrollPane scroller;
 	
 	JLabel headerLabel = new JLabel();
-	JLabel mcLabel = new JLabel();
-	JLabel modtext = new JLabel();	
+	JLabel mcVersLabel = new JLabel();
+	JLabel modNameLabel = new JLabel();	
 	JLabel[] ratIcons = new JLabel[5];		
 	JLabel picture = new JLabel();
 	JLabel rightListHeadl = new JLabel();
@@ -76,14 +76,15 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	JLabel restoreButton = new JLabel();
 	JLabel sizeLabel = new JLabel();
 	JLabel helpButton = new JLabel();
-	JLabel linkButton = new JLabel();
-	JLabel specImg = new JLabel();
+	JLabel modinstWebLnk = new JLabel();
+	JLabel topIcon = new JLabel();
 	JLabel videoButton = new JLabel();
-	JLabel sourceButton = new JLabel();
+	JLabel devWebLnk = new JLabel();
 	JLabel exitButton = new JLabel();
-	JLabel maximizeButton = new JLabel();
-	JLabel minimizeButton = new JLabel();
-	HintTextField search = new HintTextField(Read.getTextwith("seite2", "search"));
+	JLabel maxButton = new JLabel();
+	JLabel minButton = new JLabel();
+	JLabel modVersionL = new JLabel();
+	HintTextField searchInput = new HintTextField(Read.getTextwith("seite2", "search"));
 	JLabel nextButton = new JLabel();
 	
 	JProgressBar bar = new JProgressBar();
@@ -91,6 +92,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	private Cursor c = new Cursor(Cursor.HAND_CURSOR);		
 	private String stamm = Start.stamm, mcVersion = Start.mcVersion;		
 	private int hoehe =600, breite=1024;	
+	String hyperlink = Read.getTextwith("installer", "website"), website=Read.getTextwith("installer", "website");
 	
 	public void GUI() 
 	{
@@ -160,22 +162,22 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	
 		if(Start.mcVersionen!=null&&Start.mcVersionen.length>0)  //MC Version ändern
 		{
-			ChVers = new JComboBox(Start.mcVersionen);
+			mcVersDrop = new JComboBox(Start.mcVersionen);
 			for (int ka =0; ka<Start.mcVersionen.length; ka++)	
 			{
 				if(Start.mcVersionen[ka].equals(mcVersion))
-					ChVers.setSelectedIndex(ka);
+					mcVersDrop.setSelectedIndex(ka);
 			}
-			ChVers.setBounds(rand+listenb-70, (int)(hoehe*0.05), 70, 25);
-			ChVers.addActionListener(this);			
-			if(Start.mcVersionen.length==1) ChVers.setEnabled(false);
-			cp.add(ChVers);		
+			mcVersDrop.setBounds(rand+listenb-70, (int)(hoehe*0.05), 70, 25);
+			mcVersDrop.addActionListener(this);			
+			if(Start.mcVersionen.length==1) mcVersDrop.setEnabled(false);
+			cp.add(mcVersDrop);		
 		
-			mcLabel.setBounds((int)(rand+listenb-70-110-5), (int)(hoehe*0.05), 110, 25);
-			mcLabel.setText("Minecraft");
-			mcLabel.setVerticalAlignment(SwingConstants.CENTER);
-			mcLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-			cp.add(mcLabel);
+			mcVersLabel.setBounds((int)(rand+listenb-70-110-5), (int)(hoehe*0.05), 110, 25);
+			mcVersLabel.setText("Minecraft");
+			mcVersLabel.setVerticalAlignment(SwingConstants.CENTER);
+			mcVersLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+			cp.add(mcVersLabel);
 		}
 		
 		leftListMModel.addElement(Read.getTextwith("seite2", "wait2")); //Liste1 Modloader
@@ -198,18 +200,23 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		tabbedPane.setBounds(rand, listeya, listenb, listenh-30);							
 	    cp.add(tabbedPane);   
 	    
-	    search.setBounds(rand, listeya+listenh-25, listenb, 25);	
-	    search.addKeyListener(this);
-	    search.addMouseListener(this);
-	    search.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
-	    search.setBorder(BorderFactory.createCompoundBorder(search.getBorder(), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
-	    cp.add(search);
+	    searchInput.setBounds(rand, listeya+listenh-25, listenb, 25);	//Suchfeld
+	    searchInput.addKeyListener(this);
+	    searchInput.addMouseListener(this);
+	    searchInput.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
+	    searchInput.setBorder(BorderFactory.createCompoundBorder(searchInput.getBorder(), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
+	    cp.add(searchInput);
 	    
-		modtext.setBounds(mittexa, modtexty, picturex, 30);           //Modname
-		modtext.setText(Read.getTextwith("seite2", "text7"));		
-		modtext.setHorizontalAlignment(SwingConstants.CENTER);
-		modtext.setFont(new Font("Dialog", Font.BOLD, 25));
-		cp.add(modtext);
+		modNameLabel.setBounds(mittexa, modtexty, picturex, 30);           //Modname
+		modNameLabel.setText(Read.getTextwith("seite2", "text7"));		
+		modNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		modNameLabel.setFont(new Font("Dialog", Font.BOLD, 25));
+		cp.add(modNameLabel);
+		
+		modVersionL.setBounds(mittexa+10, infol+5, 160, 40); //Importierte Mods: Modversion
+		modVersionL.setFont(new Font("Dialog", Font.PLAIN, 18));
+		modVersionL.setVisible(false);
+		cp.add(modVersionL);
 		
 		for (int i=0; i<5; i++) //Sterne für Bewertung
 		{
@@ -221,10 +228,10 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 			cp.add(ratIcons[i]);
 		}
 		
-		specImg.setBounds(mittexa+picturex-250, infol-1, 50, 50); // Link zu Modinstallerweb			
-		specImg.setIcon(new ImageIcon(this.getClass().getResource("src/top.png")));
-		specImg.setVisible(false);
-		cp.add(specImg);
+		topIcon.setBounds(mittexa+picturex-250, infol-1, 50, 50); // TOP oder NEW Bild	
+		topIcon.setIcon(new ImageIcon(this.getClass().getResource("src/top.png")));
+		topIcon.setVisible(false);
+		cp.add(topIcon);
 		
 		sizeLabel.setBounds(mittexa+picturex-160-50-10, infol+5, 40+50, 40); // Downloadgröße		
 		sizeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -240,21 +247,21 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		videoButton.setVisible(false);
 		cp.add(videoButton);	
 		
-		linkButton.setBounds(mittexa+picturex-80, infol+5, 40, 40); // Link zu Modinstallerweb	
-		linkButton.setIcon(new ImageIcon(this.getClass().getResource("src/infokl.png")));
-		linkButton.addMouseListener(this); 
-		linkButton.setToolTipText(Read.getTextwith("seite2", "webi"));
-		linkButton.setCursor(c);
-		cp.add(linkButton);		
+		modinstWebLnk.setBounds(mittexa+picturex-80, infol+5, 40, 40); // Link zu Modinstallerweb	
+		modinstWebLnk.setIcon(new ImageIcon(this.getClass().getResource("src/infokl.png")));
+		modinstWebLnk.addMouseListener(this); 
+		modinstWebLnk.setToolTipText(Read.getTextwith("seite2", "webi"));
+		modinstWebLnk.setCursor(c);
+		cp.add(modinstWebLnk);		
 		
-		sourceButton.setBounds(mittexa+picturex-40, infol+5, 40, 40); // Link zum Entwickler	
-		sourceButton.setIcon(new ImageIcon(this.getClass().getResource("src/quelle.png")));
-		sourceButton.addMouseListener(this); 
-		sourceButton.setToolTipText(Read.getTextwith("seite2", "dev"));
-		sourceButton.setCursor(c);
-		cp.add(sourceButton);		
+		devWebLnk.setBounds(mittexa+picturex-40, infol+5, 40, 40); // Link zum Entwickler	
+		devWebLnk.setIcon(new ImageIcon(this.getClass().getResource("src/quelle.png")));
+		devWebLnk.addMouseListener(this); 
+		devWebLnk.setToolTipText(Read.getTextwith("seite2", "dev"));
+		devWebLnk.setCursor(c);
+		cp.add(devWebLnk);		
 		
-		picture.setBounds(mittexa, pictureya, picturex, picturey); 
+		picture.setBounds(mittexa, pictureya, picturex, picturey); //Modbild
 		picture.setHorizontalAlignment(SwingConstants.CENTER);
 		picture.setVerticalAlignment(SwingConstants.CENTER);   
 		picture.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
@@ -268,12 +275,12 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		
 		HTMLEditorKit kit = new HTMLEditorKit();		
 			
-		pane = new JEditorPane(); //Beschreibungsfenster		
-		pane.setEditable(false);
-	    pane.setContentType("text/html");	
+		modDescPane = new JEditorPane(); //Beschreibungsfenster		
+		modDescPane.setEditable(false);
+	    modDescPane.setContentType("text/html");	
 	    Document doc = kit.createDefaultDocument();
-	    pane.setDocument(doc);	  
-	    pane.setText(Read.getTextwith("seite2", "wait"));	  	  
+	    modDescPane.setDocument(doc);	  
+	    modDescPane.setText(Read.getTextwith("seite2", "wait"));	  	  
 	    
 	    StyleSheet ss = kit.getStyleSheet();
 		try 
@@ -285,12 +292,12 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		}		
 		kit.setStyleSheet(ss);
 	    
-	    scroller = new JScrollPane(pane);
+	    scroller = new JScrollPane(modDescPane);
 	    scroller.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 	    scroller.setBounds(mittexa, textya, picturex, texth);	
 	    cp.add(scroller);
 	    
-	    new DropTarget(pane, myDragDropListener);
+	    new DropTarget(modDescPane, myDragDropListener);
 	    
 		selectArrow.setBounds(mittexa+picturex+2*rand, 250, 100, 83); // Pfeil nach rechts		
 		selectArrow.setIcon(new ImageIcon(this.getClass().getResource("src/arrowSe.png")));		
@@ -357,16 +364,16 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		helpButton.addMouseListener(this); 		
 		cp.add(helpButton);
 	    
-		minimizeButton.setBounds(breite-(35+35+3+3)-3, 3, 35, 27); //Minimieren		
-		minimizeButton.setIcon(new ImageIcon(this.getClass().getResource("src/mini.png")));			
-		minimizeButton.addMouseListener(this);
-		cp.add(minimizeButton);
+		minButton.setBounds(breite-(35+35+3+3)-3, 3, 35, 27); //Minimieren		
+		minButton.setIcon(new ImageIcon(this.getClass().getResource("src/mini.png")));			
+		minButton.addMouseListener(this);
+		cp.add(minButton);
 		
-		maximizeButton.setBounds(breite-(35+35+3)-3, 3, 35, 27); //Maximieren
-		maximizeButton.setIcon(new ImageIcon(this.getClass().getResource("src/maxi.png")));			
-		maximizeButton.addMouseListener(this);
-		maximizeButton.setEnabled(false);
-		//cp.add(maximizeButton);
+		maxButton.setBounds(breite-(35+35+3)-3, 3, 35, 27); //Maximieren
+		maxButton.setIcon(new ImageIcon(this.getClass().getResource("src/maxi.png")));			
+		maxButton.addMouseListener(this);
+		maxButton.setEnabled(false);
+		//cp.add(maxButton);
 		
 		exitButton.setBounds(breite-35-3, 3, 35, 27); //Beenden		
 		exitButton.setIcon(new ImageIcon(this.getClass().getResource("src/closeme.png")));			

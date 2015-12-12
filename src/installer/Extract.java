@@ -14,9 +14,13 @@ public class Extract
 {
 	public Extract(File archive, File destDir) throws Exception 
 	{
-	        destDir.mkdir();	       
-	 
-	        ZipFile zipFile = new ZipFile(archive);
+        destDir.mkdir();	       
+     
+    	ZipFile zipFile = null;
+    	
+    	try
+    	{
+	        zipFile = new ZipFile(archive);
 	        Enumeration<? extends ZipEntry> entries = zipFile.entries();
 	 
 	        byte[] buffer = new byte[16384];
@@ -37,28 +41,46 @@ public class Extract
 	            }
 		        if (!entry.isDirectory()&&!entryFileName.endsWith(".")&&!entryFileName.endsWith("..")) 
 	            {
-	                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(new File(destDir, entryFileName)));	 
-	                BufferedInputStream bis = new BufferedInputStream(zipFile.getInputStream(entry));
-	 
-	                while ((len = bis.read(buffer)) > 0) 
-	                {
-	                    bos.write(buffer, 0, len);
-	                }
-	 
-	                bos.flush();
-	                bos.close();
-	                bis.close();
+		        	FileOutputStream fos = null;
+		        	BufferedOutputStream bos=null;
+		           	BufferedInputStream bis =null;		           
+		        	try
+		        	{
+		        		fos = new FileOutputStream(new File(destDir, entryFileName));
+		                bos = new BufferedOutputStream(fos);	 
+		                bis = new BufferedInputStream(zipFile.getInputStream(entry));
+		 
+		                while ((len = bis.read(buffer)) > 0) 
+		                {
+		                    bos.write(buffer, 0, len);
+		                }
+		        	}
+		        	finally
+		        	{
+		        		if(bos!=null)
+		        		{
+			        		bos.flush();
+			        		bos.close();
+		        		}
+		        		if(bis!=null) bis.close();
+		        		if(fos!=null) fos.close();
+		        	}
 	            }	            
 	        }
-	                zipFile.close();
-	                File meti = new File(destDir+"/META-INF");
-	                del(meti);
-	    }
+    	}
+    	finally
+    	{
+    		if(zipFile!=null) zipFile.close();
+    	}
+    	
+        del(new File(destDir+"/META-INF"));
+    }
 	 
-	    private File buildDirectoryHierarchyFor(String entryName, File destDir) 
-	    {
-	        int lastIndex = entryName.lastIndexOf('/');	       
-	        String internalPathToEntry = entryName.substring(0, lastIndex + 1);
-	        return new File(destDir, internalPathToEntry);
-	    }
+    private File buildDirectoryHierarchyFor(String entryName, File destDir) 
+    {
+        int lastIndex = entryName.lastIndexOf('/');	       
+        String internalPathToEntry = entryName.substring(0, lastIndex + 1);
+        
+        return new File(destDir, internalPathToEntry);
+    }
 }

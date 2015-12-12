@@ -24,14 +24,15 @@ import java.nio.channels.ReadableByteChannel;
 
 public class Download 
 {
-	float[] rue = new float[2];
-	private InputStream instr; 
+	float[] rue = new float[2];	
 	private int groesse=0;
 	boolean laufen =true;
 	
 	
-	public float[] downloadFile(String url_str, OutputStream outstr) throws IOException
+	public float[] downloadFile(String url_str, OutputStream os) throws IOException
 	{	
+		InputStream is = null;
+		
 		System.setProperty("http.proxyPort", "443");
 	    URL url = new URL(url_str.replace(" ", "%20"));	
 	    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -48,7 +49,7 @@ public class Download
 		if (responseCode == 2) 
 		{	
 			groesse = conn.getContentLength();			
-			instr = conn.getInputStream();			
+			is = conn.getInputStream();			
 			
 			long start = System.nanoTime();			
 			long bytesRead = 0L;
@@ -56,18 +57,18 @@ public class Download
 	     
 			try 
 			{
-	            int read = instr.read(buffer);
+	            int read = is.read(buffer);
 	            while (read >= 1) 
 	            {	            	
 	              bytesRead += read;	         
-	              outstr.write(buffer, 0, read);
-	              read = instr.read(buffer);
+	              os.write(buffer, 0, read);
+	              read = is.read(buffer);
 	            }
 	        } 
 			finally 
 			{
-	            instr.close();
-	            outstr.close();
+	            if(is!=null) is.close();
+	            if(os!=null) os.close();
 	        }
 			
 			long downloadzeit = System.nanoTime() - start;

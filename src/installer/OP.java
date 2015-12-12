@@ -6,18 +6,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.nio.channels.ByteChannel;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Scanner;
-
-import javax.swing.JOptionPane;
 
 
 /**
@@ -42,9 +40,9 @@ public class OP
 			{
 				File[] files = f.listFiles();
 				
-				for (File aktFile : files) 
+				for (File file : files) 
 				{
-					del(aktFile);
+					del(file);
 				}	
 			}
 			return f.delete();
@@ -60,19 +58,19 @@ public class OP
 		return del(new File(dir));
 	}
 	
-	final static public void copy(File quelle, File ziel) throws FileNotFoundException, IOException 
+	final static public void copy(File source, File target) throws FileNotFoundException, IOException 
 	{
-		if(quelle.exists())
+		if(source.exists())
 		{
-			if(quelle.isDirectory())	
+			if(source.isDirectory())	
 			{
-				makedirs(ziel);
-				copyDir(quelle, ziel);				
+				makedirs(target);
+				copyDir(source, target);				
 			}
 			else
 			{
-				makedirs(ziel.getParentFile());
-				copyFile(quelle, ziel);
+				makedirs(target.getParentFile());
+				copyFile(source, target);
 			}
 		}
 	}			  
@@ -81,129 +79,150 @@ public class OP
 	{
 		if(source.exists())
 		{
-		    if (!target.exists()) {
-		      target.createNewFile();
-		    }
+		    if (!target.exists()) target.createNewFile();
+		    
 		    FileChannel sourceChannel = null;
-		    FileChannel targetChannel = null;
+		    FileChannel targetChannel = null;		    
 		    try
 		    {
-		      fileInputStream = new FileInputStream(source);
-		      sourceChannel = fileInputStream.getChannel();
-		      fileOutputStream = new FileOutputStream(target);
-		      targetChannel = fileOutputStream.getChannel();
-		      targetChannel.transferFrom(sourceChannel, 0L, sourceChannel.size());
+				fileInputStream = new FileInputStream(source);
+				sourceChannel = fileInputStream.getChannel();
+				fileOutputStream = new FileOutputStream(target);
+				targetChannel = fileOutputStream.getChannel();
+				targetChannel.transferFrom(sourceChannel, 0L, sourceChannel.size());
 		    }
 		    finally
 		    {
-		      if (sourceChannel != null) {
-		        sourceChannel.close();
-		      }
-		      if (targetChannel != null) {
-		        targetChannel.close();
-		      }
+				if (sourceChannel != null) sourceChannel.close();
+				if (targetChannel != null) targetChannel.close();		      
 		    }
 		}
-	  }
-	  
-	  
-	final static public void transfer(FileChannel inputChannel, ByteChannel outputChannel, long lengthInBytes, long chunckSizeInBytes, boolean verbose) throws IOException 
-	  {
-	    long overallBytesTransfered = 0L;
+	}
 	
-	    while (overallBytesTransfered < lengthInBytes) 
-	    {
-	      long bytesToTransfer = Math.min(chunckSizeInBytes, lengthInBytes - overallBytesTransfered);
-	      long bytesTransfered = inputChannel.transferTo(overallBytesTransfered, bytesToTransfer, outputChannel);
-	      
-	      overallBytesTransfered += bytesTransfered;
-	    }
-	  }
-	
-	final static public void copyDir(File quelle, File ziel) throws FileNotFoundException,IOException 
+	final static public void copyDir(File source, File target) throws FileNotFoundException,IOException 
 	{
-		if(quelle.exists())
+		if(source.exists())
 		{
-			File[] files = quelle.listFiles();
-			ziel.mkdirs();
+			File[] files = source.listFiles();
+			target.mkdirs();
 			for (File file : files) 
 			{
 				if (file.isDirectory()) 
 				{
-					copyDir(file,new File(ziel.getAbsolutePath()+ System.getProperty("file.separator")+ file.getName()));
+					copyDir(file, new File(target.getAbsolutePath()+ System.getProperty("file.separator") + file.getName()));
 				} 
 				else 
 				{
-					copyFile(file,new File(ziel.getAbsolutePath()+ System.getProperty("file.separator")	+ file.getName()));
+					copyFile(file, new File(target.getAbsolutePath() + System.getProperty("file.separator") + file.getName()));
 				}
 			}
 		}
 	}
 	
-	final static public void rename(File alt, File neu) throws FileNotFoundException,IOException 
+	final static public void rename(File oldFile, File newFile) throws FileNotFoundException,IOException 
 	{     
-        alt.renameTo(neu);
+        oldFile.renameTo(newFile);
 	}
 	
-	final static public void makedirs(File f)
+	final static public void makedirs(File folder)
 	{
-		if(!f.exists())	f.mkdirs();
+		if(!folder.exists()) folder.mkdirs();
 	}
 	
-	final static public void Textwriters(File datei, String line, boolean weiterschreiben) throws IOException
+	final static public void Textwriters(File file, String line, boolean append) throws IOException
 	{		
 		String lines[] = {line};
-		Textwriter(datei, lines, weiterschreiben);
+		Textwriter(file, lines, append);
 	}	
 		
-	final static public void Textwriter(File datei, String[] lines, boolean weiterschreiben) throws IOException
+	final static public void Textwriter(File file, String[] lines, boolean append) throws IOException
 	{		
-		boolean umbruch = false;
-		if(datei.length()!=0&&weiterschreiben==true) umbruch = true;
-	    
-		BufferedWriter f = new BufferedWriter(new FileWriter(datei.toString(), weiterschreiben));
-        for (int i = 0; i < lines.length; ++i) 
-        {	
-        	if(umbruch) f.newLine();
-	        f.write(lines[i]);
-	        if(i<lines.length-1) f.newLine();
-        }
-        f.close();	     	   
+		boolean newLine = false;
+		if(file.length()!=0&&append==true) newLine = true;
+		
+		FileWriter fr = null;
+		BufferedWriter bw = null;
+		try
+		{
+			fr = new FileWriter(file.toString(), append);
+			bw = new BufferedWriter(fr);
+	        for (int i = 0; i < lines.length; ++i) 
+	        {	
+	        	if(newLine) bw.newLine();
+		        bw.write(lines[i]);
+		        if(i<lines.length-1) bw.newLine();
+	        }
+		}
+		finally
+		{
+			if(bw!=null) bw.close();
+			if(fr!=null) fr.close();
+		}   	   
 	}	
 		
-	final static public String[] Textreader(File datei) throws IOException
+	final static public String[] Textreader(File file) throws IOException
 	{		  	  
 	    ArrayList<String> text = new ArrayList<String>();
-	    BufferedReader f = new BufferedReader(new InputStreamReader(new FileInputStream(datei)));
-        String line;
-        while ((line = f.readLine()) != null) 
-        {
-        	text.add(line);
-        }        	      
-        f.close();
+	   
+	    FileReader fr = null;
+	    BufferedReader br = null;
+	    try
+	    {
+			fr = new FileReader(file);
+			br = new BufferedReader(fr);
+			
+			String line;
+			while ((line = br.readLine()) != null) 
+			{
+				text.add(line);
+			} 
+	    }
+	    finally
+	    {
+			if(br != null) br.close();
+			if(fr != null) fr.close();
+	    }
+	   
         return text.toArray(new String[text.size()]);
 	}
 	
-	final static public String[] Textreader(File datei, String charset) throws IOException
+	final static public String[] Textreader(File file, String charset) throws IOException
 	{
-        ArrayList<String> text = new ArrayList<String>();
-	    BufferedReader f = new BufferedReader(new InputStreamReader(new FileInputStream(datei), charset));
-        String line;
-        while ((line = f.readLine()) != null) 
-        {
-        	text.add(line);
-        }        	      
-        f.close();
-        return text.toArray(new String[text.size()]);
+        ArrayList<String> arrayStr = new ArrayList<String>();
+        
+        FileInputStream fis = null;
+        InputStreamReader isr = null;
+	    BufferedReader br = null;
+        
+	    try
+	    {
+	        fis = new FileInputStream(file);
+	        isr = new InputStreamReader(fis, charset);
+	        br = new BufferedReader(isr);
+	       
+		    String line;
+	        while ((line = br.readLine()) != null) 
+	        {
+	        	arrayStr.add(line);
+	        }      
+	    }
+	    finally
+	    {
+	    	if(br != null) br.close();
+			if(isr != null) isr.close();
+			if(fis != null) fis.close();
+	    }
+	    
+        return arrayStr.toArray(new String[arrayStr.size()]);
 	}
 	
-	final static public String Textreaders(File datei) throws IOException
+	final static public String Textreaders(File file) throws IOException
 	{
-		String[] x = Textreader(datei);
+		String[] StrArr = Textreader(file);
         
 		String inh="";
-		for (int i=0; i<x.length; i++)
-			inh+=x[i];
+		for (int i=0; i<StrArr.length; i++)
+			inh+=StrArr[i];
 		
         return inh;
 	}
@@ -212,12 +231,29 @@ public class OP
 	{		
 		String line="";
 	    ArrayList<String> list = new ArrayList<String>();
-	    BufferedReader  f = new BufferedReader(new InputStreamReader(new FileInputStream(datei)));
-        while ((line = f.readLine()) != null) 
-        {
-        	list.add(line);
-        }        	      
-        f.close();
+	    
+	    FileInputStream fis = null;
+	    InputStreamReader isr = null;
+	    BufferedReader  br = null;	    
+	    
+	    try
+	    {
+			fis = new FileInputStream(datei);
+			isr = new InputStreamReader(fis);
+			br = new BufferedReader(isr);
+			
+	        while ((line = br.readLine()) != null) 
+	        {
+	        	list.add(line);
+	        } 
+	    }
+	    finally
+	    {
+	    	if(br != null) br.close();
+			if(isr != null) isr.close();
+			if(fis != null) fis.close();
+	    }
+	    
         return list;
 	}
 	
@@ -225,26 +261,37 @@ public class OP
 	{		
 		String line="";
 	    ArrayList<String> list = new ArrayList<String>();
-	    BufferedReader f = new BufferedReader(new InputStreamReader(new FileInputStream(datei), charset));
-        while ((line = f.readLine()) != null) 
-        {
-        	list.add(line);
-        }        	      
-        f.close();
+	    
+	    FileInputStream fis = null;
+	    InputStreamReader isr = null;
+	    BufferedReader br = null;
+	    
+	    try
+	    {
+		    fis = new FileInputStream(datei);
+		    isr = new InputStreamReader(fis, charset);
+		    br = new BufferedReader(isr);
+	        while ((line = br.readLine()) != null) 
+	        {
+	        	list.add(line);
+	        }   
+	    }
+	    finally
+	    {
+	    	if(br != null) br.close();
+			if(isr != null) isr.close();
+			if(fis != null) fis.close();
+	    }
+	    
         return list;
 	}
-	
-	final static public int version (String[] options)
-	{
-		return JOptionPane.showOptionDialog(null, Read.getTextwith("OP", "modver"), Read.getTextwith("OP", "modverh"), JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);		
-	}
-	
+		
 	final static public String optionReader(String attrib)
 	{
 		File configf = new File(Start.stamm + "/Modinstaller/config.txt");
-		String rueck=null;
+		String text=null;
 		boolean exist=false;
-		String[] inhalt;
+		String[] inhalt = null;
 		try 
 		{
 			inhalt = Textreader(configf);	
@@ -253,16 +300,16 @@ public class OP
 			{
 				if(inhalt[i].split(":")[0].equals(attrib))
 				{
-					rueck= inhalt[i].split(":")[1];
+					text= inhalt[i].split(":")[1];
 					exist=true;
 				}
 			}
 		} 
-		catch (IOException e) 
-		{
-		}
-		if(exist==false) rueck="n/a";
-		return rueck;		
+		catch (IOException e){}
+		
+		if(exist==false) text="n/a";
+		
+		return text;		
 	}
 	
 	final static public void optionWriter(String attrib, String content)
@@ -272,9 +319,11 @@ public class OP
 		boolean inside = false;
 		if(configf.exists())
 		{		
-			try {
+			try 
+			{
 				inhalt = Textreader(configf);
-			} catch (IOException e) {}		
+			} 
+			catch (IOException e) {}		
 		
 			for (int i=0; i<inhalt.length; i++)
 			{
@@ -286,27 +335,64 @@ public class OP
 			}
 		}
 		if (inside)
-			try {
+		{
+			try 
+			{
 				Textwriter(configf, inhalt, false);
-			} catch (IOException e) {}
+			}
+			catch (IOException e) {}
+		}
 		else
 		{
 			String[] neu = {attrib +":"+content};
-			try {
+			try 
+			{
 				Textwriter(configf, neu, true);
-			} catch (IOException e) {}
+			} 
+			catch (IOException e) {}
 		}
 	}
 	
-	public String getInternalText(String dir)
+	public String getSizeAsString(double size)
+	{	
+		String unit = "Byte";
+		if(size>1024)
+		{
+			size/=1024.;
+			unit="KB";
+		}
+		if(size>1024)
+		{
+			size/=1024.;
+			unit="MB";
+		}
+		if(size>1024)
+		{
+			size/=1024.;
+			unit="GB";
+		}
+		size = Math.round(size*10.)/10.;
+		
+		return String.valueOf(size)+" "+unit;
+	}
+	
+	public String getInternalText(String internalFile)
 	{
 		String json="";
-		Scanner scan = new Scanner(getClass().getResourceAsStream(dir), "UTF-8");
-		while (scan.hasNextLine()) 
+		Scanner scan = null;
+		try
 		{
-			json += scan.nextLine();
+			scan = new Scanner(getClass().getResourceAsStream(internalFile), "UTF-8");
+			while (scan.hasNextLine()) 
+			{
+				json += scan.nextLine();
+			}
 		}
-		scan.close();
+		finally
+		{
+			if(scan!=null) scan.close();
+		}
+		
 		return json;
 	}
 	
@@ -315,6 +401,7 @@ public class OP
 		final Writer result = new StringWriter();
 		final PrintWriter printWriter = new PrintWriter(result);
 		aThrowable.printStackTrace(printWriter);
+		
 		return result.toString();
 	}
 }

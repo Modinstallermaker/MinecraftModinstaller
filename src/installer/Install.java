@@ -106,39 +106,8 @@ public class Install extends InstallGUI
 						new Extract(new File(modsport+"Modinstaller.jar"), new File(sport + "Result/"));  
 					}
 					status(value += 5);
-					try
-					{
-						String mode="Forge";
-						if(isModloader==true) mode="Modloader";
 					
-						optionWriter("slastmc", optionReader("lastmc"));
-						optionWriter("lastmc", mcVersion);					
-						optionWriter("slastmode", optionReader("lastmode"));
-						optionWriter("lastmode", mode);	
-						optionWriter("changed", "true");	
-											
-						if(mods.size()!=0)
-						{
-							optionWriter("slastmods", optionReader("lastmods"));
-							String modn="";
-							for (Modinfo mod : mods)
-							{
-								modn+=mod.getID()+";;";
-							}
-							if(modn.endsWith(";;"))
-								modn = modn.substring(0, modn.length()-2);
-							optionWriter("lastmods", modn);
-						}
-						else
-						{
-							optionWriter("slastmods", "n/a");
-							optionWriter("lastmods", "n/a");
-						}						
-					}
-					catch (Exception e)	{
-						stat.setText("Errorocde: S3x00: " + String.valueOf(e));
-						Fehler += getError(e) + " Errorcode: S3x00\n\n";
-					}
+					writeLog();
 					
 					status(value += 5);		
 				} 
@@ -207,42 +176,8 @@ public class Install extends InstallGUI
 						status(value=0);
 						if (!isModloader) //Forge Modus
 						{	
-							String text = Read.getTextwith("seite3", "forge");
-							stat.setText(text);  
-							stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));	
-							new File(sport + "Forge/").mkdirs();
-							File libr = new File(sport + "Forge/"+mcVersion+".zip");                //Downloadort Forge
-							dowf = new Download();	
-							String forgeURL = webplace + mcVersion +"/"+ "forge2.zip";
-														
-							if(!dowf.ident(forgeURL, libr))  //Minecraft Forge herunterladen
-							{
-								Thread t2 = new Thread(new Downloadstate(dowf, libr, Install.this)); //Prozent berechnen und anzeigen
-								t2.start();					
-								try
-								{
-									dowf.downloadFile(forgeURL, new FileOutputStream(libr));	//ZIP Datei herunterladen
-								}
-								catch (Exception ex)
-								{
-									stat.setText("Errorocde: S3x04a: " + String.valueOf(ex));
-									Fehler += "Forge "+mcVersion +"\nTo: "+libr+"\nException:\n"+ getError(ex) + "\nErrorcode: S3x04d\n\n";
-								}								
-								t2.interrupt();
-							}							
-							status(value = 90);	
-							
-							stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));
-							try
-							{
-								new Extract(libr, new File(mineord));
-							}
-							catch(Exception ex)
-							{								
-								Fehler += "Forge "+mcVersion +"\nSource: "+forgeURL+"\nFrom: "+libr.toString()+
-										"\nTo: "+mineord.toString()+"\nException:\n"+ getError(ex) + "\nErrorcode: S3x04e\n\n";
-							}
-							status(value = 100);
+							forgeInstallation();
+							extraInstallation();
 						}					
 					}					 
 					catch (Exception ex) 
@@ -252,33 +187,8 @@ public class Install extends InstallGUI
 					}
 			    }
 							
-				File impf = new File(stamm + "Modinstaller/Import/");
-				if (impf.exists()) {
-					stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/import.png")));  // Importiertes kopieren
-					if (isModloader) {
-						try {
-							for (File modim : impf.listFiles())
-								copy(modim, new File(sport + "Result/"));
-						} catch (Exception e) {
-							stat.setText("Errorocde: S3x05: " + String.valueOf(e));
-							Fehler += getError(e) + " Errorcode: S3x05\n\n";
-						}
-					} else {
-						try {
-							copy(impf, new File(mineord + "mods/"));
-						} catch (Exception e) {
-							stat.setText("Errorocde: S3x06: " + String.valueOf(e));
-							Fehler += getError(e) + " Errorcode: S3x06\n\n";
-						}
-					}
-					File impo = new File(stamm + "Modinstaller/Importo/");
-					del(impo);
-					try {
-						rename(impf, impo);
-					} catch (Exception e) {
-
-					}
-				}
+				importMods();
+				
 				stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/install.png")));
 				
 				if(isModloader)     //Dateien in Minecraft JAR bei Modloader Modus komprimieren
@@ -290,55 +200,7 @@ public class Install extends InstallGUI
 					status(value += 5);
 				}			
 				
-				try
-				{
-					File json = new File(modsport+"Modinstaller.json");
-					if(json.exists())
-					{					
-						String[] lines = Textreader(json);
-						for (int i=0; i<lines.length; i++)
-						{												
-							lines[i] = lines[i].replaceAll("\"id\": \""+mcVersion+"\",", "\"id\": \"Modinstaller\",");  
-							// z.B. 1.7.4 in JSON Datei durch 1.7.10_Mods ersetzen									
-						}
-						Textwriter(json, lines, false);
-					}
-				}
-				catch (Exception e){	
-					stat.setText("Errorocde: S3x07: " + String.valueOf(e));
-					Fehler += getError(e) + " Errorcode: S3x07\n\n";
-				}
-				
-				File profiles = new File(mineord + "launcher_profiles.json");  
-				//Minecraft Launcher: JSON Datei präparieren: Profil Modinstaller einstellen				
-				if(!profiles.exists())
-				{	
-					try {
-						profiles.createNewFile();
-					} catch (IOException e) {
-						stat.setText("Errorocde: S3xPR: " + String.valueOf(e));
-						Fehler += getError(e) + " Errorcode: S3xPR\n\n";
-					}
-				}
-					
-				Gson gson = new Gson(); 
-		        try 
-		        {          
-		            String jsontext = Textreaders(profiles);
-		            JsonObject jfile = gson.fromJson(jsontext, JsonObject.class); 
-		            jfile.addProperty("selectedProfile", "Modinstaller");
-			            JsonObject jprofiles = jfile.get("profiles").getAsJsonObject();
-				        	JsonObject sub = new JsonObject();
-				            sub.addProperty("name", "Modinstaller");
-				            sub.addProperty("lastVersionId", "Modinstaller");	
-			            jprofiles.add("Modinstaller", sub);
-		            jfile.add("profiles", jprofiles);			            
-		            Textwriters(profiles, gson.toJson(jfile), false);			                   
-		        }
-		        catch (Exception e)
-		        {
-		        	Fehler += getError(e) + " Errorcode: Pro\n\n";
-		        }			
+				setJSONs();		
 				
 				File sound = new File(mineord + "assets/indexes/"+mcVersion+".json");    //Sounddateien kopieren
 				File soundc = new File(mineord + "assets/indexes/Modinstaller.json");
@@ -372,10 +234,258 @@ public class Install extends InstallGUI
 					stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/play.png")));
 					stat.setText("");
 					startinfo.setVisible(true);
-					info.setText(Read.getTextwith("seite3", "prog13"));					
+					info.setText(Read.getTextwith("seite3", "prog13"));	
+					Start.mol.askUser(true);
 				}
 			}
 		}.start();
+	}
+	
+	private void forgeInstallation()
+	{
+		stat.setText(Read.getTextwith("seite3", "forge"));  
+		stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));	
+		
+		new File(sport + "Forge/").mkdirs();
+		File libr = new File(sport + "Forge/"+mcVersion+".zip");                //Downloadort Forge
+		String forgeURL = webplace + mcVersion +"/"+ "forge2.zip";
+		
+		dowf = new Download();	
+		try 
+		{
+			if(!dowf.ident(forgeURL, libr))  //Minecraft Forge herunterladen
+			{
+				Thread t2 = new Thread(new Downloadstate(dowf, libr, Install.this)); //Prozent berechnen und anzeigen
+				t2.start();					
+				
+				dowf.downloadFile(forgeURL, new FileOutputStream(libr));	//ZIP Datei herunterladen
+									
+				t2.interrupt();
+			}
+			stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));
+			status(value = 90);	
+			
+			try
+			{
+				new Extract(libr, new File(mineord));
+			}
+			catch(Exception ex)
+			{								
+				Fehler += "Forge "+mcVersion +"\nSource: "+forgeURL+"\nFrom: "+libr.toString()+
+						"\nTo: "+mineord.toString()+"\nException:\n"+ getError(ex) + "\nErrorcode: S3x04e\n\n";
+			}
+			status(value = 100);
+		} 
+		catch (Exception ex) 
+		{
+			stat.setText("Errorocde: S3x04a: " + String.valueOf(ex));
+			Fehler += "Forge "+mcVersion +"\nTo: "+libr+"\nException:\n"+ getError(ex) + "\nErrorcode: S3x04d\n\n";
+		}
+	}
+	
+	private void extraInstallation()
+	{		
+		try 
+		{		
+			String sourceurl = "http://files.minecraft-mods.de/installer/Extra/downloadsrc.txt";
+			File fileurl = new File(sport + "downloadsrc.txt");
+			
+			dowf = new Download();	
+			dowf.smartDownload(sourceurl, fileurl);
+			
+			new OP();
+			String cont = OP.Textreaders(fileurl);
+			String[] sp1 = cont.split(";;;;");
+			for(String s1:  sp1)
+			{
+				String[] sp2 = s1.split(";;");
+				if(sp2[0].equals(mcVersion)||sp2[0].equals("all"))
+				{
+					for (int i=1; i<sp2.length; i++)
+					{
+						String downloadURL = sp2[i];					
+						
+						File exra = new File(sport + "Extra.zip"); 	
+						try 
+						{
+							if(!dowf.ident(downloadURL, exra))  //Extra Datei herunterladen
+							{				
+								dowf.downloadFile(downloadURL, new FileOutputStream(exra));
+							}			
+							try
+							{
+								new Extract(exra, new File(mineord));
+							}
+							catch(Exception ex)
+							{	
+								ex.printStackTrace();
+							}
+						} 
+						catch (Exception ex) 
+						{
+							ex.printStackTrace();
+						}
+					}
+				}
+			}				
+		} 
+		catch (Exception ex) 
+		{
+			ex.printStackTrace();
+		}	
+	}
+	
+	private void writeLog()
+	{
+		try
+		{
+			String mode="Forge";
+			if(isModloader==true) mode="Modloader";
+		
+			optionWriter("slastmc", optionReader("lastmc"));
+			optionWriter("lastmc", mcVersion);					
+			optionWriter("slastmode", optionReader("lastmode"));
+			optionWriter("lastmode", mode);	
+			optionWriter("changed", "true");	
+								
+			if(mods.size()!=0)
+			{
+				optionWriter("slastmods", optionReader("lastmods"));
+				String modn="";
+				for (Modinfo mod : mods)
+				{
+					modn+=mod.getID()+";;";
+				}
+				if(modn.endsWith(";;"))
+					modn = modn.substring(0, modn.length()-2);
+				optionWriter("lastmods", modn);
+			}
+			else
+			{
+				optionWriter("slastmods", "n/a");
+				optionWriter("lastmods", "n/a");
+			}						
+		}
+		catch (Exception e)	{
+			stat.setText("Errorocde: S3x00: " + String.valueOf(e));
+			Fehler += getError(e) + " Errorcode: S3x00\n\n";
+		}
+	}
+	
+	private void importMods()
+	{
+		File impf = new File(stamm + "Modinstaller/Import/");
+		if (impf.exists()) {
+			stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/import.png")));  // Importiertes kopieren
+			if (isModloader) {
+				try {
+					for (File modim : impf.listFiles())
+						copy(modim, new File(sport + "Result/"));
+				} catch (Exception e) {
+					stat.setText("Errorocde: S3x05: " + String.valueOf(e));
+					Fehler += getError(e) + " Errorcode: S3x05\n\n";
+				}
+			} else {
+				try {
+					copy(impf, new File(mineord + "mods/"));
+				} catch (Exception e) {
+					stat.setText("Errorocde: S3x06: " + String.valueOf(e));
+					Fehler += getError(e) + " Errorcode: S3x06\n\n";
+				}
+			}
+			File impo = new File(stamm + "Modinstaller/Importo/");
+			del(impo);
+			try {
+				rename(impf, impo);
+			} catch (Exception e) {
+
+			}
+		}
+	}
+	
+	private void setJSONs()
+	{
+		try
+		{
+			File json = new File(modsport+"Modinstaller.json");
+			if(json.exists())
+			{					
+				String[] lines = Textreader(json);
+				for (int i=0; i<lines.length; i++)
+				{												
+					lines[i] = lines[i].replaceAll("\"id\": \""+mcVersion+"\",", "\"id\": \"Modinstaller\",");  
+					// z.B. 1.7.4 in JSON Datei durch 1.7.10_Mods ersetzen									
+				}
+				Textwriter(json, lines, false);
+			}
+		}
+		catch (Exception e){	
+			stat.setText("Errorocde: S3x07: " + String.valueOf(e));
+			Fehler += getError(e) + " Errorcode: S3x07\n\n";
+		}
+		
+		//Minecraft Launcher: JSON Datei präparieren: Profil Modinstaller einstellen	
+		File profiles = new File(mineord + "launcher_profiles.json"); 	
+		boolean emty = false;
+		if(!profiles.exists())
+		{	
+			emty=true;
+			try 
+			{
+				profiles.createNewFile();				
+			} 
+			catch (IOException e) 
+			{
+				stat.setText("Errorocde: S3xPR: " + String.valueOf(e));
+				Fehler += getError(e) + " Errorcode: S3xPR\n\n";
+			}
+		}
+			
+		Gson gson = new Gson(); 
+	          
+    	JsonObject jfile = null;
+    	JsonObject jprofiles = null;
+    	
+    	if(emty||profiles.length()<10)
+    	{
+    		 jfile = new JsonObject();
+    		 jprofiles = new JsonObject();
+    	}
+    	else
+    	{
+    		try 
+    	    {
+    			String jsontext = Textreaders(profiles);
+	    		jfile = gson.fromJson(jsontext, JsonObject.class); 	    		
+	    		jprofiles = jfile.get("profiles").getAsJsonObject();	
+    	    }
+		    catch (Exception e)
+		    {
+				jfile = new JsonObject();
+				jprofiles = new JsonObject();
+				stat.setText("Errorocde: S3xPRO1: " + String.valueOf(e));
+				Fehler += getError(e) + " Errorcode: S3xPR01\n\n";
+		    }	
+    	}
+    	
+    	JsonObject sub = new JsonObject();
+        sub.addProperty("name", "Modinstaller");
+        sub.addProperty("lastVersionId", "Modinstaller");	
+        
+    	jprofiles.add("Modinstaller", sub);
+    	
+        jfile.add("profiles", jprofiles);	
+        
+        jfile.addProperty("selectedProfile", "Modinstaller");
+        try 
+        {
+			Textwriters(profiles, gson.toJson(jfile), false);
+		} 
+        catch (IOException e) 
+        {
+			stat.setText("Errorocde: S3xPRO2: " + String.valueOf(e));
+			Fehler += getError(e) + " Errorcode: S3xPR02\n\n";
+		}	
 	}
 
 	public void status(double zahl) // Statusbar einstellen

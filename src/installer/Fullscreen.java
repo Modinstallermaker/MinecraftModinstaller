@@ -123,8 +123,8 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 	    backButton.addActionListener(this);	   
 	    cp.add(backButton);
 	    
-	    exitButton.setBounds(x-40, 0, 40, 40);
-	    exitButton.setIcon(new ImageIcon(this.getClass().getResource("src/power.png")));
+	    exitButton.setBounds(x-35, 0, 35, 27);
+	    exitButton.setIcon(new ImageIcon(this.getClass().getResource("src/closeme.png")));
 	    exitButton.addMouseWheelListener(this);
 	    exitButton.setContentAreaFilled(false);
 	    exitButton.setCursor(curs1);		  
