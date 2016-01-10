@@ -29,7 +29,7 @@ public class Compress
 		}
 		catch (Exception ex) 
 		{
-			Install.Fehler+=getError(ex)+"\n\n";
+			Install.errors+=getError(ex)+"\n\n";
 		}
 		finally
 		{
@@ -78,7 +78,7 @@ public class Compress
 		} 
 		catch (Exception ex) 
 		{
-			Install.Fehler+=getError(ex)+"\n\n";
+			Install.errors+=getError(ex)+"\n\n";
 		} 
 		finally 
 		{

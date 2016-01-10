@@ -138,7 +138,7 @@ public class Error extends JFrame
 				
 			String body = "Text=" + URLEncoder.encode(feld.getText(), "UTF-8" ) + "&" + "MCVers=" + URLEncoder.encode(Version, "UTF-8" ) + "&" + "InstallerVers=" + URLEncoder.encode( Read.getTextwith("installer", "version"), "UTF-8" ) + "&" + "OP=" + URLEncoder.encode(System.getProperty("os.name").toString() + "; " + System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString(), "UTF-8" )+ "&" + "EMail=" + URLEncoder.encode( EMail, "UTF-8" );
 	
-			String erg = new Download().post("http://www.minecraft-installer.de/api/errorreceiver.php", body);
+			String erg = new Postrequest("http://www.minecraft-installer.de/api/errorreceiver.php", body).toString();
 			
 			JOptionPane.showMessageDialog(null, erg, "Server response...", JOptionPane.INFORMATION_MESSAGE);
 			Send.setEnabled(false);
@@ -151,7 +151,7 @@ public class Error extends JFrame
 	  
 	  public void Forum_ActionPerformed(ActionEvent evt) 
 	  {
-		  new Browser("http://forum.minecraft-mods.de/index.php?page=Board&boardID=8");
+		 OperatingSystem.openLink("http://forum.minecraft-mods.de/index.php?page=Board&boardID=8");	
 	  } 
 	  
 	  public void Copy_ActionPerformed(ActionEvent evt) 

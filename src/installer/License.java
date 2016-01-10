@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.BorderFactory;
@@ -43,17 +44,18 @@ public class License extends JFrame
 	private String Lizenztext = "";
 	private JEditorPane tp = new JEditorPane();
 	private int hoehe = 345, breite=550;
-	private Modinfo[] Mod, Downloadlist;
+	private Modinfo[] Modlist, Downloadlist;
+	private ArrayList<String> offlineList;
 
-	public License(Modinfo[] Mod, Modinfo[] Downloadlist) 
+	public License(Modinfo[] Modlist, Modinfo[] Downloadlist, ArrayList<String> offlineList) 
 	{
-		this.Mod=Mod;
+		this.Modlist=Modlist;
 		this.Downloadlist=Downloadlist;
+		this.offlineList = offlineList;
 		
 		setUndecorated(true);			
 		setSize(breite, hoehe);
-		JPanel cp = new GraphicsPanel(false);		
-		cp.setBackground(Color.decode("#CfE4F7"));
+		JPanel cp = new GraphicsPanel(false);
 		cp.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 
 		
@@ -130,7 +132,10 @@ public class License extends JFrame
 		optionWriter("lizenz", String.valueOf(zeitstempel));				
 		
 		dispose();
-		new Menu(Mod, Downloadlist);
+		if(Start.online)
+			new MCVersions(Modlist, Downloadlist, offlineList).setVisible(true);
+		else
+			new Menu(Modlist, Downloadlist, offlineList);
 	}
 
 	public void check_ItemStateChanged(ItemEvent evt) 

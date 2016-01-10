@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -41,7 +42,7 @@ public class MinecraftOpenListener implements ActionListener
 		new Thread()
 		{
 			public void run()
-			{				
+			{		
 				boolean change = false;
 				long logfileDateOLD=0;
 				while(run) //Minecraft Watchdog
@@ -52,7 +53,7 @@ public class MinecraftOpenListener implements ActionListener
 					Date logfileDate = cal.getTime(); //Letzer Eintrag
 					Date now = new Date();
 					lastChangeTimeDiff = now.getTime() - logfileDate.getTime(); //Zeitdifferenz in Millisekunden
-				
+					
 					if(logfile.exists()&&logfileDate.getTime()!=logfileDateOLD)
 					{
 						try
@@ -139,6 +140,7 @@ public class MinecraftOpenListener implements ActionListener
 	        JFrame frame = new JFrame("Minecraft Modinstaller - Mods ok?");
 	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	        addComponentsToPane(frame.getContentPane());
+	        frame.setIconImage(new ImageIcon(this.getClass().getResource("src/icon.png")).getImage());
 	        frame.pack();
 	        frame.setLocationRelativeTo(null);
 	        frame.setVisible(true);	
@@ -147,7 +149,8 @@ public class MinecraftOpenListener implements ActionListener
 			System.exit(0);
 	}
 	
-	public void addComponentsToPane(Container pane) {  
+	public void addComponentsToPane(Container pane) 
+	{  
         pane.setLayout(new BorderLayout());
          
         JLabel question = new JLabel(Read.getTextwith("seite1", "compt"));
@@ -182,7 +185,7 @@ public class MinecraftOpenListener implements ActionListener
 	{
 		String body = "Mods=" + optionReader("lastmods") + "&" + "Rate=" + sel;		        	
 		try {
-			new Download().post("http://www.minecraft-installer.de/api/compSet.php", body);
+			new Postrequest("http://www.minecraft-installer.de/api/compSet.php", body);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

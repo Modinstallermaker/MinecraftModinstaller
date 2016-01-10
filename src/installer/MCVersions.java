@@ -1,31 +1,162 @@
 package installer;
 
+import static installer.OP.Textreaders;
+import static installer.OP.getError;
+
+import java.awt.Cursor;
+import java.awt.event.ItemEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import javax.swing.ImageIcon;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+import com.google.gson.Gson;
 
 /**
  *
  * @author Dirk
  */
-public class MCVersions extends javax.swing.JFrame {
-
-    /**
-	 * 
-	 */
+public class MCVersions extends javax.swing.JFrame implements MouseWheelListener 
+{
 	private static final long serialVersionUID = 1L;
-	/**
-     * Creates new form NewJFrame
-     */
-    public MCVersions() {
+	private MCVersion[] allMCVersions, forgeMCVersions;
+	private boolean onlyForge=true;
+	private int pos = 0;
+	private String[] MCVersionStr = new String[3];
+	private boolean[] isInstalled = new boolean[3];
+	private Modinfo[] modlist, downloadlist;
+	private ArrayList<String> offlineList;
+	private Cursor curs1 = new Cursor(Cursor.HAND_CURSOR);
+	private Menu menu =null;
+		
+    public MCVersions(Modinfo[] modlist, Modinfo[] downloadlist, ArrayList<String> offlineList) 
+    {
+    	this.modlist = modlist;
+    	this.downloadlist=downloadlist;
+    	this.offlineList=offlineList;
         initComponents();
+        downloadTexts();
+        fillComponents();
+    }
+    
+    public MCVersions(Modinfo[] modlist, Modinfo[] downloadlist, ArrayList<String> offlineList, Menu menu) {
+		this.menu = menu;
+		this.modlist = modlist;
+    	this.downloadlist=downloadlist;
+    	this.offlineList=offlineList;
+    	menu.setEnabled(false);
+        initComponents();
+        downloadTexts();
+        fillComponents();
+	}
+
+	private void downloadTexts()
+    {
+    	File mcversions = new File(Start.stamm+"Modinstaller/mcversions.json");
+    	try
+    	{
+    		new Downloader("http://www.minecraft-installer.de//api/mcversions.php", mcversions).run();
+    	}
+    	catch (Exception e)
+    	{
+    		new Error(getError(e) + "\n\nErrorcode: MCVx01");	
+    	}
+		
+    	if(mcversions.exists())
+    	{
+			Gson gson = new Gson();
+			String jsontext;
+			try {
+				jsontext = Textreaders(mcversions);
+				allMCVersions = gson.fromJson(jsontext, MCVersion[].class);			
+				
+			} catch (IOException e) {			
+				e.printStackTrace();
+			}
+			ArrayList<MCVersion> fmv = new ArrayList<MCVersion>();
+			for (MCVersion allmcv : allMCVersions)
+			{
+				if(allmcv.getSumForge()>2)
+					fmv.add(allmcv);
+			}
+			forgeMCVersions = fmv.toArray(new MCVersion[fmv.size()]);
+    	}
     }
                      
-    private void initComponents() {
+    private void fillComponents() 
+    {    	
+		int verg= 2;
+		int posp = pos;
+		MCVersion[] MCVersionsx = allMCVersions;
+		if(onlyForge)
+			MCVersionsx = forgeMCVersions;
+		
+		boolean inside = false;
+		if(pos==0)
+			text_rightb.setEnabled(false);
+		else
+			text_rightb.setEnabled(true);
+		
+		for (int i=MCVersionsx.length-1; i>=0; i--)
+		{			
+			if(posp>0)
+			{
+				posp--;
+				continue;
+			}
+			if(verg<0)
+				break;
+			
+					
+			String mcVersion = MCVersionsx[i].getVersion();
+			String installt = "wird";
+			if(offlineList.contains(mcVersion))
+			{
+				installt = "bereits";
+				isInstalled[verg] = true;		
+			}
+			else
+			{
+				isInstalled[verg] = false;				
+			}
+			MCVersionStr[verg] = mcVersion;
+			
+			int sum = MCVersionsx[i].getSumAll();
+			String sp = "Modifikation";
+			if(sum>1)
+				sp+="en";
+			
+			String stext = "<html><center><b><span style='font-size:16px'>"+mcVersion+
+					"</span></b><br> <br> <b><span style='font-size:12px'>"+String.valueOf(sum)+
+					"</b></b><br>"+sp+"<br><br><i>"+
+					installt+" installiert</i></center></html>";
+			
+			if(verg==1) //Mitte
+			{
+				stext = "<html><center><b><span style='font-size:22px'>"+mcVersion+
+						"</span></b><br> <br> <b><span style='font-size:18px'>"+String.valueOf(sum)+
+						"</b></b><br>"+sp+"<br> <br><i><span style='font-size:10px'>"+
+						installt+" installiert</span></i></center></html>";
+				
+			}
+			if(verg==0 && i==0)
+				inside=true;
+			
+			text[verg].setText(stext);
+			verg--;
+		}
+		if(inside)
+			text_leftb.setEnabled(false);
+		else
+			text_leftb.setEnabled(true);
+	}
+
+	private void initComponents() {
 
         panel_top = new javax.swing.JPanel();
         question_t = new javax.swing.JLabel();
@@ -38,20 +169,41 @@ public class MCVersions extends javax.swing.JFrame {
         text_leftb = new javax.swing.JLabel();
         panel_centermenu = new javax.swing.JPanel();
         panel_left = new javax.swing.JPanel();
-        text_left = new javax.swing.JLabel();
         panel_right = new javax.swing.JPanel();
-        text_right = new javax.swing.JLabel();
-        panel_center = new javax.swing.JPanel();
-        text_center = new javax.swing.JLabel();
-
+        for(int i=0; i<3; i++)
+        	text[i] = new javax.swing.JLabel();
+        panel_center = new javax.swing.JPanel();     
+        
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setAlwaysOnTop(true);
         setMinimumSize(new java.awt.Dimension(550, 290));
         setIconImage(new ImageIcon(this.getClass().getResource("src/icon.png")).getImage());
+        
+        addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent e){
+              dispose();
+              if(menu==null)
+            	  System.exit(0); 
+              else
+              {
+            	  menu.setEnabled(true);
+            	  menu.setFocusableWindowState(true);
+              }
+            }
+
+            public void windowClosed(WindowEvent e){
+            	 if(menu!=null)
+            	 {
+            		 menu.setEnabled(true);
+            		 menu.setFocusableWindowState(true);
+            	 }
+            }
+        });
+         
 
         question_t.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
         question_t.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        question_t.setText("Welche Minecaft Version möchtest Du modifizieren?");
+        question_t.setText("Welche Minecraft Version möchtest Du modifizieren?");
         question_t.setToolTipText("");
 
         javax.swing.GroupLayout panel_topLayout = new javax.swing.GroupLayout(panel_top);
@@ -66,10 +218,10 @@ public class MCVersions extends javax.swing.JFrame {
         );
 
         forge_only.setSelected(true);
-        forge_only.setText("Nur MC Versionen anzeigen, für die Forge Mods verfügbar sind");
+        forge_only.setText("Nur Minecraft Versionen anzeigen, für die Forge Mods verfügbar sind");
         forge_only.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        forge_only.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+        forge_only.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(ItemEvent evt) {
                 forge_onlyStateChanged(evt);
             }
         });
@@ -90,6 +242,9 @@ public class MCVersions extends javax.swing.JFrame {
         text_rightb.setFont(new java.awt.Font("Tahoma", 1, 30)); // NOI18N
         text_rightb.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         text_rightb.setText(">>");
+        text_rightb.addMouseWheelListener(this);
+        text_rightb.setCursor(curs1);	
+        text_rightb.setEnabled(false);
         text_rightb.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 text_rightbMouseClicked(evt);
@@ -115,6 +270,8 @@ public class MCVersions extends javax.swing.JFrame {
         text_leftb.setFont(new java.awt.Font("Tahoma", 1, 30)); // NOI18N
         text_leftb.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         text_leftb.setText("<<");
+        text_leftb.setCursor(curs1);
+        text_leftb.addMouseWheelListener(this);
         text_leftb.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 text_leftbMouseClicked(evt);
@@ -139,9 +296,10 @@ public class MCVersions extends javax.swing.JFrame {
 
         panel_centermenu.setLayout(new java.awt.BorderLayout());
 
-        text_left.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        text_left.setText("<html><center><b><span style='font-size:16px'>1.7.2</span></b><br> <br> <b><span style='font-size:12px'>180</b></b><br> verfügbare Mods<br> <br><i>bereits installiert</i></center></html>");
-        text_left.addMouseListener(new java.awt.event.MouseAdapter() {
+        text[0].setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        text[0].setCursor(curs1);
+        text[0].addMouseWheelListener(this);
+        text[0].addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 text_leftMouseClicked(evt);
             }
@@ -154,18 +312,19 @@ public class MCVersions extends javax.swing.JFrame {
         panel_left.setLayout(panel_leftLayout);
         panel_leftLayout.setHorizontalGroup(
             panel_leftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(text_left, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+            .addComponent(text[0], javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
         );
         panel_leftLayout.setVerticalGroup(
             panel_leftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(text_left, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+            .addComponent(text[0], javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
         );
 
         panel_centermenu.add(panel_left, java.awt.BorderLayout.LINE_START);
 
-        text_right.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        text_right.setText("<html><center><b><span style='font-size:16px'>1.8</span></b><br> <br> <b><span style='font-size:12px'>160</b></b><br> verfügbare Mods<br> <br><i>bereits installiert</i></center></html>");
-        text_right.addMouseListener(new java.awt.event.MouseAdapter() {
+        text[2].setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        text[2].setCursor(curs1);	
+        text[2].addMouseWheelListener(this);
+        text[2].addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 text_rightMouseClicked(evt);
             }
@@ -178,20 +337,21 @@ public class MCVersions extends javax.swing.JFrame {
         panel_right.setLayout(panel_rightLayout);
         panel_rightLayout.setHorizontalGroup(
             panel_rightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(text_right, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+            .addComponent(text[2], javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
         );
         panel_rightLayout.setVerticalGroup(
             panel_rightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(text_right, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+            .addComponent(text[2], javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
         );
 
         panel_centermenu.add(panel_right, java.awt.BorderLayout.LINE_END);
 
-        text_center.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-        text_center.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        text_center.setText("<html><center><b><span style='font-size:22px'>1.7.10</span></b><br><br><b><span style='font-size:18px'>280</span></b><br>verfügbare Mods<br><br><i><span style='font-size:10px'>bereits installiert</span></i></center></html>");
-        text_center.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        text[1].setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        text[1].setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        text[1].setCursor(curs1);	
+        text[1].addMouseWheelListener(this);
+        text[1].addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {            	
                 text_centerMouseClicked(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -203,11 +363,11 @@ public class MCVersions extends javax.swing.JFrame {
         panel_center.setLayout(panel_centerLayout);
         panel_centerLayout.setHorizontalGroup(
             panel_centerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(text_center, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
+            .addComponent(text[1], javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
         );
         panel_centerLayout.setVerticalGroup(
             panel_centerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(text_center, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+            .addComponent(text[1], javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
         );
 
         panel_centermenu.add(panel_center, java.awt.BorderLayout.CENTER);
@@ -233,53 +393,105 @@ public class MCVersions extends javax.swing.JFrame {
         );
 
         pack();
-    }// </editor-fold>                        
-
-    private void text_centerMouseEntered(java.awt.event.MouseEvent evt) {                                         
-        // TODO add your handling code here:
+        setLocationRelativeTo(null);
+    }                       
+	 
+	//Versions hover
+	private void text_rightMouseEntered(java.awt.event.MouseEvent evt) {
+	}   
+	
+    private void text_centerMouseEntered(java.awt.event.MouseEvent evt) {   
     }                                        
 
-    private void text_leftMouseEntered(java.awt.event.MouseEvent evt) {                                       
-        // TODO add your handling code here:
+    private void text_leftMouseEntered(java.awt.event.MouseEvent evt) { 
     }                                      
 
-    private void text_leftbMouseEntered(java.awt.event.MouseEvent evt) {                                        
-        // TODO add your handling code here:
+    //Button hover
+    private void text_leftbMouseEntered(java.awt.event.MouseEvent evt) {
     }                                       
-
-    private void text_leftbMouseClicked(java.awt.event.MouseEvent evt) {                                        
-        // TODO add your handling code here:
-    }                                       
+    
+    private void text_rightbMouseEntered(java.awt.event.MouseEvent evt) {                                         
+    	
+    }
 
     private void text_leftMouseClicked(java.awt.event.MouseEvent evt) {                                       
-        // TODO add your handling code here:
+    	Start.mcVersion = MCVersionStr[0];
+    	openMenu();  
     }                                      
 
     private void text_centerMouseClicked(java.awt.event.MouseEvent evt) {                                         
-        // TODO add your handling code here:
+    	Start.mcVersion = MCVersionStr[1];
+    	openMenu();  
     }                                        
 
     private void text_rightMouseClicked(java.awt.event.MouseEvent evt) {                                        
-        // TODO add your handling code here:
-    }                                       
+    	Start.mcVersion = MCVersionStr[2];    	
+    	openMenu();    	
+    }
+    
+    private void openMenu()
+    {
+    	if(menu!=null)
+    	{
+    		menu.changeVersion();
+    		menu.setEnabled(true);
+    	}
+    	else
+    	{
+    		new Menu(modlist, downloadlist, offlineList);    	        	
+    	}
+    	dispose();
+    }
 
-    private void text_rightMouseEntered(java.awt.event.MouseEvent evt) {                                        
-        // TODO add your handling code here:
-    }                                       
-
-    private void text_rightbMouseEntered(java.awt.event.MouseEvent evt) {                                         
-        // TODO add your handling code here:
-    }                                        
-
+    private void text_leftbMouseClicked(java.awt.event.MouseEvent evt) {
+    	back();
+    }
+    
     private void text_rightbMouseClicked(java.awt.event.MouseEvent evt) {                                         
-        // TODO add your handling code here:
-    }                                        
+		next();
+    }    
+    
+    private void next()
+    {
+    	if(pos>0)
+		{
+			pos--;
+			fillComponents();
+		}
+    }
+    
+    private void back()
+    {
+    	int anz;
+    	if(onlyForge)
+    		anz=forgeMCVersions.length;
+    	else
+    		anz = allMCVersions.length;
+        if(pos<anz-3)
+        {
+	    	pos++;
+	        fillComponents();
+        }
+    }
+    
+    @Override
+	public void mouseWheelMoved(MouseWheelEvent evt) {
+    	int notches = evt.getWheelRotation();
+	       if (notches < 0) 
+	       {
+	           next();	                      
+	       }
+	       else 
+	       {
+	          back();
+	       }			
+	}                               
 
-    private void forge_onlyStateChanged(javax.swing.event.ChangeEvent evt) {                                        
-        // TODO add your handling code here:
-    }                                      
-
- 
+    private void forge_onlyStateChanged(ItemEvent evt) {    
+    	pos=0;
+    	onlyForge =!onlyForge;
+    	fillComponents();
+    }    
 
     // Variables declaration - do not modify                     
     private javax.swing.JCheckBox forge_only;
@@ -293,10 +505,8 @@ public class MCVersions extends javax.swing.JFrame {
     private javax.swing.JPanel panel_top;
     private javax.swing.JPanel pannel_bottom;
     private javax.swing.JLabel question_t;
-    private javax.swing.JLabel text_center;
-    private javax.swing.JLabel text_left;
     private javax.swing.JLabel text_leftb;
-    private javax.swing.JLabel text_right;
+    private javax.swing.JLabel text[] = new javax.swing.JLabel[3];
     private javax.swing.JLabel text_rightb;
-    // End of variables declaration                   
+    // End of variables declaration     
 }

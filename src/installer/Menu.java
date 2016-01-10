@@ -20,6 +20,7 @@ import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
@@ -52,9 +53,10 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	private ArrayList<Modinfo> modlArrL = new ArrayList<Modinfo>();
 	private ArrayList<Modinfo> forgeArrL = new ArrayList<Modinfo>();
 	private ArrayList<Modinfo> proposals = new ArrayList<Modinfo>();
+	private ArrayList<String> offlineList;
 	private Modinfo[] modtexts, moddownloads;
-	private JList leftList;	
-	private DefaultListModel leftListModel;
+	private JList<String> leftList;	
+	private DefaultListModel<String> leftListModel;
 	
 	private int modID=-1;
 	private String YT = "";
@@ -65,10 +67,11 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	
 	public static boolean isModloader=true;
 
-	public Menu(Modinfo[] modtexts, Modinfo[] moddownloads) 
+	public Menu(Modinfo[] modtexts, Modinfo[] moddownloads, ArrayList<String> offlineList) 
 	{
 		this.modtexts=modtexts;
 		this.moddownloads=moddownloads;
+		this.offlineList = offlineList;
 		GUI();	    
 	    setVisible(true);			
 	    load();	 		
@@ -259,7 +262,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 					zeile= zeile.substring(0, zeile.length()-2);
 				String res ="";
 				try {
-					res = new Download().post("http://www.minecraft-installer.de/api/compGet.php", "Mods="+zeile);
+					res = new Postrequest("http://www.minecraft-installer.de/api/compGet.php", "Mods="+zeile).toString();
 				} 
 				catch (IOException e) {
 				}
@@ -307,13 +310,15 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
     	}
 	}
 		
-	private void changeVersion() //Version ändern
+	public void changeVersion() //Version ändern
 	{	
 		ist=false;
 		resetSelection();
+		mcVersLabel.setText("Minecraft ["+Start.mcVersion+"]");
 		modDescPane.setText(Read.getTextwith("seite2", "wait"));
-		Start.mcVersion = Start.mcVersionen[mcVersDrop.getSelectedIndex()];
-		mcVersion = Start.mcVersionen[mcVersDrop.getSelectedIndex()];
+		leftListMSP.getVerticalScrollBar().setValue(0);
+		leftListFSP.getVerticalScrollBar().setValue(0);
+		mcVersion = Start.mcVersion;
 		load();				
 	}	
 	
@@ -406,8 +411,9 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	
 	private void selectMod() // Auswählen von Mods
 	{	
-		Object[] listitems =  leftList.getSelectedValues();
-		for (Object listitem : listitems)
+		List<String> strlist = new ArrayList<String>();
+		strlist = leftList.getSelectedValuesList();
+		for (String listitem : strlist)
 			for(Modinfo prop : proposals)
 				if(prop.getName().equals(listitem))
 					prop.setSelect(true);		
@@ -423,8 +429,9 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	{
 		if(rightList.isFocusOwner())
 		{
-			Object[] listitems = rightList.getSelectedValues();
-			for (Object listitem : listitems)	
+			List<String> strlist = new ArrayList<String>();
+			strlist = rightList.getSelectedValuesList();
+			for (String listitem : strlist)	
 			{
 				String name = String.valueOf(listitem);
 				if (name.substring(0, 1).equals("+")) // Importierter Mod löschen
@@ -556,7 +563,8 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	
 	private void leftListItemSelected(MouseEvent e)
 	{
-		JList list = (JList)e.getSource();
+		@SuppressWarnings("unchecked")
+		JList<String> list = (JList<String>)e.getSource();
 		int index = list.locationToIndex(e.getPoint());
 		if ((e.getClickCount() == 2) || (e.getButton() == 3))
 			selectMod();
@@ -575,7 +583,8 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	{
 		if (rightListModel.getSize() > 0 && Menu.this.rightList.isEnabled()) 
 		{			
-			JList list = (JList)e.getSource();
+			@SuppressWarnings("unchecked")
+			JList<String> list = (JList<String>) e.getSource();
 			int index = list.locationToIndex(e.getPoint());
 			final String Auswahl = (String)rightListModel.getElementAt(index);
 			if ((e.getClickCount() == 2) || (e.getButton() == 3))
@@ -691,18 +700,18 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 				 restore();
 		}
 		else if(s==helpButton)
-			new Browser(Read.getTextwith("installer", "website")+"/faq.php");
+			OperatingSystem.openLink(Read.getTextwith("installer", "website")+"/faq.php");
 		else if(s== videoButton)
-			new Browser(YT);
+			OperatingSystem.openLink(YT);
 		else if(s==modinstWebLnk)
 		{
 			 if(modinstWebLnk.isEnabled())
-				 new Browser(hyperlink);
+				 OperatingSystem.openLink(hyperlink);
 		}
 		else if(s==devWebLnk)
 		{
 			 if(devWebLnk.isEnabled())
-				 new Browser(website);
+				 OperatingSystem.openLink(website);
 		}
 		else if(s==picture)
 		{
@@ -715,7 +724,11 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		else if(s==exitButton)
 			 System.exit(0);
 		else if(s==minButton)
-			 setState(ICONIFIED);
+			 setState(ICONIFIED);	
+		else if(s==mcVersLabel)
+		{			
+			new MCVersions(modtexts, moddownloads, offlineList, this).setVisible(true);
+		}
 		
 		for(int i=0; i<ratIcons.length; i++)
 		{
@@ -735,7 +748,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 					try
 					{
 						String body = "modID=" + modID + "&rating="+(rating+1);
-						new Download().post("http://www.minecraft-installer.de/api/modrating.php", body);							
+						new Postrequest("http://www.minecraft-installer.de/api/modrating.php", body);							
 					} 
 					catch (Exception er) {
 						new Error(getError(er));
@@ -780,7 +793,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	    else if (s == rightList) 
 	    	rightListItemSelected(e);
 	    else if ((s == nextButton) && (nextButton.isEnabled())) 
-	    	startInstallation();
+	    	startInstallation();		
 	}
 	
 	@Override

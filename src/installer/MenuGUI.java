@@ -44,20 +44,20 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	private static final long serialVersionUID = 1L;
 	
 	JTabbedPane tabbedPane = new JTabbedPane();
-	JComboBox mcVersDrop;
+	JComboBox<String> mcVersDrop;
 	JPanel cp;
 	
-	JList leftListM = new JList();
+	JList<String> leftListM = new JList<String>();
 	JScrollPane  leftListMSP = new JScrollPane(leftListM);
-	DefaultListModel leftListMModel = new DefaultListModel();
+	DefaultListModel<String> leftListMModel = new DefaultListModel<String>();
 	
-	JList leftListF = new JList();
+	JList<String> leftListF = new JList<String>();
 	JScrollPane leftListFSP = new JScrollPane(leftListF);
-	DefaultListModel leftListFModel = new DefaultListModel();
+	DefaultListModel<String> leftListFModel = new DefaultListModel<String>();
 	
-	JList rightList = new JList();	
+	JList<String> rightList = new JList<String>();	
 	JScrollPane rightListSP = new JScrollPane(rightList);
-	DefaultListModel rightListModel = new DefaultListModel();
+	DefaultListModel<String> rightListModel = new DefaultListModel<String>();
 	
 	DragDropListener myDragDropListener = new DragDropListener(this);	
 			
@@ -90,7 +90,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	JProgressBar bar = new JProgressBar();
 	
 	private Cursor c = new Cursor(Cursor.HAND_CURSOR);		
-	private String stamm = Start.stamm, mcVersion = Start.mcVersion;		
+	private String stamm = Start.stamm;		
 	private int hoehe =600, breite=1024;	
 	String hyperlink = Read.getTextwith("installer", "website"), website=Read.getTextwith("installer", "website");
 	
@@ -159,26 +159,14 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		headerLabel.setVerticalAlignment(SwingConstants.CENTER);
 		headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD,45));
 		cp.add(headerLabel);
-	
-		if(Start.mcVersionen!=null&&Start.mcVersionen.length>0)  //MC Version ändern
-		{
-			mcVersDrop = new JComboBox(Start.mcVersionen);
-			for (int ka =0; ka<Start.mcVersionen.length; ka++)	
-			{
-				if(Start.mcVersionen[ka].equals(mcVersion))
-					mcVersDrop.setSelectedIndex(ka);
-			}
-			mcVersDrop.setBounds(rand+listenb-70, (int)(hoehe*0.05), 70, 25);
-			mcVersDrop.addActionListener(this);			
-			if(Start.mcVersionen.length==1) mcVersDrop.setEnabled(false);
-			cp.add(mcVersDrop);		
 		
-			mcVersLabel.setBounds((int)(rand+listenb-70-110-5), (int)(hoehe*0.05), 110, 25);
-			mcVersLabel.setText("Minecraft");
-			mcVersLabel.setVerticalAlignment(SwingConstants.CENTER);
-			mcVersLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-			cp.add(mcVersLabel);
-		}
+		mcVersLabel.setBounds((int)(rand), (int)(hoehe*0.05), listenb, 40); //Minecraft Version auswählen
+		mcVersLabel.setText("Minecraft ["+Start.mcVersion+"]");
+		mcVersLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		mcVersLabel.addMouseListener(this);
+		mcVersLabel.setCursor(c);	
+		mcVersLabel.setFont(mcVersLabel.getFont().deriveFont(Font.BOLD,14));
+		cp.add(mcVersLabel);
 		
 		leftListMModel.addElement(Read.getTextwith("seite2", "wait2")); //Liste1 Modloader
 		leftListM.setModel(leftListMModel);		
@@ -208,7 +196,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	    cp.add(searchInput);
 	    
 		modNameLabel.setBounds(mittexa, modtexty, picturex, 30);           //Modname
-		modNameLabel.setText(Read.getTextwith("seite2", "text7"));		
+		modNameLabel.setText(Read.getTextwith("seite2", "text7"));
 		modNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		modNameLabel.setFont(new Font("Dialog", Font.BOLD, 25));
 		cp.add(modNameLabel);
@@ -399,7 +387,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	{   
 		private static final long serialVersionUID = 1L;
 
-		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) 
+		public Component getListCellRendererComponent(@SuppressWarnings("rawtypes") JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) 
 	    {  
            super.getListCellRendererComponent( list, value, index, isSelected, cellHasFocus );  
            list.setFixedCellHeight(25);     

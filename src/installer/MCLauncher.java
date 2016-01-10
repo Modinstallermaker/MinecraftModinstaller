@@ -2,7 +2,6 @@ package installer;
 
 import java.awt.Desktop;
 import java.io.File;
-import java.io.FileOutputStream;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -55,9 +54,10 @@ public class MCLauncher
 			makedirs(speicherort.getParentFile());	
 			try 
 			{
-				if(!new Download().ident(downloadort, speicherort)||speicherort.length()==0)						
+				Downloader dow = new Downloader(downloadort, speicherort);
+				if(!dow.isDownloadSizeEqual()||speicherort.length()==0)						
 				{		
-					new Download().downloadFile(downloadort, new FileOutputStream(speicherort));		
+					dow.run();		
 					ausf =true;				
 				}
 			} 
@@ -67,7 +67,8 @@ public class MCLauncher
 			} 
 			if(ausf ==false)
 			{
-				int eingabe = JOptionPane.showConfirmDialog(null, Read.getTextwith("startLauncher", "prog1"), Read.getTextwith("startLauncher", "prog1h"), JOptionPane.YES_NO_OPTION);
+				int eingabe = JOptionPane.showConfirmDialog(null, Read.getTextwith("startLauncher", "prog1"), 
+						Read.getTextwith("startLauncher", "prog1h"), JOptionPane.YES_NO_OPTION);
 				if(eingabe == 0)
 				{
 					JFileChooser FC = new JFileChooser();

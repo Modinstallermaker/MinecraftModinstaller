@@ -130,17 +130,17 @@ public class InstallGUI extends JFrame implements MouseListener {
 	{
 		Object s = e.getSource();
 		if(s==socialIcons[0])
-			new Browser(Read.getTextwith("seite3", "facebook"));
+			OperatingSystem.openLink(Read.getTextwith("seite3", "facebook"));
 		else if(s==socialIcons[1])
-			new Browser("https://plus.google.com/+MinecraftinstallerDeMod");
+			OperatingSystem.openLink("https://plus.google.com/+MinecraftinstallerDeMod");
 		else if(s==socialIcons[2])
-			new Browser("https://twitter.com/Modinstaller");
+			OperatingSystem.openLink("https://twitter.com/Modinstaller");
 		else if(s==socialIcons[3])
-			new Browser(Read.getTextwith("installer", "website")+"/proposal.php");
+			OperatingSystem.openLink(Read.getTextwith("installer", "website")+"/proposal.php");
 		else if(s==socialIcons[4])
-			new Browser(Read.getTextwith("installer", "website")+"/faq.php");
+			OperatingSystem.openLink(Read.getTextwith("installer", "website")+"/faq.php");
 		else if(s==banner)
-			new Browser("http://server.nitrado.net/deu/gameserver-mieten?pk_campaign=MinecraftInstaller");
+			OperatingSystem.openLink("http://server.nitrado.net/deu/gameserver-mieten?pk_campaign=MinecraftInstaller");
 		else if(s==startMCButton)
 		{
 			new MCLauncher();	
