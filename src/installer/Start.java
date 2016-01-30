@@ -13,6 +13,7 @@ import java.awt.Desktop;
 import java.awt.Font;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -30,9 +31,9 @@ import com.google.gson.GsonBuilder;
 
 /**
  * 
- * Beschreibung
+ * Modinstaller start window
  * 
- * @version 4.3
+ * @version 5.0
  * @author Dirk Lippke
  */
 
@@ -47,19 +48,20 @@ public class Start extends JFrame
 	private ArrayList<String> offlineList = new ArrayList<String>();
 	private int versuch = 0;	
 	private int heightFrame =300, widthFrame=500;
+	private Modinfo[] modtexts = null, moddownloads = null;
 	
-	public static String mcVersion=null, webplace, mineord, stamm, lang ="n/a";
-	public static ArrayList<String> sent = new ArrayList<String>();
-	public static boolean online = false;
-	public static String[] mcVersionen;
-	Modinfo[] modtexts = null;
-	Modinfo[] moddownloads = null;
-	public static String mac ="";
+	public static String mcVersion="", webplace, mineord, stamm, lang ="n/a";
+	public static ArrayList<String> sentImportedModInfo = new ArrayList<String>();
+	public static String[] mcVersionen;	
+	public static MCVersion[] allMCVersions, forgeMCVersions;	
 	public static MinecraftOpenListener mol;
+	public static boolean online = false;
 	
+	/**
+	 * Setting up design of Minecraft Modinstaller
+	 */	
 	public static void main(String[] args) 
-	{		
-		System.setProperty("java.net.preferIPv4Stack", "true");
+	{
 		try 
 	    {	
 			Color red = Color.decode("#9C2717");
@@ -89,35 +91,22 @@ public class Start extends JFrame
 		new Start();			
 	}	
 	
+	/**
+	 * Design JFrame for startup screen
+	 */
 	public Start()
 	{	
-		/* MAC Adresse
-		try { 
-            NetworkInterface ni = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()); 
-            byte[] hwa = ni.getHardwareAddress(); 
-           
-            for (int i = 0; i < hwa.length; i++) { 
-                mac += String.format("%x:", hwa[i]); 
-            } 
-            if (mac.length() > 0 && !ni.isLoopback()) { 
-                System.out.println(mac.toLowerCase().substring(0, mac.length() - 1)); 
-            } 
-        } catch (Exception e) {} 
-		*/
-		minecraftDir();
-		lang = optionReader("language");
-		if(lang.equals("n/a"))
+		getMCDir();		
+		
+		if(!optionReader("language").equals("n/a"))
+			lang = optionReader("language");
+		else
 		{
-			Object[] options2 = {"Deutsch (German)", "English (Englisch)"};			
-			int selected2 = JOptionPane.showOptionDialog(null, "Welche Sprache sprichst Du?\nWhat language do you speak?", "Spache/Language?", 
-					JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,	options2, options2[0]);
-			switch (selected2)
-			{
-				case 0: lang="de"; break;
-				case 1: lang="en"; break;
-				default: lang="en";
-			}			
-		}	
+			if(System.getProperty("user.language").startsWith("de")) //Set up language
+				lang="de";
+			else
+				lang="en";
+		}
 		
 		modinstallerVersion = Read.getTextwith("installer", "version");
 		versionExtension = Read.getTextwith("installer", "zusatz");
@@ -168,7 +157,7 @@ public class Start extends JFrame
 		cp.add(logo);
 		
 		prog.setBounds(220, 250, 350, 20);
-		prog.setText(Read.getTextwith("seite1", "prog1"));
+		prog.setText(Read.getTextwith("Start", "prog1"));
 		prog.setFont(new Font("Dialog", Font.BOLD, 16));		
 		cp.add(prog);
 		
@@ -184,27 +173,30 @@ public class Start extends JFrame
 								
 				searchMCVersions();
 		
-				if(!update())
+				if(!checkInstallerUpdate())
 					offline();
 				
 				mol = new MinecraftOpenListener(); // Check if Minecraft is open 
-				removeOldModFiles();
 				if(online)
 				{
-					shortcuts();
-					downloadInfo();
+					makeShortcuts();
+					downloadReqInfo();
 				}
 				askMCVersion();
 			}
 		}.start();
-	}	
+	}
 	
+	/**
+	 * If the client pc is offline, configure Modinstaller and ask for Minecraft Version	
+	 */
+	//TODO: This method has to be integrated in the MCVersion JFrame 
 	private void offline()
 	{
 		online=false;
 		versionExtension = "Offline";								
 		mcVersionen = offlineList.toArray( new String[]{} );
-		int selected2 = JOptionPane.showOptionDialog(null, Read.getTextwith("OP", "modver") + " (Offline)", Read.getTextwith("OP", "modverh"),
+		int selected2 = JOptionPane.showOptionDialog(null, Read.getTextwith("Start", "modver") + " (Offline)", Read.getTextwith("Start", "modverh"),
 				JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null, mcVersionen, mcVersionen[mcVersionen.length-1]);
 		if(selected2 !=-1)
 		{
@@ -216,7 +208,10 @@ public class Start extends JFrame
 		}
 	}
 	
-	private void shortcuts()
+	/**
+	 * Creates shortcuts for Minecraft Modinstaller on desktop and in start menu with a VB-Script
+	 */
+	private void makeShortcuts()
 	{
 		try
 		{	
@@ -252,7 +247,10 @@ public class Start extends JFrame
 		}	
 	}	
 	
-	private void minecraftDir()
+	/**
+	 * Gets Minecraft and Modinstaller folder
+	 */
+	private void getMCDir()
 	{	
 		String str = System.getProperty("os.name").toLowerCase(); // Ordner Appdata den Betriebssystemen anpassen
 		
@@ -273,9 +271,14 @@ public class Start extends JFrame
 		 }	
 	}	  
 	
-	private boolean update()  // Update testen
+	/**
+	 * Checks if the the client uses the latest Modinstaller verison.
+	 * If not a dialog is show that informs the user about the new Installer features.
+	 * @return true: if the Modinstaller can establish an Internet connection
+	 */
+	private boolean checkInstallerUpdate()  // Update testen
 	{		
-		prog.setText(Read.getTextwith("seite1", "prog4"));
+		prog.setText(Read.getTextwith("Start", "prog4"));
 		try 
 		{			
 			File updatetxt = new File(stamm + "Modinstaller/update.txt");
@@ -308,7 +311,7 @@ public class Start extends JFrame
 								
 				if (newVersAvail) // Wenn Programmnummer nicht identisch ist
 				{
-					prog.setText(Read.getTextwith("seite1", "prog5"));
+					prog.setText(Read.getTextwith("Start", "prog5"));
 					
 					String desc ="";
 					for (int i=1; i<cont.length; i++)
@@ -316,9 +319,9 @@ public class Start extends JFrame
 						desc+=cont[i];
 					}
 					int eingabe = JOptionPane.showConfirmDialog(null,
-							"<html><body><span style=\"font-weight:bold\">"+Read.getTextwith("seite1", "update1")+
-							newVers + Read.getTextwith("seite1", "update2")+ desc+ Read.getTextwith("seite1", "update3"), 
-							Read.getTextwith("seite1", "update1"), JOptionPane.YES_NO_OPTION);
+							"<html><body><span style=\"font-weight:bold\">"+Read.getTextwith("Start", "update1")+
+							newVers + Read.getTextwith("Start", "update2")+ desc+ Read.getTextwith("Start", "update3"), 
+							Read.getTextwith("Start", "update1"), JOptionPane.YES_NO_OPTION);
 					if (eingabe == 0) 
 					{
 						OperatingSystem.openLink(Read.getTextwith("installer", "website"));
@@ -326,7 +329,7 @@ public class Start extends JFrame
 				}
 				else
 				{
-					prog.setText(Read.getTextwith("seite1", "prog6"));
+					prog.setText(Read.getTextwith("Start", "prog6"));
 			    	
 				}
 			}			
@@ -338,7 +341,7 @@ public class Start extends JFrame
 			if(versuch<2)
 			{
 				versuch++;				
-				return update();				
+				return checkInstallerUpdate();				
 			}
 			try 
 			{
@@ -349,12 +352,12 @@ public class Start extends JFrame
 			} 
 			catch (Exception e) {}
 
-			Object[] options2 = {Read.getTextwith("seite1", "inter1"), Read.getTextwith("seite1", "inter2"), Read.getTextwith("seite1", "inter3")};
-			int selected2 = JOptionPane.showOptionDialog(null, Read.getTextwith("seite1", "inter4")+ex.toString(), 
-					Read.getTextwith("seite1", "inter4h"), JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null, options2, options2[0]);
+			Object[] options2 = {Read.getTextwith("Start", "inter1"), Read.getTextwith("Start", "inter2"), Read.getTextwith("Start", "inter3")};
+			int selected2 = JOptionPane.showOptionDialog(null, Read.getTextwith("Start", "inter4")+ex.toString(), 
+					Read.getTextwith("Start", "inter4h"), JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null, options2, options2[0]);
 			switch(selected2)
 			{
-				case 0: OperatingSystem.openLink(Read.getTextwith("seite1", "intercon"));
+				case 0: OperatingSystem.openLink(Read.getTextwith("Start", "intercon"));//TODO: check intercon
 						break;
 				case 2: System.exit(0);
 			}
@@ -363,6 +366,9 @@ public class Start extends JFrame
 		return online;		
 	}
 	
+	/**
+	 * Lists all installed client Minecraft Versions
+	 */	
 	private void searchMCVersions()
 	{		
 		File file = new File(mineord + "versions");
@@ -381,49 +387,26 @@ public class Start extends JFrame
 		}
 	}
 	
-	private void removeOldModFiles()
-	{
-		try 												// Wenn Minecraft aktueller
-		{ 
-			prog.setText(Read.getTextwith("seite1", "prog7"));
-			
-			String lastmc = optionReader("lastmc");
-			
-			if (!lastmc.equals("n/a")&&!lastmc.equals(mcVersion))
-			{				
-				prog.setText(Read.getTextwith("seite1", "prog8"));
-				
-				del(new File(stamm + "Modinstaller/Mods"));				
-				del(new File(stamm + "Modinstaller/Original"));	
-				del(new File(stamm + "Modinstaller/Mods/forge.zip"));	
-				del(new File(stamm + "Modinstaller/Mods/Forge"));	
-			}
-			else
-			{
-				prog.setText(Read.getTextwith("seite1", "prog9"));						
-			}
-							
-		} 
-		catch (Exception ex) 
-		{
-			new Error(String.valueOf(ex) +"\n\nErrorcode: S1x03");
-		}		
-	}
-	
-	private void downloadInfo()
+	/**
+	 * Downloads all mod texts, downloads, Minecraft versions and the background picture for Modinstaller
+	 */
+	private void downloadReqInfo()
 	{			    
 		if(online)
 		{
 			try 
 			{
-				prog.setText(Read.getTextwith("seite1", "prog12"));
-				File texte = new File(stamm+"Modinstaller/modtexts.json");
-				new Downloader("http://www.minecraft-installer.de//api/mods2.php", texte).run();
+				prog.setText(Read.getTextwith("Start", "prog12"));
+				File texte = new File(stamm+"Modinstaller/modtexts.json"); 
+				new Downloader("http://www.minecraft-installer.de//api/mods2.php", texte).run(); //all mod texts
 				
-				Gson gson = new Gson();
-				String jsontext= Textreaders(texte);
-				modtexts = gson.fromJson(jsontext, Modinfo[].class);
-				del(texte);
+				if(texte.exists())
+				{
+					Gson gson = new Gson();
+					String jsontext= Textreaders(texte);
+					modtexts = gson.fromJson(jsontext, Modinfo[].class);
+					del(texte);
+				}
 			} 
 			catch (Exception e) 
 			{				
@@ -432,40 +415,99 @@ public class Start extends JFrame
 			
 			try 
 			{
-				prog.setText(Read.getTextwith("seite1", "prog13"));
+				prog.setText(Read.getTextwith("Start", "prog13"));
 				File downloadt = new File(stamm+"Modinstaller/downloadtexts.json");
-				new Downloader("http://www.minecraft-installer.de//api/offer3.php", downloadt).run();
+				new Downloader("http://www.minecraft-installer.de//api/offer3.php", downloadt).run();  //All mod downloads
 				
-				Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
-				String jsontext= Textreaders(downloadt);
-		    	moddownloads = gson.fromJson(jsontext, Modinfo[].class);
-		    	del(downloadt);
+				if(downloadt.exists())
+				{
+					Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+					String jsontext= Textreaders(downloadt);
+			    	moddownloads = gson.fromJson(jsontext, Modinfo[].class);
+			    	del(downloadt);
+				}
 			}
 			catch (Exception e)
 			{
 				new Error(getError(e));
-			}
+			}			
+			
+	    	try
+	    	{
+	    		File mcversions = new File(Start.stamm+"Modinstaller/mcversions.json"); 
+	    		new Downloader("http://www.minecraft-installer.de//api/mcversions.php", mcversions).run(); //MC versions + number of mods
+	    		if(mcversions.exists())
+	        	{
+	    			Gson gson = new Gson();
+	    			String jsontext;
+	    			try 
+	    			{
+	    				jsontext = Textreaders(mcversions);
+	    				allMCVersions = gson.fromJson(jsontext, MCVersion[].class);			
+	    				
+	    			}
+	    			catch (IOException e) {			
+	    				e.printStackTrace();
+	    			}
+	    			ArrayList<MCVersion> fmv = new ArrayList<MCVersion>();
+	    			for (MCVersion allmcv : allMCVersions)
+	    			{
+	    				if(allmcv.getSumForge()>2)
+	    					fmv.add(allmcv);
+	    			}
+	    			forgeMCVersions = fmv.toArray(new MCVersion[fmv.size()]);
+	    			del(mcversions);
+	        	}
+	    	}
+	    	catch (Exception e)
+	    	{
+	    		new Error(getError(e));	
+	    	}
+	    	try
+	    	{
+	    		File backgr = new File(Start.stamm+"Modinstaller/modinstallerbg.png"); //Background picture
+	    		new Downloader("http://www.minecraft-installer.de/Dateien/modinstallerbg.png", backgr).run();	    		
+	    	}
+	    	catch (Exception e)
+	    	{
+	    		new Error(getError(e));	
+	    	}
 		}
 	}
 	
+	/**
+	 * Start next JFrame for asking the User to select Minecraft version or agreeing the licensee. 
+	 */
 	private void askMCVersion()
 	{	
-		prog.setText(Read.getTextwith("seite1", "prog14"));
+		prog.setText(Read.getTextwith("Start", "prog14"));
 		
     	String lizenz = optionReader("lizenz");
 		
 		if(lizenz.equals("n/a")||lizenz.equals("false"))
 			new License(modtexts, moddownloads, offlineList);
 		else
-			new MCVersions(modtexts, moddownloads, offlineList).setVisible(true);	
+			new MCVersions(modtexts, moddownloads, offlineList);	
 	    dispose();
 	}
 	
+	/**
+	 * Gets String of a program version which can be compared with another program version.
+	 * @param version Program version
+	 * @return normalised program version
+	 */
 	private String normalisedVersion(String version) 
 	{
-	        return normalisedVersion(version, ".", 4);
+		return normalisedVersion(version, ".", 4);
 	}
 
+	/**
+	 * Gets String of a program version which can be compared with another program version.
+	 * @param version Program version
+	 * @param sep separator String
+	 * @param maxWidth maximal width of the program version
+	 * @return
+	 */
 	private String normalisedVersion(String version, String sep, int maxWidth)
 	{
 		String[] split = Pattern.compile(sep, Pattern.LITERAL).split(version);

@@ -30,7 +30,8 @@ import com.google.gson.JsonObject;
  * @author Dirk Lippke
  */
 
-public class Import {
+public class Import 
+{
 	private String stamm = Start.stamm;
 	private boolean Modloader = Menu.isModloader;
 	private File sport = new File(stamm + "Modinstaller/Import/");
@@ -42,7 +43,8 @@ public class Import {
 			website = "", credits = "", requiredMods = "", modLogo = "";
 	private MenuGUI men;
 
-	public Import(File datei, MenuGUI men) {		
+	public Import(File datei, MenuGUI men) 
+	{		
 		this.men = men;
 		setImport();
 		del(extr);
@@ -52,14 +54,15 @@ public class Import {
 
 		if (!Modloader) // Forge
 		{
-			try {
+			try 
+			{
 				sucher(datei);
 			} 
-			catch (Exception e) {
-			}
+			catch (Exception e) {}
 
-			if (modName.equals("")) {
-				description = Read.getTextwith("modimport", "nomodinfo"); //keine Modinfos vorhanden
+			if (modName.equals("")) 
+			{
+				description = Read.getTextwith("Import", "nomodinfo"); //keine Modinfos vorhanden
 				website = Read.getTextwith("installer", "website")+"faq.php?id=nomodinfo";
 				
 				if (datei.isFile()) // Datei --> alles vor der Endung --> Titel --> Datei in mods Ordner
@@ -71,27 +74,29 @@ public class Import {
 					modName = datei.getName();
 				}				
 				File importf = new File(sport + "/" + modName + ".jar");
-				try {
+				try 
+				{
 					copy(datei, importf);
 				}
-				catch (Exception e) {
-				}
+				catch (Exception e) {}
 			}
 			else //Modinfos an Datenbank
 			{
-				try {
-					if (!Start.sent.contains(modName)) {
+				try 
+				{
+					if (!Start.sentImportedModInfo.contains(modName)) 
+					{
 						String body = "Name=" + modName.replace("\'", "`") + "&"
 								+ "MCVersion=" + mcVersion.replace("\'", "`") + "&"
 								+ "ModVersion="	+ URLEncoder.encode(modVersion.replace("\'", "`"), "UTF-8")
 								+ "&" + "Requires="	+ URLEncoder.encode(requiredMods.replace("\'", "`"),"UTF-8")
 								+ "&" + "Description=" + description.replace("\'", "`")
 								+ "&" + "Web=" + URLEncoder.encode(website.replace("\'", "`"), "UTF-8");
-						Start.sent.add(modName);
+						Start.sentImportedModInfo.add(modName);
 						new Postrequest("http://www.minecraft-installer.de/api/imports.php", body);
 					}
-				} catch (Exception e) {
-				}
+				} 
+				catch (Exception e) {}
 			}
 		} 
 		else // Modloader
@@ -105,26 +110,32 @@ public class Import {
 				if (Dateiendung.equals(".jar") || Dateiendung.equals(".zip"))
 				// Modloader ZIP oder JAR Datei --> Extrahieren und Kopieren in Minecraft.jar
 				{
-					try {
+					try 
+					{
 						new Extract(datei, modspo);
-					} catch (Exception e) {
+					} 
+					catch (Exception e) {
 						e.printStackTrace();
 					}
 				} 
 				else // Modloader Datei unbekannt --> Kopieren in Minecraft.JAR
 				{
-					try {
+					try 
+					{
 						copy(datei, new File(modspo.getAbsolutePath() + "/" + name));
-					} catch (Exception e) {
+					} 
+					catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
 			} 
 			else // Modloader Ordner --> Kopieren in Minecraft.JAR
 			{
-				try {
+				try 
+				{
 					copy(datei, modspo);
-				} catch (Exception e) {
+				} 
+				catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
@@ -169,42 +180,49 @@ public class Import {
 					{
 						this.modName = updateCat(info);
 						File importf = new File(sport + "/" + modName + ".jar");
-						try {
+						try 
+						{
 							copy(datei, importf);
-						} catch (Exception e) {
-						}				
+						} 
+						catch (Exception e) {}				
 					}
 				} 
 				else 
 				{
-					try {
+					try 
+					{
 						extr.mkdirs();
 						new Extract(datei, extr);
 						searchInfo(extr);
-						try {
+						try 
+						{
 							File[] jars = searchFile(extr, ".jar");
-							for (int j = 0; j < jars.length; j++) {
+							for (int j = 0; j < jars.length; j++) 
+							{
 								del(extr2);
 								new Extract(jars[j], extr2);
 								searchInfo(extr2);
 							}
-						} catch (Exception e) {
-						}
+						} 
+						catch (Exception e) {}
 
-						try {
+						try 
+						{
 							File[] zips = searchFile(extr, ".zip");
-							for (int z = 0; z < zips.length; z++) {
+							for (int z = 0; z < zips.length; z++) 
+							{
 								del(extr2);
 								new Extract(zips[z], extr2);
 								searchInfo(extr2);
 							}
-						} catch (Exception e) {
-						}
-					} catch (Exception e) {
-					}
+						} 
+						catch (Exception e) {}
+					} 
+					catch (Exception e) {}
 				}
 			}
-		} else // Wenn Ordner
+		} 
+		else // Wenn Ordner
 		{
 			File[] jars = searchFile(datei, ".jar"); // In Ordner JAR Datei
 			for (int j = 0; j < jars.length; j++)
@@ -216,43 +234,55 @@ public class Import {
 		}	
 	}
 
-	private void searchInfo(File datei) {
+	private void searchInfo(File datei) 
+	{
 		for (File file : datei.listFiles()) // In Ordner Infodatei suchen
 		{
-			if (file.isFile()) {
-				if (file.getName().equals("mcmod.info")) {
+			if (file.isFile()) 
+			{
+				if (file.getName().equals("mcmod.info")) 
+				{
 					String modname = updateCat(getModinfoStringFromFile(file));
 					File path = new File(sportn.getAbsolutePath() + "/" + modname);
 					path.mkdirs();
-					try {
+					try 
+					{
 						copy(datei, path);
-					} catch (Exception e) {
+					}
+					catch (Exception e) {
 						e.printStackTrace();
 					}
 					new Compress(path, new File(sport.getAbsolutePath() + "/" + modname + ".jar"));
 				}
-			} else {
+			} 
+			else 
+			{
 				searchInfo(file);
 			}
 		}
 	}
 
-	public String getModinfoStringFromFile(File modinfo) {
+	public String getModinfoStringFromFile(File modinfo) 
+	{
 		new OP();
-		try {
+		try 
+		{
 			return OP.Textreaders(modinfo);
-		} catch (IOException e) {
-		}
+		} 
+		catch (IOException e) {}
 		return "";
 	}
 
-	public String getModinfoStringFromJAR(File jarfile) {
+	public String getModinfoStringFromJAR(File jarfile) 
+	{
 		StringBuilder builder = new StringBuilder();
 		InputStream in = null;
 		String inputFile = "jar:file:/" + jarfile.getAbsolutePath() + "!/mcmod.info";
-		if (inputFile.startsWith("jar:")) {
+		if (inputFile.startsWith("jar:")) 
+		{
 			URL inputURL;
-			try {
+			try 
+			{
 				inputURL = new URL(inputFile);
 
 				JarURLConnection conn = (JarURLConnection) inputURL.openConnection();
@@ -264,16 +294,21 @@ public class Import {
 				}
 				in.close();
 				return builder.toString();
-			} catch (Exception e) {
+			} 
+			catch (Exception e) 
+			{
 				return "";
 			}
-		} else
+		}
+		else
 			return "";
 	}
 
-	public String updateCat(String jsontext) {
+	public String updateCat(String jsontext) 
+	{
 		Gson gson = new Gson();
-		try {
+		try 
+		{
 			JsonArray jsona1 = null;
 			JsonObject jsono1 = null;
 			try {
@@ -414,15 +449,15 @@ public class Import {
 		String text = "<html><body>";
 		if (!mcVersion.equals("")&& !mcVersion.contains(Start.mcVersion))
 		{
-			text += Read.getTextwith("modimport", "warning1")+mcVersion+"!</b><br><br>";
+			text += Read.getTextwith("Import", "warning1")+mcVersion+"!</b><br><br>";
 		}
 		text += description + "<br><br>";
 		if(!requiredMods.equals(""))
-			text+="<b>"+Read.getTextwith("modimport", "requiredMods")+"</b>: "+requiredMods+"<br><br>";
+			text+="<b>"+Read.getTextwith("Import", "requiredMods")+"</b>: "+requiredMods+"<br><br>";
 		if(!authors.equals(""))
-			text+="<b>"+Read.getTextwith("modimport", "authors")+"</b>: "+authors+"<br><br>";
+			text+="<b>"+Read.getTextwith("Import", "authors")+"</b>: "+authors+"<br><br>";
 		if(!credits.equals(""))
-			text+="<b>"+Read.getTextwith("modimport", "credits")+"</b>: "+credits+"<br><br>";
+			text+="<b>"+Read.getTextwith("Import", "credits")+"</b>: "+credits+"<br><br>";
 		text = text.substring(0, text.length()-8);
 		
 		men.modDescPane.setText(text);	

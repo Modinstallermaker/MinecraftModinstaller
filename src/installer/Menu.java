@@ -37,16 +37,16 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * 
- * Beschreibung
+ * All actions for Modinstaller main window
  * 
- * @version 2.1 vom 14.04.2013
+ * @version 5.0
  * @author Dirk Lippke
  */
 
 public class Menu extends MenuGUI implements ActionListener, MouseListener, ChangeListener, KeyListener
 {
 	private static final long serialVersionUID = 1L;	
-	public String mineord = Start.mineord, stamm = Start.stamm, mcVersion = Start.mcVersion;	
+	private String mineord = Start.mineord, stamm = Start.stamm, mcVersion = Start.mcVersion;	
 	private boolean online = Start.online;
 	private double proz=0.0,  rating = 0.0;	
 	private boolean manual=false;
@@ -56,8 +56,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	private ArrayList<String> offlineList;
 	private Modinfo[] modtexts, moddownloads;
 	private JList<String> leftList;	
-	private DefaultListModel<String> leftListModel;
-	
+	private DefaultListModel<String> leftListModel;	
 	private int modID=-1;
 	private String YT = "";
 	private boolean importmod=false, searchfocus = false, ist=false;
@@ -77,6 +76,11 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	    load();	 		
 	}
 	
+	/**
+	 * Necessary for the fist start of the menu.
+	 * All mods of the selected Minecraft version are dedicated to the modloader and forge ArrayList.
+	 * Decides the modloader or forge mods are shown first.
+	 */
 	private void load()
 	{
 		if(online)
@@ -126,7 +130,11 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		}
 	}
 	
-	private void setOffline(boolean off) //Den Offline Modus vorbereiten
+	/**
+	 * Sets the Modinstaller to offline mode, if no Internet connection can be established
+	 * @param off True, activates the offline mode
+	 */
+	private void setOffline(boolean off)
 	{
 		if(off==true)
 		{
@@ -146,7 +154,9 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		}
 	}
 	
-	
+	/**
+	 * Change Modinstaller to Modinstaller mode. The lists of the tab are changed.
+	 */
 	private void setModloader()
 	{		
 		resetSelection();
@@ -159,6 +169,9 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	    ist=true;
 	}
 
+	/**
+	 * Change Modinstaller to Forge mode. The lists of the tab are changed.
+	 */
 	private void setForge() 
 	{		
 		resetSelection();
@@ -170,12 +183,19 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	    sortOutInstalledMods();	 
 	    ist=true;
 	}
+	
+	/**
+	 * All mods are unselected
+	 */
 	private void resetSelection()
 	{
 		for(Modinfo prop: proposals)
 			prop.setSelect(false);
 	}
 	
+	/**
+	 * Transfers all mods that are already installed from the left to the right list
+	 */
 	private void sortOutInstalledMods()
 	{	
 		String Mode = "Modloader";
@@ -200,6 +220,10 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		loadTexts();
 	}
 	
+	/**
+	 * Updates all lists and adds entries of the mods with imports.
+	 * Shows the probability in a bar if the selected are compatible to each other.
+	 */
 	public void updateLists()
 	{
 		leftListModel.removeAllElements();
@@ -214,7 +238,8 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 				leftListModel.addElement(prop.getName());
 		}
 		
-		new Thread() //Importiere Mods adden
+		//Adds all imported mods
+		new Thread()
 		{
 			public void run()
 			{		
@@ -224,17 +249,20 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 				if(isModloader)
 					mode="Modloader";
 				
+				//Adds all mods that are imported at the last time
 				if(optionReader("lastmc").equals(mcVersion) && optionReader("lastmode").equals(mode))
 				{	
 					if(impo.exists())
 					{
-						try {
+						try 
+						{
 							rename(impo, impf);
-						} catch (Exception e) {
-						}	
+						} 
+						catch (Exception e) {}	
 					}
 				}
 				
+				//Adds all new imported mods
 				if(impf.exists())
 				{			
 					File[] imports = impf.listFiles();
@@ -247,7 +275,8 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 			}
 		}.start();
 		
-		if(bart!=null) //Kompatibilität der Mods anzeigen
+		//Show the compatibility of the mods that have been selected
+		if(bart!=null)
 			bart.interrupt();
 		bart = new Thread()
 		{
@@ -278,21 +307,24 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 					}
 					if(val==-1)
 					{
-						bar.setVisible(false);
+						ratingBar.setVisible(false);
 					}
 					else
 					{
-						bar.setVisible(true);
-						bar.setValue(val);
+						ratingBar.setVisible(true);
+						ratingBar.setValue(val);
 					}
 				}
 				else
-					bar.setVisible(false);
+					ratingBar.setVisible(false);
 			}
 		};
 		bart.start();
 	}
 	
+	/**
+	 * Selects the first mod of the left or right mod list in order to show any mod text
+	 */
 	private void loadTexts()
 	{
 		if(leftListModel.isEmpty())  
@@ -309,20 +341,27 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
     		setInfoText((String)leftListModel.get(0));	  
     	}
 	}
-		
-	public void changeVersion() //Version ändern
+	
+	/**
+	 * Changes the Minecraft version
+	 */
+	public void changeVersion()
 	{	
 		ist=false;
 		resetSelection();
 		mcVersLabel.setText("Minecraft ["+Start.mcVersion+"]");
-		modDescPane.setText(Read.getTextwith("seite2", "wait"));
+		modDescPane.setText(Read.getTextwith("Menu", "wait"));
 		leftListMSP.getVerticalScrollBar().setValue(0);
 		leftListFSP.getVerticalScrollBar().setValue(0);
 		mcVersion = Start.mcVersion;
 		load();				
 	}	
 	
-	private void setInfoText(final String modname) //Modbeschreibung anzeigen
+	/**
+	 * Sets the texts, links and pictures of an mods that has been selected by user.
+	 * @param modname Name of the selected mod
+	 */
+	private void setInfoText(final String modname)
 	{	
 		setImport(false);
 		modNameLabel.setText(modname);	
@@ -350,6 +389,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 					{
 						if(modd.getName().equals(modname)&&modd.getMC().equals(mcVersion))
 						{
+							//Shows if the mod is popular
 							proz = modd.getRating();
 							if(proz > 6.5)	
 							{
@@ -359,6 +399,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 							else
 								topIcon.setVisible(false);
 							
+							//Shows if the mod is new
 							if(modd.getDate()!=null)								
 							{
 								long DAY_IN_MS = 1000 * 60 * 60 * 24;								
@@ -384,6 +425,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 			    }	
 			}
 		}
+		//Load picture of mod
 		if(picThread!=null)
 			picThread.interrupt();
 		picThread = new Thread() 
@@ -401,7 +443,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 			} 
 		    catch (Exception e) 
 		    {
-				picture.setText(Read.getTextwith("seite2", "nopic"));				
+				picture.setText(Read.getTextwith("Menu", "nopic"));				
 				picture.setIcon(null);
 			}	
     	 }
@@ -409,6 +451,9 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	    picThread.start();
 	}
 	
+	/**
+	 * Install mod: Method detects the selected mods in the left list and moves the selected mods to the right list
+	 */
 	private void selectMod() // Auswählen von Mods
 	{	
 		List<String> strlist = new ArrayList<String>();
@@ -424,7 +469,10 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 			searchInput.requestFocus();
 		searchfocus=false;
 	}
-		
+	
+	/**
+	 * Uninstall mod: Method detects the selected mods in the right list and moves the selected mods to the left list
+	 */
 	private void removeMod() // Entfernen von Mods
 	{
 		if(rightList.isFocusOwner())
@@ -458,6 +506,9 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		}
 	}
 
+	/**
+	 * Packs all selected mods in the right list into an ArrayList and starts the Install window.
+	 */
 	private void startInstallation() // Installieren Knopf
 	{		
 		try 
@@ -475,6 +526,9 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		}	
 	}
 
+	/**
+	 * If the mod import button is pressed ask user for the folder or mod file.
+	 */
 	private void importMod() //Mods importieren
 	{			
 		setImport(true);
@@ -490,6 +544,10 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
         }
 	}
 	
+	/**
+	 * If a imported mod is shown in the menu some special modifications have to be done.
+	 * @param yes true, if a imported mod has to be shown
+	 */
 	public void setImport(boolean yes)
 	{
 		if(yes)
@@ -498,13 +556,13 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	         
 	        if(isModloader)
 	        {
-	        	modNameLabel.setText(Read.getTextwith("seite2", "importmh"));
-	        	modDescPane.setText(Read.getTextwith("seite2", "importm"));
+	        	modNameLabel.setText(Read.getTextwith("Menu", "importmh"));
+	        	modDescPane.setText(Read.getTextwith("Menu", "importm"));
 	        }
 	        else
 	        {
-	        	modNameLabel.setText(Read.getTextwith("seite2", "importfh"));
-	        	modDescPane.setText(Read.getTextwith("seite2", "importf"));
+	        	modNameLabel.setText(Read.getTextwith("Menu", "importfh"));
+	        	modDescPane.setText(Read.getTextwith("Menu", "importf"));
 	        }	      
 		}
 		modDescPane.setCaretPosition(0);
@@ -516,7 +574,10 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
         	ic.setVisible(!yes);
 	}
 		
-	private void restore() //Letzte Modinstallation wiederherstellen
+	/**
+	 * If user presses the restore button the last Minecraft installation is restored
+	 */
+	private void restore()
 	{
 		del(new File(mineord+"versions/Modinstaller"));
 		try 
@@ -524,7 +585,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 			copy(new File(stamm+"Modinstaller/Backup/Modinstaller.jar"), new File(mineord+"versions/Modinstaller.jar"));
 			copy(new File(stamm+"Modinstaller/Backup/Modinstaller.json"), new File(mineord+"versions/Modinstaller.json"));
 			copy(new File(stamm+"Modinstaller/Backup/mods"), new File(mineord+"mods"));
-			JOptionPane.showMessageDialog(null,	Read.getTextwith("seite2", "restore"), Read.getTextwith("seite2", "restoreh"), JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null,	Read.getTextwith("Menu", "restore"), Read.getTextwith("Menu", "restoreh"), JOptionPane.INFORMATION_MESSAGE);
 		} 
 		catch (Exception e) 
 		{			
@@ -541,6 +602,11 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		restoreButton.setEnabled(false);	
 	}
 	
+	/**
+	 * Graphical implementation in visual star symbols of an Double rating.
+	 * @param stars Number of stars that has to be displayed
+	 * @param manual True, if a cursor of the user sets the number of stars
+	 */
 	private void setRating(double stars, boolean manual) //Bewertung grafisch umsetzen
 	{		
 		for (JLabel s : ratIcons)
@@ -561,10 +627,15 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		}
 	}
 	
+	/**
+	 * Detects the source of a MouseEvent in the left mod list.
+	 * Counts the number of clicks and shows the mod description.
+	 * If the user has clicked twice the mods will be selected.
+	 * @param e MouseEvent of the left list
+	 */
 	private void leftListItemSelected(MouseEvent e)
 	{
-		@SuppressWarnings("unchecked")
-		JList<String> list = (JList<String>)e.getSource();
+		JList<?> list = (JList<?>) e.getSource();
 		int index = list.locationToIndex(e.getPoint());
 		if ((e.getClickCount() == 2) || (e.getButton() == 3))
 			selectMod();
@@ -579,12 +650,17 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		}
 	}
 	
+	/**
+	 * Detects the source of a MouseEvent in the left mod list.
+	 * Counts the number of clicks and shows the mod or import description.
+	 * If the user has clicked twice the mods will be removed.
+	 * @param e MouseEvent of the right list
+	 */
 	private void rightListItemSelected(MouseEvent e)
 	{
 		if (rightListModel.getSize() > 0 && Menu.this.rightList.isEnabled()) 
 		{			
-			@SuppressWarnings("unchecked")
-			JList<String> list = (JList<String>) e.getSource();
+			JList<?> list = (JList<?>) e.getSource();
 			int index = list.locationToIndex(e.getPoint());
 			final String Auswahl = (String)rightListModel.getElementAt(index);
 			if ((e.getClickCount() == 2) || (e.getButton() == 3))
@@ -592,12 +668,14 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 				removeMod();
 			}	
 			else if (e.getButton() == 1)
-			{		
+			{	
+				//If the user clicked on a mod with a "+" the imported mod description is shown
 				if (Auswahl.substring(0, 1).equals("+"))
 				{		
 					modNameLabel.setText("Loading Mod...");	
 					picture.setIcon(new ImageIcon(this.getClass().getResource("src/wait.gif")));
-					new Thread(){
+					new Thread()
+					{
 						public void run()
 						{
 							new Import(Auswahl.substring(2), Menu.this);							
@@ -612,6 +690,10 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		}	
 	}
 	
+	/**
+	 * Update the left mod list according to the entered text the user typed in
+	 * @param e
+	 */
 	private void enterSearchText(KeyEvent e)
 	{
 		int si = leftList.getSelectedIndex();
@@ -638,19 +720,19 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 			leftListModel.removeAllElements();	
 			
 			String needle = searchInput.getText().toLowerCase().replace(" ", "");	
-			for(Modinfo prop : proposals) //Filter 1: Startet mit erstem Buchstaben
+			for(Modinfo prop : proposals) //Filter 1: Starts with the first letter
 			{					
 				String modname = prop.getName().toLowerCase().replace(" ", "");			
 				if(modname.startsWith(needle)&&!prop.getSelect())
 					leftListModel.addElement(prop.getName());			
 			}	
-			for(Modinfo prop : proposals) //Filter 2: Enthält die Zeichenkette
+			for(Modinfo prop : proposals) //Filter 2: Contains the whole String
 			{					
 				String modname = prop.getName().toLowerCase().replace(" ", "");			
 				if(modname.contains(needle)&&!modname.startsWith(needle)&&!prop.getSelect())
 					leftListModel.addElement(prop.getName());			
 			}
-			if(needle.length()>2) //Filter 3: Anfang und Ende des Strings entfernen und suchen
+			if(needle.length()>2) //Filter 3: Remove the first and the last letter of the String
 			{
 				String needle2 = needle.substring(0, needle.length()-1);
 				if(needle2.length()>2)
@@ -678,7 +760,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 			}
 			else
 			{
-				leftListModel.addElement(Read.getTextwith("seite2", "searchn"));
+				leftListModel.addElement(Read.getTextwith("Menu", "searchn"));
 				leftList.setEnabled(false);
 			}
 		}

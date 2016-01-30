@@ -4,31 +4,55 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import static installer.OP.del;
 
 public class Extract 
 {
+	private File archive, destDir;
+	private double max = 100.0, start = 0.0;
+	
+	public Extract(File archive, File destDir, double max, double start) throws Exception 
+	{
+		this.archive = archive;
+		this.destDir = destDir;
+		this.max = max;
+		this.start = start;
+		work();
+	}
 	public Extract(File archive, File destDir) throws Exception 
 	{
-        destDir.mkdir();	       
-     
+		this.archive = archive;
+		this.destDir = destDir;
+        work();
+    }
+	
+	private void work() throws ZipException, IOException
+	{
+		destDir.mkdir();	       
+	     
     	ZipFile zipFile = null;
-    	
+    
     	try
     	{
 	        zipFile = new ZipFile(archive);
-	        Enumeration<? extends ZipEntry> entries = zipFile.entries();
-	 
-	        byte[] buffer = new byte[16384];
+	        
+	        double add = max/(double)zipFile.size();
+	        double val = start;
+	       
+	        Enumeration<? extends ZipEntry> entries = zipFile.entries();	 
+	        byte[] buffer = new byte[4096];
 	        int len;
+	        ZipEntry entry = null;
 	        while (entries.hasMoreElements()) 
-	        {
-	        	ZipEntry entry = (ZipEntry) entries.nextElement();
-	 
+	        {	        	 
+	        	entry = (ZipEntry) entries.nextElement();
+	        	
 	            String entryFileName = entry.getName();
 	            
 	            if(entryFileName.equals("aux.class")) 
@@ -54,6 +78,7 @@ public class Extract
 		                {
 		                    bos.write(buffer, 0, len);
 		                }
+		                Install.detState(val += add);
 		        	}
 		        	finally
 		        	{
@@ -74,7 +99,9 @@ public class Extract
     	}
     	
         del(new File(destDir+"/META-INF"));
-    }
+        
+        Install.detState(max);
+	}
 	 
     private File buildDirectoryHierarchyFor(String entryName, File destDir) 
     {

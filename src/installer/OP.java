@@ -1,6 +1,5 @@
 package installer;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -18,33 +17,13 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Scanner;
-import java.util.Collections;
 import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Pack200;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
-
-
-import com.google.common.base.Charsets;
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-import com.google.common.hash.Hashing;
-import com.google.common.io.CharStreams;
-import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
 
 import org.tukaani.xz.XZInputStream;
 
@@ -155,8 +134,7 @@ public class OP
         }
 
         byte[] decompressed = readFully(new XZInputStream(new ByteArrayInputStream(data)));
-
-        //Snag the checksum signature
+        
         String end = new String(decompressed, decompressed.length - 4, 4);
         if (!end.equals("SIGN"))
         {
@@ -172,18 +150,9 @@ public class OP
                 ((decompressed[x - 5] & 0xFF) << 24);
 
         File temp = File.createTempFile("art", ".pack");
-        System.out.println("  Signed");
-        System.out.println("  Checksum Length: " + len);
-        System.out.println("  Total Length:    " + (decompressed.length - len - 8));
-        System.out.println("  Temp File:       " + temp.getAbsolutePath());
 
         byte[] checksums = Arrays.copyOfRange(decompressed, decompressed.length - len - 8, decompressed.length - 8);
 
-        //As Pack200 copies all the data from the input, this creates duplicate data in memory.
-        //Which on some systems triggers a OutOfMemoryError, to counter this, we write the data
-        //to a temporary file, force GC to run {I know, eww} and then unpack.
-        //This is a tradeoff of disk IO for memory.
-        //Should help mac users who have a lower standard max memory then the rest of the world (-.-)
         OutputStream out = new FileOutputStream(temp);
         out.write(decompressed, 0, decompressed.length - len - 8);
         out.close();
@@ -205,39 +174,7 @@ public class OP
         jos.close();
         jarBytes.close();
         temp.delete();
-    }
-    
-    public static void copyAndStrip(File sourceJar, File targetJar) throws IOException
-    {
-        ZipFile in = new ZipFile(sourceJar);
-        ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(targetJar)));
-
-        for (ZipEntry e : Collections.list(in.entries()))
-        {
-            if (e.isDirectory())
-            {
-                out.putNextEntry(e);
-            }
-            else if (e.getName().startsWith("META-INF"))
-            {
-            }
-            else
-            {
-                ZipEntry n = new ZipEntry(e.getName());
-                n.setTime(e.getTime());
-                out.putNextEntry(n);
-                out.write(readEntry(in, e));
-            }
-        }
-
-        in.close();
-        out.close();
-    }
-    
-    private static byte[] readEntry(ZipFile inFile, ZipEntry entry) throws IOException
-    {
-        return readFully(inFile.getInputStream(entry));
-    }
+    }     
    
 	public static byte[] readFully(InputStream stream) throws IOException
 	{
@@ -256,167 +193,7 @@ public class OP
         return entryBuffer.toByteArray();
 	}
 	
-	 public static boolean downloadFileEtag(String libName, File libPath, String libURL)
-	    {
-		 try
-	        {
-	            URL url = new URL(libURL);
-	            URLConnection connection = url.openConnection();
-	            connection.setConnectTimeout(5000);
-	            connection.setReadTimeout(5000);
-
-	            String etag = connection.getHeaderField("ETag");
-	            if (etag == null)
-	            {
-	              etag = "-";
-	            }
-	            else if ((etag.startsWith("\"")) && (etag.endsWith("\"")))
-	            {
-	                etag = etag.substring(1, etag.length() - 1);
-	            }
-
-	            InputSupplier<InputStream> urlSupplier = new URLISSupplier(connection);
-	            Files.copy(urlSupplier, libPath);
-
-	            if (etag.indexOf('-') != -1) return true; //No-etag, assume valid
-	            try
-	            {
-	                byte[] fileData = Files.toByteArray(libPath);
-	                String md5 = Hashing.md5().hashBytes(fileData).toString();
-	                System.out.println("  ETag: " + etag);
-	                System.out.println("  MD5:  " + md5);
-	                return etag.equalsIgnoreCase(md5);
-	            }
-	            catch (IOException e)
-	            {
-	                e.printStackTrace();
-	                return false;
-	            }
-	        }
-	        catch (FileNotFoundException fnf)
-	        {
-	            if (!libURL.endsWith(PACK_NAME))
-	            {
-	                fnf.printStackTrace();
-	            }
-	            return false;
-	        }
-	        catch (Exception e)
-	        {
-	            e.printStackTrace();
-	            return false;
-	        }
-	    }
-	
-	public static boolean checksumValid(File libPath, List<String> checksums)
-{
-	  try
-        {
-            byte[] fileData = Files.toByteArray(libPath);
-            boolean valid = checksums == null || checksums.isEmpty() || checksums.contains(Hashing.sha1().hashBytes(fileData).toString());
-            if (!valid && libPath.getName().endsWith(".jar"))
-            {
-                valid = validateJar(libPath, fileData, checksums);
-            }
-            return valid;
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-            return false;
-        }
-    }	
-
-    public static boolean validateJar(File libPath, byte[] data, List<String> checksums) throws IOException
-    {
-        System.out.println("Checking \"" + libPath.getAbsolutePath() + "\" internal checksums");
-
-        HashMap<String, String> files = new HashMap<String, String>();
-        String[] hashes = null;
-        JarInputStream jar = new JarInputStream(new ByteArrayInputStream(data));
-        JarEntry entry = jar.getNextJarEntry();
-        while (entry != null)
-        {
-            byte[] eData = readFully(jar);
-
-            if (entry.getName().equals("checksums.sha1"))
-            {
-                hashes = new String(eData, Charset.forName("UTF-8")).split("\n");
-            }
-            if (!entry.isDirectory())
-            {
-                files.put(entry.getName(),convertByteArrayToHexString(eData));
-            }
-            entry = jar.getNextJarEntry();
-        }
-        jar.close();
-
-        if (hashes != null)
-        {
-            boolean failed = !checksums.contains(files.get("checksums.sha1"));
-            if (failed)
-            {
-                System.out.println("    checksums.sha1 failed validation");
-            }
-            else
-            {
-                System.out.println("    checksums.sha1 validated successfully");
-                for (String hash : hashes)
-                {
-                    if (hash.trim().equals("") || !hash.contains(" ")) continue;
-                    String[] e = hash.split(" ");
-                    String validChecksum = e[0];
-                    String target = hash.substring(validChecksum.length() + 1);
-                    String checksum = files.get(target);
-
-                    if (!files.containsKey(target) || checksum == null)
-                    {
-                        System.out.println("    " + target + " : missing");
-                        failed = true;
-                    }
-                    else if (!checksum.equals(validChecksum))
-                    {
-                        System.out.println("    " + target + " : failed (" + checksum + ", " + validChecksum + ")");
-                        failed = true;
-                    }
-                }
-            }
-
-            if (!failed)
-            {
-                System.out.println("    Jar contents validated successfully");
-            }
-
-            return !failed;
-        }
-        else
-        {
-            System.out.println("    checksums.sha1 was not found, validation failed");
-            return false; //Missing checksums
-        }
-    } 
-    
-    private static String hashString(String message)
-    {     
-    	byte[] hashedBytes = null;
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-1");
-            hashedBytes = digest.digest(message.getBytes("UTF-8"));                
-        } 
-        catch (Exception ex) {}
-        return convertByteArrayToHexString(hashedBytes);
-    }
-    
-    private static String convertByteArrayToHexString(byte[] arrayBytes) {
-        StringBuffer stringBuffer = new StringBuffer();
-        for (int i = 0; i < arrayBytes.length; i++) {
-            stringBuffer.append(Integer.toString((arrayBytes[i] & 0xff) + 0x100, 16)
-                    .substring(1));
-        }
-        return stringBuffer.toString();
-    }
-	
-	final static public void makedirs(File folder)
+    final static public void makedirs(File folder)
 	{
 		if(!folder.exists()) folder.mkdirs();
 	}

@@ -1,21 +1,14 @@
 package installer;
 
-import static installer.OP.Textreaders;
-import static installer.OP.getError;
-
 import java.awt.Cursor;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
-
-import com.google.gson.Gson;
 
 /**
  *
@@ -24,7 +17,7 @@ import com.google.gson.Gson;
 public class MCVersions extends javax.swing.JFrame implements MouseWheelListener 
 {
 	private static final long serialVersionUID = 1L;
-	private MCVersion[] allMCVersions, forgeMCVersions;
+	
 	private boolean onlyForge=true;
 	private int pos = 0;
 	private String[] MCVersionStr = new String[3];
@@ -40,7 +33,6 @@ public class MCVersions extends javax.swing.JFrame implements MouseWheelListener
     	this.downloadlist=downloadlist;
     	this.offlineList=offlineList;
         initComponents();
-        downloadTexts();
         fillComponents();
     }
     
@@ -51,50 +43,16 @@ public class MCVersions extends javax.swing.JFrame implements MouseWheelListener
     	this.offlineList=offlineList;
     	menu.setEnabled(false);
         initComponents();
-        downloadTexts();
         fillComponents();
 	}
-
-	private void downloadTexts()
-    {
-    	File mcversions = new File(Start.stamm+"Modinstaller/mcversions.json");
-    	try
-    	{
-    		new Downloader("http://www.minecraft-installer.de//api/mcversions.php", mcversions).run();
-    	}
-    	catch (Exception e)
-    	{
-    		new Error(getError(e) + "\n\nErrorcode: MCVx01");	
-    	}
-		
-    	if(mcversions.exists())
-    	{
-			Gson gson = new Gson();
-			String jsontext;
-			try {
-				jsontext = Textreaders(mcversions);
-				allMCVersions = gson.fromJson(jsontext, MCVersion[].class);			
-				
-			} catch (IOException e) {			
-				e.printStackTrace();
-			}
-			ArrayList<MCVersion> fmv = new ArrayList<MCVersion>();
-			for (MCVersion allmcv : allMCVersions)
-			{
-				if(allmcv.getSumForge()>2)
-					fmv.add(allmcv);
-			}
-			forgeMCVersions = fmv.toArray(new MCVersion[fmv.size()]);
-    	}
-    }
                      
     private void fillComponents() 
     {    	
 		int verg= 2;
 		int posp = pos;
-		MCVersion[] MCVersionsx = allMCVersions;
+		MCVersion[] MCVersionsx = Start.allMCVersions;
 		if(onlyForge)
-			MCVersionsx = forgeMCVersions;
+			MCVersionsx = Start.forgeMCVersions;
 		
 		boolean inside = false;
 		if(pos==0)
@@ -114,10 +72,10 @@ public class MCVersions extends javax.swing.JFrame implements MouseWheelListener
 			
 					
 			String mcVersion = MCVersionsx[i].getVersion();
-			String installt = "wird";
+			String installt = Read.getTextwith("MCVersions", "t2");
 			if(offlineList.contains(mcVersion))
 			{
-				installt = "bereits";
+				installt = Read.getTextwith("MCVersions", "t3");
 				isInstalled[verg] = true;		
 			}
 			else
@@ -127,21 +85,21 @@ public class MCVersions extends javax.swing.JFrame implements MouseWheelListener
 			MCVersionStr[verg] = mcVersion;
 			
 			int sum = MCVersionsx[i].getSumAll();
-			String sp = "Modifikation";
+			String sp = Read.getTextwith("MCVersions", "t4a");
 			if(sum>1)
-				sp+="en";
+				sp+=Read.getTextwith("MCVersions", "t4b");
 			
 			String stext = "<html><center><b><span style='font-size:16px'>"+mcVersion+
 					"</span></b><br> <br> <b><span style='font-size:12px'>"+String.valueOf(sum)+
 					"</b></b><br>"+sp+"<br><br><i>"+
-					installt+" installiert</i></center></html>";
+					installt+" "+Read.getTextwith("MCVersions", "t1")+"</i></center></html>";
 			
 			if(verg==1) //Mitte
 			{
 				stext = "<html><center><b><span style='font-size:22px'>"+mcVersion+
 						"</span></b><br> <br> <b><span style='font-size:18px'>"+String.valueOf(sum)+
 						"</b></b><br>"+sp+"<br> <br><i><span style='font-size:10px'>"+
-						installt+" installiert</span></i></center></html>";
+						installt+" "+Read.getTextwith("MCVersions", "t1")+"</span></i></center></html>";
 				
 			}
 			if(verg==0 && i==0)
@@ -156,8 +114,8 @@ public class MCVersions extends javax.swing.JFrame implements MouseWheelListener
 			text_leftb.setEnabled(true);
 	}
 
-	private void initComponents() {
-
+	private void initComponents() 
+	{
         panel_top = new javax.swing.JPanel();
         question_t = new javax.swing.JLabel();
         pannel_bottom = new javax.swing.JPanel();
@@ -179,31 +137,33 @@ public class MCVersions extends javax.swing.JFrame implements MouseWheelListener
         setMinimumSize(new java.awt.Dimension(550, 290));
         setIconImage(new ImageIcon(this.getClass().getResource("src/icon.png")).getImage());
         
-        addWindowListener(new WindowAdapter(){
-            public void windowClosing(WindowEvent e){
-              dispose();
-              if(menu==null)
-            	  System.exit(0); 
-              else
-              {
-            	  menu.setEnabled(true);
-            	  menu.setFocusableWindowState(true);
-              }
-            }
-
-            public void windowClosed(WindowEvent e){
-            	 if(menu!=null)
-            	 {
-            		 menu.setEnabled(true);
-            		 menu.setFocusableWindowState(true);
-            	 }
-            }
-        });
-         
+		addWindowListener(new WindowAdapter()
+		{
+			public void windowClosing(WindowEvent e)
+			{
+				dispose();
+				if(menu==null)
+					System.exit(0); 
+				else
+				{
+					menu.setEnabled(true);
+					menu.setVisible(true);
+				}
+			}
+			
+			public void windowClosed(WindowEvent e)
+			{
+				if(menu!=null)
+				{
+					menu.setEnabled(true);
+					menu.setVisible(true);
+				}
+			}
+		});         
 
         question_t.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
         question_t.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        question_t.setText("Welche Minecraft Version möchtest Du modifizieren?");
+        question_t.setText(Read.getTextwith("MCVersions", "t5"));
         question_t.setToolTipText("");
 
         javax.swing.GroupLayout panel_topLayout = new javax.swing.GroupLayout(panel_top);
@@ -218,7 +178,7 @@ public class MCVersions extends javax.swing.JFrame implements MouseWheelListener
         );
 
         forge_only.setSelected(true);
-        forge_only.setText("Nur Minecraft Versionen anzeigen, für die Forge Mods verfügbar sind");
+        forge_only.setText(Read.getTextwith("MCVersions", "t6"));
         forge_only.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         forge_only.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(ItemEvent evt) {
@@ -394,6 +354,7 @@ public class MCVersions extends javax.swing.JFrame implements MouseWheelListener
 
         pack();
         setLocationRelativeTo(null);
+        setVisible(true);
     }                       
 	 
 	//Versions hover
@@ -464,9 +425,9 @@ public class MCVersions extends javax.swing.JFrame implements MouseWheelListener
     {
     	int anz;
     	if(onlyForge)
-    		anz=forgeMCVersions.length;
+    		anz=Start.forgeMCVersions.length;
     	else
-    		anz = allMCVersions.length;
+    		anz = Start.allMCVersions.length;
         if(pos<anz-3)
         {
 	    	pos++;
@@ -475,16 +436,13 @@ public class MCVersions extends javax.swing.JFrame implements MouseWheelListener
     }
     
     @Override
-	public void mouseWheelMoved(MouseWheelEvent evt) {
-    	int notches = evt.getWheelRotation();
-	       if (notches < 0) 
-	       {
-	           next();	                      
-	       }
-	       else 
-	       {
-	          back();
-	       }			
+	public void mouseWheelMoved(MouseWheelEvent evt) 
+    {
+		int notches = evt.getWheelRotation();
+		if (notches < 0) 
+			next();	  
+		else 
+			back();	
 	}                               
 
     private void forge_onlyStateChanged(ItemEvent evt) {    

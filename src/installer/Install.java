@@ -10,7 +10,6 @@ import static installer.OP.optionReader;
 import static installer.OP.optionWriter;
 import static installer.OP.rename;
 import static installer.OP.unpackLibrary;
-import static installer.OP.checksumValid;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,9 +40,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 /**
  * 
- * Beschreibung
+ * Mod, Minecraft and Forge installation
  * 
- * @version 2.1 vom 14.04.2013
+ * @version 5.0
  * @author Dirk Lippke
  */
 
@@ -52,7 +51,7 @@ public class Install extends InstallGUI
 	private static final long serialVersionUID = 1L;
 	private String mineord = Start.mineord, stamm = Start.stamm, mcVersion = Start.mcVersion;	
 	private boolean online = Start.online;
-	private double value = 0.00;
+	private double mainVal=0.00;
 	private String modsport = mineord + "versions/Modinstaller/";
 	private String sport = stamm + "Modinstaller/";	
 	private ArrayList<Modinfo> mods;
@@ -71,6 +70,9 @@ public class Install extends InstallGUI
 		installation();
 	}
 	
+	/**
+	 * Main installation thread
+	 */
 	public void installation()
 	{
 		new Thread() 
@@ -80,25 +82,30 @@ public class Install extends InstallGUI
 			{
 				try 
 				{
-					status(value += 5);					
-					
+					mainState(mainVal += 1);	//1				
+										
+					//Setting restore point
+					mainBarInf.setText(Read.getTextwith("Install", "main1"));
 					try
 					{	
-						stat.setText(Read.getTextwith("seite3", "prog3")); //Wiederherstellungspunkt
+						detBarInf.setText(Read.getTextwith("Install", "def1"));
 						stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/restore2.png")));		
 						del(new File(sport + "Backup"));					
 						copy(new File(modsport), new File(sport + "Backup"));	
+						mainState(mainVal += 2);	//3
 						copy(new File(mineord +"mods"), new File(sport + "Backup/mods"));	
 					}
 					catch (Exception e)
 					{
-						stat.setText("Errorocde: S3x0a: " + String.valueOf(e));
+						mainState(mainVal += 2);	//3
+						detBarInf.setText("Errorocde: S3x0a: " + String.valueOf(e));
 						errors += getError(e) + " Errorcode: S3x0a\n\n";
 					}
 					
-					status(value += 5);
+					mainState(mainVal += 2); //5	
 					
-					stat.setText(Read.getTextwith("seite3", "prog1"));	//Löschen								
+					//Delete old files
+					detBarInf.setText(Read.getTextwith("Install", "def2"));		
 					del(new File(sport + "Result"));
 					del(new File(sport + "Original"));					
 					del(new File(mineord +"mods"));
@@ -106,153 +113,125 @@ public class Install extends InstallGUI
 					del(new File(mineord +"config"));	
 					del(new File(modsport));
 					
-					stat.setText(Read.getTextwith("seite3", "prog2"));            //Anlegen
+					mainState(mainVal += 1);	//6
+					
+					//Create new folders
+					detBarInf.setText(Read.getTextwith("Install", "def3"));
 					makedirs(new File(sport + "Result"));
 					makedirs(new File(sport + "Backup"));	
 					makedirs(new File(modsport));
-					
-					status(value += 5);
-					
 					File mcVersionFolder = new File(mineord + "versions/"+mcVersion);
 					mcVersionFolder.mkdirs();
 					
+					mainState(mainVal += 1); //7											
+					
+					//Installing new Minecraft version
 					if(online)
-					{							
+					{	
+						mainBarInf.setText(Read.getTextwith("Install", "main2"));
+						
+						//Downloading JSON file											
 						File jsonFile = new File(mineord + "versions/"+mcVersion+"/"+mcVersion+".json");	
-						if(!jsonFile.exists())							
+						if(!jsonFile.exists())
+						{
+							detBarInf.setText(Read.getTextwith("Install", "def4"));
 							new Downloader("https://s3.amazonaws.com/Minecraft.Download/versions/"+mcVersion+"/"+mcVersion+".json", jsonFile).run();
-											
+						}
+						
+						//Downloading Minecraft JAR						
 						File jarFile = new File(mineord + "versions/"+mcVersion+"/"+mcVersion+".jar");
 						if(!jarFile.exists())
 						{
-							stat.setText(Read.getTextwith("seite3", "installmc"));
 							stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));
+							detBarInf.setText(Read.getTextwith("Install", "def5"));	
 							
 							Downloader dow = new Downloader("https://s3.amazonaws.com/Minecraft.Download/versions/"+mcVersion+"/"+mcVersion+".jar", jarFile);
-							Thread t = new Thread(new Downloadstate(dow, Install.this));
+							Thread t = new Thread(new Downloadstate(dow));
 							t.start();							
 							dow.run();	
 							t.interrupt();							
-						}
+						}						
 					}
 					
-					copy(mcVersionFolder, new File(modsport)); //von Versions Ordner in Modinstaller Ordner kopieren
+					mainState(mainVal += 2); //9
 					
+					//Copy and edit new Minecraft version in Modinstaller folder
+					detBarInf.setText(Read.getTextwith("Install", "def6"));	
+					copy(mcVersionFolder, new File(modsport));
+					
+					//Rename JAR and JSON into "Modinstaller"
 					File newJson = new File(modsport + "Modinstaller.json");
-					rename(new File(modsport + mcVersion+".jar"), new File(modsport + "Modinstaller.jar")); //Umbenennen in Modinstaller
+					rename(new File(modsport + mcVersion+".jar"), new File(modsport + "Modinstaller.jar"));
 					rename(new File(modsport + mcVersion+".json"), newJson);
 					
+					mainState(mainVal += 1); //10	
+					
+					//Install required libraries for Minecraft
+					mainBarInf.setText(Read.getTextwith("Install", "main3")); 					
 					if(newJson.exists())
-						installLibraries(newJson);	
+						installLibraries(newJson);	//+15= 25								
 					
-					status(value += 5);					
-					
-					if(isModloader)  // Entpacken	
-					{
-						
-						stat.setText(Read.getTextwith("seite3", "extra"));
-						stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));
+					//Extract Minecraft JAR, if Modinstaller is in modloader mode
+					if(isModloader)
+					{	
+						mainBarInf.setText(Read.getTextwith("Install", "main4")); 
+						detBarInf.setText("");
+						stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/extract.png")));
 						new Extract(new File(modsport+"Modinstaller.jar"), new File(sport + "Result/"));  
+						mainState(mainVal += 10); //+10 =20 (Modloader has only one library JSON file)
 					}
-					status(value += 5);
 					
+					//Document all installed mods
 					writeLog();
-					
-					status(value += 5);		
 				} 
 				catch (Exception ex) 
 				{
-					stat.setText("Errorcode: S3x01: " + String.valueOf(ex));
+					detBarInf.setText("Errorcode: S3x01: " + String.valueOf(ex));
 					errors += getError(ex) + " Errorcode: S3x01\n\n";
 				}
 				
-				if (online)																//Dateien herunterladen
-				{			
-					try 
-					{	
-						makedirs(new File(sport + "Mods")); // Ordner anlegen	
-						
-						for (Modinfo mod : mods) 
-						{
-							String infotext = Read.getTextwith("seite3", "prog8a") + mod.getName() + "</b>"+Read.getTextwith("seite3", "prog8b");
-							stat.setText(infotext);
-							stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));
-							
-							String DownloadURL = "http://www.minecraft-installer.de/api/download3.php?id="+mod.getID(); //Downloadlink für ZIP Datei
-											
-							File ZIPFile= new File(sport + "Mods/"+ mod.getID()+".zip");
-							File ZIPExtract = new File(sport + "Mods/"+ mod.getID()+"/");
-														
-							try
-							{	
-								if(ZIPFile.length() != mod.getSize()) // Nur herunterladen, wenn nicht auf PC verfügbar
-								{
-									del(ZIPFile);
-									del(ZIPExtract);
-									
-									Downloader dow = new Downloader(DownloadURL, ZIPFile);									
-									Thread t = new Thread(new Downloadstate(dow, Install.this));
-									t.start();
-									dow.run();	
-									t.interrupt();									
-								}
-								
-								status(value=90);								
-								stat.setText(Read.getTextwith("seite3", "extra2")+mod.getName()+"..."); //Heruntergeladene ZIP Datei entpacken
-								stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));	
-								status(value+=2);
-								
-								new Extract(ZIPFile, ZIPExtract); 
-								
-								status(value=95);
-								
-								if(isModloader) //Modloader
-									copy(ZIPExtract, new File(sport + "Result")); //in JAR Kompressionsordner
-								else  //Forge
-									copy(ZIPExtract, new File(mineord)); //in .mincraft Ordner
-								
-								status(value=100);
-							}
-							catch (Exception ex)
-							{
-								stat.setText("Errorocde: S3x04: " + String.valueOf(ex));
-								errors += "Mod: "+mod.getName() + " " + mcVersion +"\nSource: "+DownloadURL+"\nFrom: "+ZIPFile.toString()+
-										"\nTo: "+ZIPExtract.toString()+"\nException:\n"+ getError(ex) + "\nErrorcode: S3x04\n\n";
-							}	
-						} 	
-						
-						status(value=0);
-						
-						if (!isModloader) //Forge Modus
-						{	
-							forgeInstallation();
-							extraInstallation();
-						}					
-					}					 
-					catch (Exception ex) 
-					{
-						stat.setText("Errorocde: S3x04: " + String.valueOf(ex));
-						errors += getError(ex) + " Errorcode: S3x04\n\n";
-					}
-			    }
-							
+				//Downloads all selected mod files
+				if (online)
+				{
+					mainBarInf.setText(Read.getTextwith("Install", "main5"));
+					downloadMods();
+				}					
+				
+				//Install manual imported mods
+				mainBarInf.setText(Read.getTextwith("Install", "main6"));
 				importMods();
 				
-				stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/install.png")));
+				mainState(mainVal += 10); 
 				
-				if(isModloader)     //Dateien in Minecraft JAR bei Modloader Modus komprimieren
-				{					
-					stat.setText(Read.getTextwith("seite3", "prog12"));	
-					stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/Komprimieren.png")));
-					status(value += 5);
-					new Compress(new File(sport + "Result/"), new File(modsport +"Modinstaller.jar"));  // Komprimieren
-					status(value += 5);
+				stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/install.png")));
+				detBarInf.setText("");
+				
+				//If modloader mode, compress new mods into Minecraft JAR
+				if(isModloader)
+				{	
+					mainBarInf.setText(Read.getTextwith("Install", "main7"));
+					stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/compress.png")));
+					new Compress(new File(sport + "Result/"), new File(modsport +"Modinstaller.jar"));
+					
+					mainState(mainVal += 5); //+5 =20, da keine 2 Libraries
 				}			
 				
-				setProfiles();
+				mainBarInf.setText(Read.getTextwith("Install", "main8"));
+				
+				//Set Minecraft JSON files
+				detBarInf.setText(Read.getTextwith("Install", "def7"));
+				setProfiles();				
+				
+				mainState(mainVal += 2);
+				
+				//Modify Minecraft Serverlist
 				modifyServerlist();
 				
-				File sound = new File(mineord + "assets/indexes/"+mcVersion+".json");    //Sounddateien kopieren
+				mainState(mainVal += 2);
+				
+				//Copy sound files
+				detBarInf.setText(Read.getTextwith("Install", "def8"));
+				File sound = new File(mineord + "assets/indexes/"+mcVersion+".json");
 				File soundc = new File(mineord + "assets/indexes/Modinstaller.json");
 				if(sound.exists())
 				{
@@ -262,35 +241,115 @@ public class Install extends InstallGUI
 					} 
 					catch (Exception e) 
 					{	
-						stat.setText("Errorocde: S3xSS: " + String.valueOf(e));
+						detBarInf.setText("Errorocde: S3xSS: " + String.valueOf(e));
 						errors += getError(e) + " Errorcode: S3xSS\n\n";
 					}
 				}
-
+				
+				mainState(mainVal += 1);
+				
 				startMCButton.setEnabled(true);
 				
-				if (!errors.equals("")) // alle Fehler anzeigen
+				if (!errors.equals("")) //show all Errors
 				{
 					new Error(errors);
-					stat.setText(Read.getTextwith("seite3", "error2"));				
+					info.setText(Read.getTextwith("Install", "head2"));
+					detBarInf.setText(Read.getTextwith("Install", "error"));				
 				} 
-				else 
+				else  //show picture gallery
 				{
-					bar.setVisible(false);
+					detBar.setVisible(false);
+					mainBar.setVisible(false);
 					banner.setVisible(false);
-					for(int i=0; i<socialIcons.length; i++)
-						socialIcons[i].setVisible(true);
+					detBarInf.setVisible(false);
+					mainBarInf.setVisible(false);
 					stateIcon.setVisible(false);
-					stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/play.png")));
-					stat.setText("");
+					
+					for(int i=0; i<socialIcons.length; i++)
+						socialIcons[i].setVisible(true);	
 					startinfo.setVisible(true);
-					info.setText(Read.getTextwith("seite3", "prog13"));	
+					stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/play.png")));							
+					info.setText(Read.getTextwith("Install", "head1"));	
 					Start.mol.askUser(true);
 				}
 			}
 		}.start();
 	}
 	
+	/**
+	 * Downloads all selected Mods from the Internet
+	 */
+	private void downloadMods()
+	{
+		try 
+		{				
+			makedirs(new File(sport + "Mods"));
+			
+			double add = 50.0/(double)mods.size();
+			for (Modinfo mod : mods) 
+			{
+				detBarInf.setText(Read.getTextwith("Install", "dow1a") + mod.getName() + "</b>"+Read.getTextwith("Install", "dow1b"));
+				stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));
+				
+				String DownloadURL = "http://www.minecraft-installer.de/api/download3.php?id="+mod.getID(); //Downloadlink für ZIP Datei
+								
+				File ZIPFile= new File(sport + "Mods/"+ mod.getID()+".zip");				
+				File ZIPExtract = new File(mineord);				
+				if(isModloader)
+					 ZIPExtract = new File(sport + "Result");
+											
+				try
+				{	
+					//Download mod only if the mod is not available on the client
+					if(ZIPFile.length() != mod.getSize())
+					{
+						Downloader dow = new Downloader(DownloadURL, ZIPFile);									
+						Thread t = new Thread(new Downloadstate(dow));
+						t.start();
+						dow.run();	
+						t.interrupt();									
+					}
+					
+					mainState(mainVal += add*0.8);	
+					
+					//Extract downloaded ZIP file
+					detBarInf.setText(Read.getTextwith("Install", "dow2")+mod.getName());
+					stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/extract.png")));													
+					new Extract(ZIPFile, ZIPExtract); 
+					
+					mainState(mainVal += add*0.2);
+				}
+				catch (Exception ex)
+				{
+					detBarInf.setText("Errorocde: S3x04: " + String.valueOf(ex));
+					errors += "Mod: "+mod.getName() + " " + mcVersion +"\nSource: "+DownloadURL+"\nFrom: "+ZIPFile.toString()+
+							"\nTo: "+ZIPExtract.toString()+"\nException:\n"+ getError(ex) + "\nErrorcode: S3x04\n\n";
+				}	
+			} 							
+			//75%
+			if (!isModloader) //Forge mode
+			{	
+				//Install sepcial forge mods and libraries
+				forgeInstallation(); //10
+				mainState(mainVal += 9);
+				
+				//Install special Modinstaller Mods
+				extraInstallation();
+				mainState(mainVal += 1);
+			}							
+		}					 
+		catch (Exception ex) 
+		{
+			detBarInf.setText("Errorocde: S3x04: " + String.valueOf(ex));
+			errors += getError(ex) + " Errorcode: S3x04\n\n";
+		}
+	}
+	
+	/**
+	 * Gets the Path of a Minecraft Library from an JsonObject
+	 * @param jo The JsonObject that contains the libraries
+	 * @return String of the libraries path
+	 */
 	private String getNativeString(JsonObject jo)
 	{
 		String add=null;
@@ -381,39 +440,77 @@ public class Install extends InstallGUI
 		}
 		catch (Exception e)
 		{
-			stat.setText("Errorcode: S3xna: "+ String.valueOf(e));
+			detBarInf.setText("Errorcode: S3xna: "+ String.valueOf(e));
 			errors += getError(e) + " Errorcode: S3xna\n\n";
 		}
 		return add;
 	}		
 	
+	/**
+	 * Installs Minecraft Forge files and libraries
+	 */
 	private void forgeInstallation()
 	{
-		stat.setText(Read.getTextwith("seite3", "forge"));  
-		stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));	
+		mainBarInf.setText(Read.getTextwith("Install", "forge1"));  		
 		
 		new File(sport + "Forge/").mkdirs();
 		
+		//Downloading Forge JSON File
+		detBarInf.setText(Read.getTextwith("Install", "forge2"));  
+		stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));	
 		File jsonFile = new File(sport+"Forge/"+mcVersion+".json");	
 		del(jsonFile);
-		new Downloader("http://files.minecraft-mods.de/installer/MCForge/"+mcVersion+".json", jsonFile).run();
+		new Downloader("http://files.minecraft-mods.de/installer/MCForge/versions/"+mcVersion+".json", jsonFile).run();
+		
+		//Installing Forge libraries
 		if(jsonFile.exists())
 			installLibraries(jsonFile);
-		
-		File jsonFile2 = new File(mineord + "versions/Modinstaller/Modinstaller.json");	
+				
+		File jsonFile2 = new File(mineord, "versions/Modinstaller/Modinstaller.json");	
 		try 
 		{
 			copy(jsonFile, jsonFile2);
 		} 
 		catch (Exception e) 
 		{			
-			stat.setText("Errorcode: S3xfo: "+ String.valueOf(e));
+			detBarInf.setText("Errorcode: S3xfo: "+ String.valueOf(e));
 			errors += getError(e) + " Errorcode: S3xfo\n\n";
-		}		
-	}
+		}	
+		
+		//Delete META-INF folder
+		detBarInf.setText(Read.getTextwith("Install", "forge3"));  
+		for(int i=0; i<Start.allMCVersions.length; i++)
+		{
+			if(Start.allMCVersions[i].getVersion().equals(mcVersion))
+			{
+				if(Start.allMCVersions[i].getStripMeta()==1)
+				{
+					try 
+					{
+						File jar =new File(modsport, "Modinstaller.jar");
+						File resx = new File(sport + "Resultx/");
+						del(resx);
+						new Extract(jar, resx, 50, 0);						
+						del(jar);
+						new Compress(resx, jar, 50, 50);
+						del(resx);
+					} 
+					catch (Exception e) 
+					{
+						e.printStackTrace();
+					}	
+				}
+			}		
+		}
+	}	
 	
+	/**
+	 * Install required Minecraft libraries from JSON file
+	 * @param jsonFile JsonFile with libraries
+	 */
 	private void installLibraries(File jsonFile)
-	{
+	{		
+		//Read JSON file
 		Gson gson = new Gson(); 
 		String content ="";
 		try 
@@ -422,40 +519,30 @@ public class Install extends InstallGUI
 		} 
 		catch (Exception e) 
 		{
-			stat.setText("Errorcode: S3xli: "+ String.valueOf(e));
+			detBarInf.setText("Errorcode: S3xli: "+ String.valueOf(e));
 			errors += getError(e) + " Errorcode: S3xli\n\n";
 		}
 		
-		JsonObject main = gson.fromJson(content, JsonObject.class);
-		
-		String forgeID ="forge";
-		try
-		{
-			String idtext = main.get("id").getAsString().substring(6);
-			int pos=0;
-			for(int z=0; z<idtext.length(); z++)
-				if(Character.isDigit(idtext.charAt(z)))
-					pos= z;
-			forgeID = idtext.substring(pos);
-		}
-		catch (Exception e)
-		{
-			forgeID ="forge";
-			stat.setText("Errorcode: S3xID: "+ String.valueOf(e));
-			errors +=  getError(e) + " Errorcode: S3xID\n\n";
-		}
-			
+		//Set ID to Modinstaller
+		JsonObject main = gson.fromJson(content, JsonObject.class);		
 		main.addProperty("id", "Modinstaller");
 				
 		if(main.has("libraries") && online)
 		{
 			JsonArray arr = main.get("libraries").getAsJsonArray();
 			
+			double addi = 15.0/(double)arr.size();
+			int u=1;
+			//List all Libraries
 			loop1 : for(JsonElement obj : arr)
-			{
+			{				
+				mainBarInf.setText(Read.getTextwith("Install", "lib1")+u+"/"+arr.size()+")");
+				u++;
+				
 				JsonObject jo = obj.getAsJsonObject();				
 				if(jo.has("name"))
 				{
+					//Calculate checksum
 					List<String> checksums = new ArrayList<String>();
 					if(jo.has("checksums"))
 					{
@@ -467,6 +554,7 @@ public class Install extends InstallGUI
 					String con = jo.get("name").getAsString();					
 					String add = getNativeString(jo);
 					
+					//Get Library Path
 					Artifact artifact = null;
 					if(add!=null)
 					{
@@ -478,60 +566,59 @@ public class Install extends InstallGUI
 					else						
 						artifact = new Artifact(con);
 					
+					//Generate Library Download URL
 					String libURL = "https://libraries.minecraft.net/";
 					if(jo.has("url"))
 						libURL = jo.get("url").getAsString();
 					libURL += artifact.getPath();
 					
-					System.out.println(forgeID);
-					if(libURL.contains(forgeID))
-						 libURL = "http://files.minecraft-mods.de/installer/MCForge/"+mcVersion+".jar";
-					
 					File libPath = artifact.getLocalPath(new File(mineord+"libraries/"));
 					if(!libPath.exists())
 					{
-						 stat.setText("Downloading library: "+artifact.getDescriptor());
+						 detBarInf.setText(Read.getTextwith("Install", "lib2")+artifact.getDescriptor());
 						 stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));
-						 Thread t = null;
+						 Thread t2 = null;
 						 try
-						 {							
-							 Downloader dow = new Downloader(libURL, libPath);
-							 t = new Thread(new Downloadstate(dow, Install.this));
-							 t.start();
-							 dow.run();
-							 t.interrupt();								 
-						 }
-						 catch (Exception e)
-						 {	
-							 t.interrupt();	
-							 Thread t2 = null;
+						 {		
+							 //Download library as packed file
+							 File packFile = new File(libPath.getParentFile(), libPath.getName() + PACK_NAME);	
+							 Downloader dow2 = new Downloader(libURL + PACK_NAME, packFile);
+							 t2 = new Thread(new Downloadstate(dow2));
+							 t2.start();
+							 dow2.run();
+							 t2.interrupt();	
+							 
+							 //Extract packed library
+							 detBarInf.setText(Read.getTextwith("Install", "lib2")+artifact.getDescriptor());
+							 stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/extract.png")));
+							 f = new RandomAccessFile(packFile, "r");
+							 byte[] b = new byte[(int)f.length()];
+							 f.read(b);
+							 f.close();
+							 unpackLibrary(libPath, b);
+							 del(packFile);
+						 }									 
+						 catch (Exception e2) //If no packed file available download unpacked file
+						 {
+							 t2.interrupt();
+							 Thread t = null;							 
 							 try
-							 {			
-								 File packFile = new File(libPath.getParentFile(), libPath.getName() + PACK_NAME);	
-								 Downloader dow2 = new Downloader(libURL + PACK_NAME, packFile);
-								 t2 = new Thread(new Downloadstate(dow2, Install.this));
-								 t2.start();
-								 dow2.run();
-								 t2.interrupt();	
-								 
-								 stat.setText("Exracting library: "+artifact.getDescriptor());
-								 stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/Extrahieren.png")));
-								 f = new RandomAccessFile(packFile, "r");
-								 byte[] b = new byte[(int)f.length()];
-								 f.read(b);
-								 f.close();
-								 unpackLibrary(libPath, b);
-								 del(packFile);
-								 checksumValid(libPath, checksums);
-							 }									 
-							 catch (Exception e2)
-							 {
-								 t2.interrupt();
-								 stat.setText("Errorcode: S3xli: "+ String.valueOf(e2));
-								 errors += con +": "+"\n" +getError(e2) + " Errorcode: S3xli2\n\n";
+							 {							
+								 Downloader dow = new Downloader(libURL, libPath);
+								 t = new Thread(new Downloadstate(dow));
+								 t.start();
+								 dow.run();
+								 t.interrupt();								 
 							 }
-						 }
+							 catch (Exception e)
+							 {	
+								 t.interrupt();									 
+								 detBarInf.setText("Errorcode: S3xli: "+ String.valueOf(e));
+								 errors += con +": "+"\n" +getError(e) + " Errorcode: S3xli2\n\n";
+							 }							 
+						 }						
 					}
+					mainState(mainVal += addi);
 				}
 			}
 		}
@@ -543,11 +630,14 @@ public class Install extends InstallGUI
 		} 
 		catch (IOException e) 
 		{
-			stat.setText("Errorocde: S3xJS: " + String.valueOf(e));
+			detBarInf.setText("Errorocde: S3xJS: " + String.valueOf(e));
 			errors += getError(e) + " Errorcode: S3xJS\n\n";
 		}
 	}
 	
+	/**
+	 * Downloads and installs special mods for Minecraft Modinstaller
+	 */
 	private void extraInstallation()
 	{		
 		try 
@@ -571,7 +661,7 @@ public class Install extends InstallGUI
 						Downloader dowf = new Downloader(sp2[i], exra);						
 						try 
 						{
-							if(!dowf.isDownloadSizeEqual())  //Extra Datei herunterladen
+							if(!dowf.isDownloadSizeEqual())
 							{				
 								dowf.run();
 							}			
@@ -598,6 +688,9 @@ public class Install extends InstallGUI
 		}	
 	}
 	
+	/**
+	 * Documents all installed mods in a file
+	 */
 	private void writeLog()
 	{
 		try
@@ -631,17 +724,20 @@ public class Install extends InstallGUI
 		}
 		catch (Exception e)	
 		{
-			stat.setText("Errorocde: S3x00: " + String.valueOf(e));
+			detBarInf.setText("Errorocde: S3x00: " + String.valueOf(e));
 			errors += getError(e) + " Errorcode: S3x00\n\n";
 		}
 	}
 	
+	/**
+	 * Copies all manual imported mods into the designated folders 
+	 */
 	private void importMods()
 	{
 		File impf = new File(stamm + "Modinstaller/Import/");
 		if (impf.exists()) 
 		{
-			stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/import.png")));  // Importiertes kopieren
+			stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/import.png")));
 			if (isModloader) 
 			{
 				try 
@@ -651,7 +747,7 @@ public class Install extends InstallGUI
 				} 
 				catch (Exception e) 
 				{
-					stat.setText("Errorocde: S3x05: " + String.valueOf(e));
+					detBarInf.setText("Errorocde: S3x05: " + String.valueOf(e));
 					errors += getError(e) + " Errorcode: S3x05\n\n";
 				}
 			} 
@@ -663,7 +759,7 @@ public class Install extends InstallGUI
 				} 
 				catch (Exception e) 
 				{
-					stat.setText("Errorocde: S3x06: " + String.valueOf(e));
+					detBarInf.setText("Errorocde: S3x06: " + String.valueOf(e));
 					errors += getError(e) + " Errorcode: S3x06\n\n";
 				}
 			}
@@ -677,7 +773,10 @@ public class Install extends InstallGUI
 		}
 	}
 	
-	private void setProfiles() //Minecraft Launcher: JSON Datei präparieren: Profil Modinstaller einstellen	
+	/**
+	 * Prepares Minecraft JSON files
+	 */
+	private void setProfiles()	
 	{
 		File profiles = new File(mineord + "launcher_profiles.json"); 	
 		boolean emty = false;
@@ -690,7 +789,7 @@ public class Install extends InstallGUI
 			} 
 			catch (IOException e) 
 			{
-				stat.setText("Errorocde: S3xPR: " + String.valueOf(e));
+				detBarInf.setText("Errorocde: S3xPR: " + String.valueOf(e));
 				errors += getError(e) + " Errorcode: S3xPR\n\n";
 			}
 		}
@@ -720,7 +819,7 @@ public class Install extends InstallGUI
 		    {
 				jfile = new JsonObject();
 				jprofiles = new JsonObject();
-				stat.setText("Errorocde: S3xPRO1: " + String.valueOf(e));
+				detBarInf.setText("Errorocde: S3xPRO1: " + String.valueOf(e));
 				errors += getError(e) + " Errorcode: S3xPR01\n\n";
 		    }	
     	}
@@ -741,12 +840,15 @@ public class Install extends InstallGUI
 		} 
         catch (IOException e) 
         {
-			stat.setText("Errorocde: S3xPRO2: " + String.valueOf(e));
+			detBarInf.setText("Errorocde: S3xPRO2: " + String.valueOf(e));
 			errors += getError(e) + " Errorcode: S3xPR02\n\n";
 		}	
 	}
 	
-	private void modifyServerlist()  //Serverliste modifizieren
+	/**
+	 * Modifies Minecraft Serverist servers.dat
+	 */
+	private void modifyServerlist()
 	{
 		File jsonfile = new File(stamm+"Modinstaller/serverlist.json");
 		try 
@@ -781,7 +883,7 @@ public class Install extends InstallGUI
 						Map.Entry<String, Tag> m =it.next();
 						@SuppressWarnings("unchecked")
 						ListTag<CompoundTag> value= (ListTag<CompoundTag>) m.getValue();   
-					    oldserverentries = value.getValue(); //Alte Serverlisteinträge					    
+					    oldserverentries = value.getValue(); //old serverlist enties			    
 					}
 					finally
 					{
@@ -849,10 +951,22 @@ public class Install extends InstallGUI
 			}	
 		}		
 	}
-
-	public void status(double zahl) // Statusbar einstellen
+	
+	/**
+	 * Sets main state bar
+	 * @param number Integer from 0 to 100
+	 */
+	private void mainState(double number)
 	{
-		bar.setValue((int) zahl);
-		bar.setStringPainted(true);
+		mainBar.setValue((int) number);
+	}
+
+	/**
+	 * Sets detailed state bar
+	 * @param number Interger from 0 to 100
+	 */
+	public static void detState(double number)
+	{
+		detBar.setValue((int) number);
 	}
 }

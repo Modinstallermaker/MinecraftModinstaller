@@ -2,7 +2,7 @@ package installer;
 
 public class MCVersion 
 {
-	private int ID, SumAll, SumForge;
+	private int ID, SumAll, SumForge, stripMeta;
 	private String Version;
 	
 	public int getID() {
@@ -17,4 +17,7 @@ public class MCVersion
 	public String getVersion() {
 		return Version;
 	}	
+	public int getStripMeta(){
+		return stripMeta;
+	}
 }

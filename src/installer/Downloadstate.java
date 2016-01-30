@@ -3,12 +3,10 @@ package installer;
 public class Downloadstate implements Runnable 
 {
 	private Downloader dow;
-	private Install i;
 
-	public Downloadstate(Downloader dow, Install i) 
+	public Downloadstate(Downloader dow) 
 	{
 		this.dow = dow;
-		this.i = i;
 	}
 
 	public void run() 
@@ -23,7 +21,7 @@ public class Downloadstate implements Runnable
 					int sizeExpected = dow.getExpectedDownloadSize();
 					if (sizeExpected > 1) {
 						double proz = Math.round(((double) sizeNow / (double) sizeExpected) * 1000.) / 10.;
-						i.status(proz * 0.9);
+						Install.detState(proz);
 					}
 				}
 

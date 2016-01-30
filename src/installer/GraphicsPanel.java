@@ -1,19 +1,18 @@
 package installer;
 
-import javax.swing.JPanel;
-
-import java.awt.MediaTracker;
-import java.awt.image.BufferedImage;
-import java.awt.TexturePaint;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Rectangle;
-import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.TexturePaint;
 import java.awt.Toolkit;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+import javax.swing.JPanel;
 
 public class GraphicsPanel extends JPanel
 {
@@ -25,17 +24,11 @@ public class GraphicsPanel extends JPanel
   private BufferedImage texture;
   private boolean singlePaint;
   
-  public GraphicsPanel(boolean sp, String URL)
-  {
-    singlePaint = sp;
-    texture = loadTexture(URL);
-  }
-  
   public GraphicsPanel(boolean sp)
   {
     singlePaint = sp;
-    texture = loadTexture("http://www.minecraft-installer.de/Dateien/modinstallerbg.png");
-  } 
+    texture = loadTexture();
+  }
   
   public void paintComponent(Graphics g)
   {
@@ -60,20 +53,16 @@ public class GraphicsPanel extends JPanel
     }
   }
   
-  private BufferedImage loadTexture(String URL)
+  private BufferedImage loadTexture()
   {
     Image image = null;
     BufferedImage bufferedImage = null;  
-    URL url=null;
-	try {
-		url = new URL(URL);
-	} catch (MalformedURLException e1) {
-		e1.printStackTrace();
-	}
-    if (url == null)
-    return null;
+   
+    File backgr = new File(Start.stamm+"Modinstaller/modinstallerbg.png");    
+    if (!backgr.exists()||backgr.length()<10)
+    	return null;
     
-    image = Toolkit.getDefaultToolkit().getImage(url);
+    image = Toolkit.getDefaultToolkit().getImage(backgr.getAbsolutePath());
     if(image != null)
     {
       tracker.addImage(image, 0);

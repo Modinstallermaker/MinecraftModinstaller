@@ -11,14 +11,36 @@ import java.util.jar.JarOutputStream;
 import static installer.OP.*;
 
 public class Compress 
-{
+{	
+	private BufferedInputStream bis;
+	private JarOutputStream zipOut;
+	private int fileNo = 0;
+	private double addi = 1, val = 0.0, max = 100.0, start=0.0;
+	private File source, target;
 	private File sourcecpy;
-	private BufferedInputStream bis = null;
-	private JarOutputStream zipOut = null;
 	
+	public Compress(File source, File target, double max, double start)
+	{
+		this.source=source;
+		this.target=target;
+		this.max = max;
+		this.start = start;
+		work();
+	}		
+
 	public Compress(File source, File target)
 	{
+		this.source=source;
+		this.target=target;
+		work();
+	}
+	
+	void work()
+	{
 		sourcecpy = source;
+		getFileNumber(source);
+		addi = max/(double)fileNo;
+		val = start;
 		
 		makedirs(target.getParentFile());
 		
@@ -39,42 +61,60 @@ public class Compress
 			}
 			catch (IOException e) {} 
 		} 
+		Install.detState(max);
+	}
+	
+	private void getFileNumber(File source)
+	{
+		File[] files = source.listFiles();
+		for(File f: files)
+		{
+			if(f.isDirectory())
+				getFileNumber(f);
+			else
+				fileNo++;			
+		}
 	}
 	
 	public void zip(File source)
-	{
+	{		
 		try 
 		{
 			File[] files = source.listFiles();
 			if (files != null) 
-			{
-				for (int i = 0; i < files.length; i++) // Alle Dateien und Unterordner auflisten
+			{			
+				for (int i = 0; i < files.length; i++)
 				{
 					if (files[i].isDirectory()) 
 					{
-						zip(files[i]); // Wenn Unterordner vorhanden diese erst durchsuchen
+						zip(files[i]);
 					} 
 					else 
 					{
-						bis = new BufferedInputStream(new FileInputStream(files[i])); // Datei einlesen
+						FileInputStream fis = new FileInputStream(files[i]);
+						bis = new BufferedInputStream(fis);
 						int avail = bis.available();
 						byte[] buffer = new byte[avail];
 						if (avail > 0) 
 						{
 							bis.read(buffer, 0, avail);
 						}
-						String eintragname = files[i].getAbsolutePath().substring(sourcecpy.getAbsolutePath().length()).replace("\\", "/").substring(1);
-						if (eintragname.equals("_aux.class")) 
+						
+						String entryName = files[i].getAbsolutePath().substring(sourcecpy.getAbsolutePath().length()+1).replace("\\", "/");
+						if (entryName.contains("_aux.class")) 
 						{
-							eintragname = "aux.class";
+							entryName = entryName.replace("_aux.class", "aux.class");
 						}
-						JarEntry ze = new JarEntry(eintragname); // Datei in Jar Datei schreiben
+						//Write file in JAR file
+						JarEntry ze = new JarEntry(entryName);
 						zipOut.putNextEntry(ze);
-						zipOut.write(buffer, 0, buffer.length); // Byte buffer speichern
+						int length = (int)files[i].length() ;
+						zipOut.write(buffer, 0, length);
+						Install.detState(val += addi);
 						zipOut.closeEntry();
 					}
 				}
-			}
+			}		
 		} 
 		catch (Exception ex) 
 		{

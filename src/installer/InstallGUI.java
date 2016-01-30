@@ -5,7 +5,9 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.URL;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -24,9 +26,10 @@ public class InstallGUI extends JFrame implements MouseListener {
 	public JLabel startMCButton = new JLabel();
 	public JLabel banner = new JLabel();
 	public JLabel[] socialIcons;	
-	public JLabel stat = new JLabel();
+	public JLabel detBarInf = new JLabel(), mainBarInf = new JLabel();
 	public JLabel startinfo = new JLabel();	
-	public static JProgressBar bar = new JProgressBar();
+	public static JProgressBar detBar = new JProgressBar();
+	public static JProgressBar mainBar = new JProgressBar();
 	
 	private JLabel headlineLabel = new JLabel();
 	private Cursor c = new Cursor(Cursor.HAND_CURSOR);		
@@ -47,57 +50,55 @@ public class InstallGUI extends JFrame implements MouseListener {
 		cp.setLayout(null);
 		add(cp);
 		
-		headlineLabel.setBounds(0, 20, (int)(breite), (int)(hoehe*0.1));                              //Überschrift
+		headlineLabel.setBounds(0, 20, (int)(breite), 35);                              //Überschrift
 		headlineLabel.setText(Read.getTextwith("installer", "name"));
 		headlineLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		headlineLabel.setVerticalAlignment(SwingConstants.CENTER);
 		headlineLabel.setFont(headlineLabel.getFont().deriveFont(Font.BOLD,45));
-		cp.add(headlineLabel);
-		
-		banner.setBackground(null);
-		banner.setForeground(null);
-		banner.setIcon(new ImageIcon(this.getClass().getResource("src/banner_gross.png")));
-		banner.setBounds(0, (int)(hoehe*0.12), (int)(breite), (int)(hoehe*0.3));
-		banner.setCursor(c);
-		banner.setHorizontalAlignment(SwingConstants.CENTER);
-		banner.addMouseListener(this);
-		cp.add(banner);
+		cp.add(headlineLabel);		
 		
 		stateIcon.setBackground(null);
 		stateIcon.setForeground(null);
 		stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/install.png")));
-		stateIcon.setBounds(15, 150, 80, 80);
+		stateIcon.setBounds(15, 160, 80, 80);
 		cp.add(stateIcon);		
 
-		bar.setBounds(100, 180, 425, 33);
-		cp.add(bar);
-		
-		stat.setBounds(105, 160, 425, 17);
-		cp.add(stat);
-		
 		info.setBounds(0, 70, (int)(breite), (int)(hoehe*0.2));                             //Info
 		info.setHorizontalAlignment(SwingConstants.CENTER);
 		info.setFont(exitButton.getFont().deriveFont(Font.PLAIN, 30));
 		cp.add(info);
 		
+		mainBarInf.setBounds(105, 160, 420, 20);        
+		cp.add(mainBarInf);
+		mainBar.setBounds(100, 180, 425, 20);
+		cp.add(mainBar);
+				
+		detBarInf.setBounds(105, 200, 420, 20);
+		cp.add(detBarInf);		
+		detBar.setBounds(100, 220, 425, 20);
+		cp.add(detBar);
+		
+		//Information for user to start Minecraft Version Modinstaller
 		startinfo.setBounds(0, (int)(hoehe*0.31), (int)(breite), (int)(hoehe*0.2));                             //Info
 		startinfo.setHorizontalAlignment(SwingConstants.CENTER);
-		startinfo.setText(Read.getTextwith("seite3", "startinfo")+Start.mcVersion+")");
+		startinfo.setText(Read.getTextwith("InstallGUI", "t1")+Start.mcVersion+")");
 		startinfo.setFont(exitButton.getFont().deriveFont(Font.PLAIN, 16));
 		startinfo.setVisible(false);
 		cp.add(startinfo);
 		
-		exitButton.setBounds(rand, hoehe-40-rand, 150, 40); //exitButton	
-		exitButton.setText(Read.getTextwith("seite3", "text2"));		
-		exitButton.setIcon(new ImageIcon(this.getClass().getResource("src/power.png")));			
-		exitButton.setFont(exitButton.getFont().deriveFont(Font.BOLD, 16));	
+		 //Exit Button
+		exitButton.setBounds(rand, hoehe-40-rand, 150, 40);	
+		exitButton.setText(Read.getTextwith("InstallGUI", "t2"));		
+		exitButton.setFont(startMCButton.getFont().deriveFont(Font.BOLD, 18));
+		exitButton.setIcon(new ImageIcon(this.getClass().getResource("src/power.png")));	
 		exitButton.addMouseListener(this);
 		exitButton.setCursor(c);		
 		cp.add(exitButton);
 		
+		//Start Minecraft Button
 		startMCButton.setBounds((int)(breite-220-rand), hoehe-40-rand, 220, 40);
 		startMCButton.setIcon(new ImageIcon(this.getClass().getResource("src/start.png")));		
-		startMCButton.setText(Read.getTextwith("seite3", "text3"));
+		startMCButton.setText(Read.getTextwith("InstallGUI", "t3"));
 		startMCButton.setHorizontalTextPosition(SwingConstants.LEFT);
 		startMCButton.setFont(startMCButton.getFont().deriveFont(Font.BOLD, 18));
 		startMCButton.setHorizontalAlignment(SwingConstants.RIGHT);	
@@ -108,6 +109,22 @@ public class InstallGUI extends JFrame implements MouseListener {
 		cp.add(startMCButton);
 		
 		setVisible(true);
+		
+		try 
+		{
+			banner.setIcon(new ImageIcon(ImageIO.read(new URL("http://minecraft-installer.de/api/getAds.php?channel=installlarge&type=img"))));
+			
+			banner.setBounds(0, 55, (int)(breite), 105);
+			banner.setVerticalAlignment(SwingConstants.CENTER);
+			banner.setCursor(c);
+			banner.setHorizontalAlignment(SwingConstants.CENTER);
+			banner.addMouseListener(this);
+			cp.add(banner);
+		}
+		catch (Exception e) 
+		{			
+			e.printStackTrace();
+		}	
 		
 		String[] Bilder = {"src/facebook.png", "src/google.png", "src/twitter.png", "src/proposal.png", "src/support.png"};
 		int abstand = 20;
@@ -126,11 +143,12 @@ public class InstallGUI extends JFrame implements MouseListener {
 			cp.add(socialIcons[i]);
 		}
 	}
+	
 	public void mouseClicked(MouseEvent e) 
 	{
 		Object s = e.getSource();
 		if(s==socialIcons[0])
-			OperatingSystem.openLink(Read.getTextwith("seite3", "facebook"));
+			OperatingSystem.openLink(Read.getTextwith("InstallGUI", "facebook"));
 		else if(s==socialIcons[1])
 			OperatingSystem.openLink("https://plus.google.com/+MinecraftinstallerDeMod");
 		else if(s==socialIcons[2])
@@ -140,7 +158,7 @@ public class InstallGUI extends JFrame implements MouseListener {
 		else if(s==socialIcons[4])
 			OperatingSystem.openLink(Read.getTextwith("installer", "website")+"/faq.php");
 		else if(s==banner)
-			OperatingSystem.openLink("http://server.nitrado.net/deu/gameserver-mieten?pk_campaign=MinecraftInstaller");
+			OperatingSystem.openLink("http://minecraft-installer.de/api/getAds.php?channel=installlarge&type=url");
 		else if(s==startMCButton)
 		{
 			new MCLauncher();	

@@ -13,7 +13,7 @@ import static installer.OP.*;
  * 
  * Beschreibung
  * 
- * @version 2.1 vom 14.04.2013
+ * @version 5.0
  * @author Dirk Lippke
  */
 
@@ -67,12 +67,12 @@ public class MCLauncher
 			} 
 			if(ausf ==false)
 			{
-				int eingabe = JOptionPane.showConfirmDialog(null, Read.getTextwith("startLauncher", "prog1"), 
-						Read.getTextwith("startLauncher", "prog1h"), JOptionPane.YES_NO_OPTION);
+				int eingabe = JOptionPane.showConfirmDialog(null, Read.getTextwith("MCLauncher", "prog1"), 
+						Read.getTextwith("MCLauncher", "prog1h"), JOptionPane.YES_NO_OPTION);
 				if(eingabe == 0)
 				{
 					JFileChooser FC = new JFileChooser();
-					FC.setDialogTitle(Read.getTextwith("startLauncher", "prog2"));
+					FC.setDialogTitle(Read.getTextwith("MCLauncher", "prog2"));
 					FC.setFileSelectionMode(JFileChooser.FILES_ONLY);
 					FileNameExtensionFilter filter = new FileNameExtensionFilter("MC Launcher (.JAR)", "jar");
 					FC.setFileFilter(filter);

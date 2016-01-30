@@ -85,7 +85,7 @@ public class License extends JFrame
 		zur.setCursor(c);
 		zur.setBackground(null);
 		zur.setBounds(10, 295, 110, 35);
-		zur.setText(Read.getTextwith("lizenz", "text1"));
+		zur.setText(Read.getTextwith("License", "text1"));
 		zur.setMargin(new Insets(2, 2, 2, 2));
 		zur.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -96,7 +96,7 @@ public class License extends JFrame
 		wei.setCursor(c);
 		wei.setBackground(null);
 		wei.setBounds(410, 295, 130, 35);
-		wei.setText(Read.getTextwith("lizenz", "text2"));
+		wei.setText(Read.getTextwith("License", "text2"));
 		wei.setMargin(new Insets(2, 2, 2, 2));
 		wei.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -106,7 +106,7 @@ public class License extends JFrame
 		wei.setEnabled(false);
 		cp.add(wei);
 		check.setBounds(55, 260, 400, 25);
-		check.setText(Read.getTextwith("lizenz", "text3"));
+		check.setText(Read.getTextwith("License", "text3"));
 		check.setOpaque(false);
 		check.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent evt) {
@@ -116,7 +116,7 @@ public class License extends JFrame
 		cp.add(check);
 		head.setBounds(24, 15, 243, 25);
 		head.setFont(new Font("Dialog", Font.BOLD, 16));
-		head.setText(Read.getTextwith("lizenz", "text4"));
+		head.setText(Read.getTextwith("License", "text4"));
 		cp.add(head);
 
 		setVisible(true);
@@ -129,11 +129,11 @@ public class License extends JFrame
 	{
 		Date zeitstempel = new Date();
 		
-		optionWriter("lizenz", String.valueOf(zeitstempel));				
+		optionWriter("License", String.valueOf(zeitstempel));				
 		
 		dispose();
 		if(Start.online)
-			new MCVersions(Modlist, Downloadlist, offlineList).setVisible(true);
+			new MCVersions(Modlist, Downloadlist, offlineList);
 		else
 			new Menu(Modlist, Downloadlist, offlineList);
 	}

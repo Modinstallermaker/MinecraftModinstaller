@@ -39,10 +39,13 @@ import javax.swing.text.Document;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
+/**
+ * Modinstaller main menu GUI
+ */
+
 public class MenuGUI extends JFrame implements ActionListener, MouseListener, ChangeListener, KeyListener
-{
+{		
 	private static final long serialVersionUID = 1L;
-	
 	JTabbedPane tabbedPane = new JTabbedPane();
 	JComboBox<String> mcVersDrop;
 	JPanel cp;
@@ -84,10 +87,10 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	JLabel maxButton = new JLabel();
 	JLabel minButton = new JLabel();
 	JLabel modVersionL = new JLabel();
-	HintTextField searchInput = new HintTextField(Read.getTextwith("seite2", "search"));
+	HintTextField searchInput = new HintTextField(Read.getTextwith("MenuGUI", "t1"));
 	JLabel nextButton = new JLabel();
 	
-	JProgressBar bar = new JProgressBar();
+	JProgressBar ratingBar = new JProgressBar();
 	
 	private Cursor c = new Cursor(Cursor.HAND_CURSOR);		
 	private String stamm = Start.stamm;		
@@ -153,14 +156,14 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		int texth = listeya+listenh-textya;
 		int liste2h= (int)(listenh*0.54);
 	
-		headerLabel.setBounds(0, 0, (int)(breite), (int)(hoehe*0.1));                              //Überschrift
+		headerLabel.setBounds(0, 0, (int)(breite), (int)(hoehe*0.1));
 		headerLabel.setText(Read.getTextwith("installer", "name"));
 		headerLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		headerLabel.setVerticalAlignment(SwingConstants.CENTER);
 		headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD,45));
 		cp.add(headerLabel);
 		
-		mcVersLabel.setBounds((int)(rand), (int)(hoehe*0.05), listenb, 40); //Minecraft Version auswählen
+		mcVersLabel.setBounds((int)(rand), (int)(hoehe*0.05), listenb, 40); //Select Minecraft version
 		mcVersLabel.setText("Minecraft ["+Start.mcVersion+"]");
 		mcVersLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		mcVersLabel.addMouseListener(this);
@@ -168,12 +171,12 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		mcVersLabel.setFont(mcVersLabel.getFont().deriveFont(Font.BOLD,14));
 		cp.add(mcVersLabel);
 		
-		leftListMModel.addElement(Read.getTextwith("seite2", "wait2")); //Liste1 Modloader
+		leftListMModel.addElement(Read.getTextwith("MenuGUI", "t2")); //List Modloader
 		leftListM.setModel(leftListMModel);		
 		leftListM.setCellRenderer(new CellRenderer());				
 		leftListM.addMouseListener(this);
 				
-		leftListFModel.addElement(Read.getTextwith("seite2", "wait2")); //Liste1 Forge
+		leftListFModel.addElement(Read.getTextwith("MenuGUI", "t2")); //List Forge
 		leftListF.setModel(leftListFModel);
 		leftListF.setCellRenderer(new CellRenderer());				
 		leftListF.addMouseListener(this);
@@ -188,25 +191,25 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		tabbedPane.setBounds(rand, listeya, listenb, listenh-30);							
 	    cp.add(tabbedPane);   
 	    
-	    searchInput.setBounds(rand, listeya+listenh-25, listenb, 25);	//Suchfeld
+	    searchInput.setBounds(rand, listeya+listenh-25, listenb, 25); //Search field
 	    searchInput.addKeyListener(this);
 	    searchInput.addMouseListener(this);
 	    searchInput.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 	    searchInput.setBorder(BorderFactory.createCompoundBorder(searchInput.getBorder(), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
 	    cp.add(searchInput);
 	    
-		modNameLabel.setBounds(mittexa, modtexty, picturex, 30);           //Modname
-		modNameLabel.setText(Read.getTextwith("seite2", "text7"));
+		modNameLabel.setBounds(mittexa, modtexty, picturex, 30); //Mod name
+		modNameLabel.setText(Read.getTextwith("MenuGUI", "t3"));
 		modNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		modNameLabel.setFont(new Font("Dialog", Font.BOLD, 25));
 		cp.add(modNameLabel);
 		
-		modVersionL.setBounds(mittexa+10, infol+5, 160, 40); //Importierte Mods: Modversion
+		modVersionL.setBounds(mittexa+10, infol+5, 160, 40); //Import mods
 		modVersionL.setFont(new Font("Dialog", Font.PLAIN, 18));
 		modVersionL.setVisible(false);
 		cp.add(modVersionL);
 		
-		for (int i=0; i<5; i++) //Sterne für Bewertung
+		for (int i=0; i<5; i++) //Stars for mod rating
 		{
 			ratIcons[i] = new JLabel();
 			ratIcons[i].setBounds(mittexa+10+i*25, infol, 40, 40);
@@ -216,59 +219,59 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 			cp.add(ratIcons[i]);
 		}
 		
-		topIcon.setBounds(mittexa+picturex-250, infol-1, 50, 50); // TOP oder NEW Bild	
+		topIcon.setBounds(mittexa+picturex-250, infol-1, 50, 50); // TOP or NEW picture	
 		topIcon.setIcon(new ImageIcon(this.getClass().getResource("src/top.png")));
 		topIcon.setVisible(false);
 		cp.add(topIcon);
 		
-		sizeLabel.setBounds(mittexa+picturex-160-50-10, infol+5, 40+50, 40); // Downloadgröße		
+		sizeLabel.setBounds(mittexa+picturex-160-50-10, infol+5, 40+50, 40); // Download size		
 		sizeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		sizeLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
 		sizeLabel.setFont(new Font("Dialog", Font.PLAIN, 18));
 		cp.add(sizeLabel);
 		
-		videoButton.setBounds(mittexa+picturex-120, infol+5, 40, 40); // Link zu Video	
+		videoButton.setBounds(mittexa+picturex-120, infol+5, 40, 40); // Link to mod video	
 		videoButton.setIcon(new ImageIcon(this.getClass().getResource("src/video.png")));
 		videoButton.addMouseListener(this); 
-		videoButton.setToolTipText(Read.getTextwith("seite2", "video"));
+		videoButton.setToolTipText(Read.getTextwith("MenuGUI", "t4"));
 		videoButton.setCursor(c);
 		videoButton.setVisible(false);
 		cp.add(videoButton);	
 		
-		modinstWebLnk.setBounds(mittexa+picturex-80, infol+5, 40, 40); // Link zu Modinstallerweb	
+		modinstWebLnk.setBounds(mittexa+picturex-80, infol+5, 40, 40); // Link to Modinstaller website	
 		modinstWebLnk.setIcon(new ImageIcon(this.getClass().getResource("src/infokl.png")));
 		modinstWebLnk.addMouseListener(this); 
-		modinstWebLnk.setToolTipText(Read.getTextwith("seite2", "webi"));
+		modinstWebLnk.setToolTipText(Read.getTextwith("MenuGUI", "t5"));
 		modinstWebLnk.setCursor(c);
 		cp.add(modinstWebLnk);		
 		
-		devWebLnk.setBounds(mittexa+picturex-40, infol+5, 40, 40); // Link zum Entwickler	
-		devWebLnk.setIcon(new ImageIcon(this.getClass().getResource("src/quelle.png")));
+		devWebLnk.setBounds(mittexa+picturex-40, infol+5, 40, 40); // Link to mod developer	
+		devWebLnk.setIcon(new ImageIcon(this.getClass().getResource("src/devLnk.png")));
 		devWebLnk.addMouseListener(this); 
-		devWebLnk.setToolTipText(Read.getTextwith("seite2", "dev"));
+		devWebLnk.setToolTipText(Read.getTextwith("MenuGUI", "t6"));
 		devWebLnk.setCursor(c);
 		cp.add(devWebLnk);		
 		
-		picture.setBounds(mittexa, pictureya, picturex, picturey); //Modbild
+		picture.setBounds(mittexa, pictureya, picturex, picturey); //Mod picture
 		picture.setHorizontalAlignment(SwingConstants.CENTER);
 		picture.setVerticalAlignment(SwingConstants.CENTER);   
 		picture.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 		picture.addMouseListener(this);
 		picture.setCursor(c);    	
 		picture.setIcon(new ImageIcon(this.getClass().getResource("src/wait.gif")));	
-		picture.setToolTipText(Read.getTextwith("seite2", "pici"));
+		picture.setToolTipText(Read.getTextwith("MenuGUI", "t7"));
 		cp.add(picture);
 		
 		new DropTarget(picture, myDragDropListener);
 		
 		HTMLEditorKit kit = new HTMLEditorKit();		
 			
-		modDescPane = new JEditorPane(); //Beschreibungsfenster		
+		modDescPane = new JEditorPane(); //Mod description pane	
 		modDescPane.setEditable(false);
 	    modDescPane.setContentType("text/html");	
 	    Document doc = kit.createDefaultDocument();
 	    modDescPane.setDocument(doc);	  
-	    modDescPane.setText(Read.getTextwith("seite2", "wait"));	  	  
+	    modDescPane.setText(Read.getTextwith("MenuGUI", "t2"));	  	  
 	    
 	    StyleSheet ss = kit.getStyleSheet();
 		try 
@@ -287,34 +290,34 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	    
 	    new DropTarget(modDescPane, myDragDropListener);
 	    
-		selectArrow.setBounds(mittexa+picturex+2*rand, 250, 100, 83); // Pfeil nach rechts		
+		selectArrow.setBounds(mittexa+picturex+2*rand, 250, 100, 83); // Arrow right: add mod	
 		selectArrow.setIcon(new ImageIcon(this.getClass().getResource("src/arrowSe.png")));		
-		selectArrow.setToolTipText(Read.getTextwith("seite2", "text1"));
+		selectArrow.setToolTipText(Read.getTextwith("MenuGUI", "t8"));
 		selectArrow.addMouseListener(this);
 		selectArrow.setCursor(c);
 		cp.add(selectArrow);
 	
-		removeArrow.setBounds(mittexa+picturex+rand, 360, 100, 83); // Pfeil nach links		
+		removeArrow.setBounds(mittexa+picturex+rand, 360, 100, 83); // Arrow left: remove mod	
 		removeArrow.setIcon(new ImageIcon(this.getClass().getResource("src/arrowRe.png")));	
-		removeArrow.setToolTipText(Read.getTextwith("seite2", "text2"));	
+		removeArrow.setToolTipText(Read.getTextwith("MenuGUI", "t9"));	
 		removeArrow.addMouseListener(this);
 		removeArrow.setCursor(c);
 		cp.add(removeArrow);	
 		
-		restoreButton.setBounds(breite-rand-listenb+10, (int)(hoehe*0.1), 180, 40); // Restore druchführen	
-		restoreButton.setText(Read.getTextwith("seite2", "text5"));	
+		restoreButton.setBounds(breite-rand-listenb+10, (int)(hoehe*0.1), 180, 40); // Restore Minecraft	
+		restoreButton.setText(Read.getTextwith("MenuGUI", "t10"));	
 		restoreButton.setFont(restoreButton.getFont().deriveFont(Font.BOLD));
 		restoreButton.setIcon(new ImageIcon(this.getClass().getResource("src/restore.png")));		
 		restoreButton.addMouseListener(this); 
 		restoreButton.setCursor(c);			
 		File backupfile = new File(stamm +"Modinstaller/Backup/");
-		if (!backupfile.exists()) // überprüfen, ob Restore möglich ist		
+		if (!backupfile.exists()) // Check, if restore possible	
 		{
 			restoreButton.setEnabled(false);
 		}
 		cp.add(restoreButton);
 		
-		importButton.setText(Read.getTextwith("seite2", "text3"));	
+		importButton.setText(Read.getTextwith("MenuGUI", "t11"));	 //Mod import button
 		importButton.setFont(importButton.getFont().deriveFont(Font.BOLD));
 		importButton.setIcon(new ImageIcon(this.getClass().getResource("src/importkl.png")));	
 		importButton.addMouseListener(this); 
@@ -324,12 +327,12 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		cp.add(BorderLayout.CENTER, importButton);
 		new DropTarget(importButton, myDragDropListener);	   
 		
-		rightListHeadl.setBounds(breite-rand-listenb, (int)(hoehe*0.315), listenb, 20); //Liste2 Überschrift
+		rightListHeadl.setBounds(breite-rand-listenb, (int)(hoehe*0.315), listenb, 20); //List right headline
 		rightListHeadl.setHorizontalAlignment(SwingConstants.CENTER);
-		rightListHeadl.setText(Read.getTextwith("seite2", "modi"));		
+		rightListHeadl.setText(Read.getTextwith("MenuGUI", "t12"));		
 		cp.add(rightListHeadl);
 		
-		rightListModel.addElement("");    // Liste2
+		rightListModel.addElement("");    // right list model
 		rightList.setModel(rightListModel);   
 		rightList.setCellRenderer(new CellRenderer());  
 		rightList.addMouseListener(this);
@@ -338,17 +341,17 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		cp.add(rightListSP);
 		
 	
-		bar.setBounds(breite-rand-listenb, (int)(hoehe*0.35)+liste2h-1, listenb, 15);
-		bar.setOpaque(false);
-		bar.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
-		bar.setUI(new GradientPalletProgressBarUI());
-		cp.add(bar);
+		ratingBar.setBounds(breite-rand-listenb, (int)(hoehe*0.35)+liste2h-1, listenb, 15);
+		ratingBar.setOpaque(false);
+		ratingBar.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
+		ratingBar.setUI(new GradientPalletProgressBarUI());
+		cp.add(ratingBar);
 		
 		new DropTarget(rightList, myDragDropListener);
 		
 		helpButton.setBounds(2, 5, 50, 50); // FAQ anzeigen			
 		helpButton.setIcon(new ImageIcon(this.getClass().getResource("src/help.png")));
-		helpButton.setToolTipText(Read.getTextwith("seite2", "text6"));	
+		helpButton.setToolTipText(Read.getTextwith("MenuGUI", "t13"));	
 		helpButton.addMouseListener(this); 		
 		cp.add(helpButton);
 	    
@@ -369,7 +372,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		cp.add(exitButton);
 	
 		nextButton.setBounds((int)(breite-250-rand), hoehe-70-rand, 250, 70); // Installieren		
-		nextButton.setText(Read.getTextwith("seite2", "text10"));
+		nextButton.setText(Read.getTextwith("MenuGUI", "t14"));
 		nextButton.setFont(nextButton.getFont().deriveFont((float) 15));
 		nextButton.addMouseListener(this);
 		nextButton.setCursor(c);		

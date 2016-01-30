@@ -30,10 +30,10 @@ public class MinecraftOpenListener implements ActionListener
 	boolean run = true;
 	boolean closedDialoge =true;
 	
-	JButton yesb = new JButton(Read.getTextwith("seite1", "compj"));
-	JButton db = new JButton(Read.getTextwith("seite1", "compk"));
-	JButton nob = new JButton(Read.getTextwith("seite1", "compn"));
-	JButton errorb = new JButton(Read.getTextwith("seite1", "compe"));
+	JButton yesb = new JButton(Read.getTextwith("MOL", "compj"));
+	JButton db = new JButton(Read.getTextwith("MOL", "compk"));
+	JButton nob = new JButton(Read.getTextwith("MOL", "compn"));
+	JButton errorb = new JButton(Read.getTextwith("MOL", "compe"));
 	private Cursor c = new Cursor(Cursor.HAND_CURSOR);		
 	int sel=-1;
 	
@@ -100,7 +100,7 @@ public class MinecraftOpenListener implements ActionListener
 												e.printStackTrace();
 											}
 											*/											
-											JOptionPane.showMessageDialog(null, Read.getTextwith("installer", "exitmc"));
+											JOptionPane.showMessageDialog(null, Read.getTextwith("MOL", "exitmc"));
 											closedDialoge = true;
 										}
 									}
@@ -153,7 +153,7 @@ public class MinecraftOpenListener implements ActionListener
 	{  
         pane.setLayout(new BorderLayout());
          
-        JLabel question = new JLabel(Read.getTextwith("seite1", "compt"));
+        JLabel question = new JLabel(Read.getTextwith("MOL", "compt"));
         question.setHorizontalAlignment(SwingConstants.CENTER);
         question.setFont(new Font("Dialog", Font.BOLD, 14));
         question.setCursor(c);
@@ -206,7 +206,8 @@ public class MinecraftOpenListener implements ActionListener
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent e) 
+	{
 		Object s = e.getSource();
 		if(s==yesb){
 			sel=3;
