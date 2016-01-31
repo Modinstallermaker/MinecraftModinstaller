@@ -17,8 +17,8 @@ import javax.swing.JPanel;
 public class GraphicsPanel extends JPanel
 {
   /**
-	 * 
-	 */
+   * Background picture for Modinstaller Menu and Install frame
+   */
   private static final long serialVersionUID = 1L;
   private MediaTracker tracker = new MediaTracker(this);
   private BufferedImage texture;

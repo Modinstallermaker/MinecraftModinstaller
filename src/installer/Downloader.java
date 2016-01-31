@@ -24,8 +24,7 @@ public class Downloader implements Runnable
 	private long elapsed=-1;
 	private float elapsedSeconds =-1;
 	private float kbRead =-1;
-	
-	
+		
 	public Downloader(String url_str, File targetFile)
 	{
 		this.url_str = url_str;

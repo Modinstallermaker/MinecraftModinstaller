@@ -30,7 +30,7 @@ import org.tukaani.xz.XZInputStream;
 public class OP 
 {
 	private static FileOutputStream fos;
-	private static FileInputStream fis;
+	private static FileInputStream fis;	
 
 	final static public boolean del(File dir)
 	{
@@ -205,7 +205,10 @@ public class OP
 	}	
 		
 	final static public void Textwriter(File file, String[] lines, boolean append) throws IOException
-	{		
+	{	
+		if(!file.exists())
+			file.createNewFile();
+		
 		boolean newLine = false;
 		if(file.length()!=0&&append==true) newLine = true;
 		
@@ -230,7 +233,7 @@ public class OP
 	}	
 		
 	final static public String[] Textreader(File file) throws IOException
-	{		  	  
+	{		
 	    ArrayList<String> text = new ArrayList<String>();
 	   
 	    FileReader fr = null;

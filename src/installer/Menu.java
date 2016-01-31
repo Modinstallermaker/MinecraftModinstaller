@@ -226,17 +226,22 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	 */
 	public void updateLists()
 	{
+		nextButton.setEnabled(false);
 		leftListModel.removeAllElements();
 		rightListModel.removeAllElements();
 		searchInput.reset();		
 		leftList.setEnabled(true);
 		leftList.requestFocusInWindow();
-		for(Modinfo prop: proposals){
+		for(Modinfo prop: proposals)
+		{
 			if(prop.getSelect())
+			{
 				rightListModel.addElement(prop.getName());
+				nextButton.setEnabled(true);
+			}
 			else
 				leftListModel.addElement(prop.getName());
-		}
+		}			
 		
 		//Adds all imported mods
 		new Thread()
@@ -270,6 +275,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 					{				
 						String name =modi.getName().substring(0, modi.getName().lastIndexOf("."));
 						rightListModel.addElement("+ "+name);
+						nextButton.setEnabled(true);
 					}
 				}
 			}
@@ -464,7 +470,6 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 					prop.setSelect(true);		
 		updateLists();
 		
-		nextButton.setEnabled(true);	
 		if(searchfocus)
 			searchInput.requestFocus();
 		searchfocus=false;
@@ -497,12 +502,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 							prop.setSelect(false);	
 				}	
 			}
-			updateLists();
-			nextButton.setEnabled(true);
-			if (rightListModel.getSize() == 0) 
-			{
-				nextButton.setEnabled(false); // Wenn keine Mods in Liste2 vorhanden Installieren deaktivieren
-			}	
+			updateLists();			
 		}
 	}
 

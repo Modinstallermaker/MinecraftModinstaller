@@ -282,7 +282,7 @@ public class Start extends JFrame
 		try 
 		{			
 			File updatetxt = new File(stamm + "Modinstaller/update.txt");
-			String quellenurl = "http://www.minecraft-installer.de//request.php?target=update&lang="+Read.getTextwith("installer", "lang");
+			String quellenurl = "http://www.minecraft-installer.de//request.php?target=update&lang="+lang;
 			new Downloader(quellenurl , updatetxt).run(); // update_de.txt herunterladen
 			if(updatetxt.exists())
 			{
@@ -482,7 +482,7 @@ public class Start extends JFrame
 	{	
 		prog.setText(Read.getTextwith("Start", "prog14"));
 		
-    	String lizenz = optionReader("lizenz");
+    	String lizenz = optionReader("license");
 		
 		if(lizenz.equals("n/a")||lizenz.equals("false"))
 			new License(modtexts, moddownloads, offlineList);

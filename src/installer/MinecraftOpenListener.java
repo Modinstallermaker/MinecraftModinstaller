@@ -91,15 +91,7 @@ public class MinecraftOpenListener implements ActionListener
 										{
 											closedDialoge = false;
 											//TODO: Close Minecraft
-											/*
-											Runtime rt = Runtime.getRuntime();
-											try {
-												rt.exec("taskkill /F /IM javaw.exe");
-											} catch (IOException e) {
-												// TODO Auto-generated catch block
-												e.printStackTrace();
-											}
-											*/											
+																					
 											JOptionPane.showMessageDialog(null, Read.getTextwith("MOL", "exitmc"));
 											closedDialoge = true;
 										}

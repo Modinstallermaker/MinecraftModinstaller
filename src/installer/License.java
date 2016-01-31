@@ -29,7 +29,7 @@ import javax.swing.text.html.HTMLEditorKit;
  * 
  * Beschreibung
  * 
- * @version 2.1 vom 14.04.2013
+ * @version 5.0
  * @author Dirk Lippke
  */
 
@@ -74,7 +74,7 @@ public class License extends JFrame
 		tp.setEditable(false);
 		tp.setContentType("text/html");
 		tp.setEditorKit(new HTMLEditorKit()); 
-		tp.setText("<html><body>" +Lizenztext	+ "</body></html>");
+		tp.setText("<html><body>" +Lizenztext + "</body></html>");
 	
 		JScrollPane ScrollPane2 = new JScrollPane(tp);
 		ScrollPane2.setBounds(25, 50, 500, 200);
@@ -120,16 +120,13 @@ public class License extends JFrame
 		cp.add(head);
 
 		setVisible(true);
-	}
-
-	// Anfang Methoden
-	
+	}	
 
 	public void wei_ActionPerformed(ActionEvent evt) 
 	{
 		Date zeitstempel = new Date();
 		
-		optionWriter("License", String.valueOf(zeitstempel));				
+		optionWriter("license", String.valueOf(zeitstempel));				
 		
 		dispose();
 		if(Start.online)

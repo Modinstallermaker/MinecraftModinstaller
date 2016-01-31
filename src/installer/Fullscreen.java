@@ -195,7 +195,7 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 				} 
 				catch (Exception e) 
 				{
-					hdPicture.setText(Read.getTextwith("seite2", "nopic"));
+					hdPicture.setText(Read.getTextwith("Menu", "nopic"));
 					hdPicture.setIcon(null);
 				}					 
 				geladen = true;

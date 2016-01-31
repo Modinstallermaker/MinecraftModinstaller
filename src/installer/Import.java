@@ -141,7 +141,7 @@ public class Import
 			}
 			setListEntry(name);	
 			modName = name;
-			description = Read.getTextwith("seite2", "importm"); //Modloader Mod Info Text
+			description = Read.getTextwith("Menu", "importm"); //Modloader Mod Info Text
 			website = Read.getTextwith("installer", "website")+"faq.php?id=importm";
 		}
 		

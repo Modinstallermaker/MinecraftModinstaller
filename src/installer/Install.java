@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -56,6 +57,7 @@ public class Install extends InstallGUI
 	private String sport = stamm + "Modinstaller/";	
 	private ArrayList<Modinfo> mods;
 	private boolean isModloader; 
+	private static FileInputStream fis;
 
     private static final String PACK_NAME = ".pack.xz";
 	
@@ -353,6 +355,7 @@ public class Install extends InstallGUI
 	private String getNativeString(JsonObject jo)
 	{
 		String add=null;
+		boolean take = false;
 		OperatingSystem os = OperatingSystem.getCurrentPlatform();		
 		try
 		{		
@@ -387,6 +390,7 @@ public class Install extends InstallGUI
 			}
 			if (jo.has("rules")) 
 			{
+				
 				JsonArray ja = jo.get("rules").getAsJsonArray();
 				for(JsonElement el : ja)
 				{
@@ -397,22 +401,25 @@ public class Install extends InstallGUI
 						if(action.equals("allow"))
 						{
 							if(obj.has("os"))
-							{
+							{								
 								JsonObject oso = obj.get("os").getAsJsonObject();
 								if(oso.has("name"))
 								{
+									take = false;
 									String name = oso.get("name").getAsString();
 									if (os == OperatingSystem.WINDOWS )
-										if(!name.equals("windows"))
-											add = "false";
+										if(name.equals("windows"))
+											take = true;
 									else if (os == OperatingSystem.OSX)
-										if(!name.equals("osx"))
-										add = "false";
+										if(name.equals("osx"))
+											take = true;
 									else if (os == OperatingSystem.LINUX)
-										if(!name.equals("linux"))
-											add = "false";
+										if(name.equals("linux"))
+											take = true;
 								}
 							}
+							else
+								take = true;
 						}
 						else if(action.equals("disallow"))
 						{
@@ -424,25 +431,30 @@ public class Install extends InstallGUI
 									String name = oso.get("name").getAsString();
 									if (os == OperatingSystem.WINDOWS)
 										if(name.equals("windows"))
-											add = "false";
+											take = false;
 									else if (os == OperatingSystem.OSX)
 										if(name.equals("osx"))
-										add = "false";
+											take = false;
 									else if (os == OperatingSystem.LINUX)
 										if(name.equals("linux"))
-											add = "false";
+											take = false;
 								}
 							}
 						}
 					}
 				}
 			}
+			else
+				take = true;
+			if(!take)
+				add = "false";
 		}
 		catch (Exception e)
 		{
 			detBarInf.setText("Errorcode: S3xna: "+ String.valueOf(e));
 			errors += getError(e) + " Errorcode: S3xna\n\n";
 		}
+		System.out.println(jo.get("name").getAsString()+add);
 		return add;
 	}		
 	
@@ -589,7 +601,7 @@ public class Install extends InstallGUI
 							 t2.interrupt();	
 							 
 							 //Extract packed library
-							 detBarInf.setText(Read.getTextwith("Install", "lib2")+artifact.getDescriptor());
+							 detBarInf.setText(Read.getTextwith("Install", "lib3")+artifact.getDescriptor());
 							 stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/extract.png")));
 							 f = new RandomAccessFile(packFile, "r");
 							 byte[] b = new byte[(int)f.length()];
@@ -617,6 +629,39 @@ public class Install extends InstallGUI
 								 errors += con +": "+"\n" +getError(e) + " Errorcode: S3xli2\n\n";
 							 }							 
 						 }						
+					}
+					//Generate sha-1 checksums
+					if(libPath.exists())
+					{
+						MessageDigest md;
+						try 
+						{
+							md = MessageDigest.getInstance("SHA1");
+						
+					        fis = new FileInputStream(libPath);
+					        byte[] dataBytes = new byte[1024];
+					        
+					        int nread = 0; 
+					        
+					        while ((nread = fis.read(dataBytes)) != -1) 
+					        {
+					        	md.update(dataBytes, 0, nread);
+					        };
+					
+					        byte[] mdbytes = md.digest();
+					       
+					        StringBuffer sb = new StringBuffer("");
+					        for (int i = 0; i < mdbytes.length; i++) 
+					        {
+					        	sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+					        }
+					        File shafile = new File(libPath.getParentFile(), libPath.getName()+".sha");
+					        Textwriters(shafile, sb.toString(), false);
+						} 
+						catch (Exception e) 
+						{			
+							e.printStackTrace();
+						}
 					}
 					mainState(mainVal += addi);
 				}
