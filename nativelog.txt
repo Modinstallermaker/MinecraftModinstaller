@@ -8,14 +8,14 @@ App Directory dir: C:\Program Files (x86)\Minecraft
 Start dir: C:/Program Files (x86)/Minecraft
 Launcher dir: C:/Program Files (x86)/Minecraft/game
 TmpDir dir: C:/Program Files (x86)/Minecraft/game
-Java Launcher hash: f9d59d273807f7b98f8e32d327ac7964481246d4
+Java Launcher hash: 5e357bf1f1318e35c779a85c7213c3b4d39a5f59
 Java Version: 1.8.0_25
 x64: 1
 LauncherConfiguration from: https://launchermeta.mojang.com/mc/launcher.json
 Downloaded config
 Native launcher is current
 Native launcher is current
-Java launcher is current: f9d59d273807f7b98f8e32d327ac7964481246d4(f9d59d273807f7b98f8e32d327ac7964481246d4)
+Java launcher is current: 5e357bf1f1318e35c779a85c7213c3b4d39a5f59(5e357bf1f1318e35c779a85c7213c3b4d39a5f59)
 Check to see if we can run the launcher
 Native launcher is current
 runJavaLauncher

@@ -227,11 +227,15 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	public void updateLists()
 	{
 		nextButton.setEnabled(false);
-		leftListModel.removeAllElements();
+		if(leftListModel!=null)
+			leftListModel.removeAllElements();
 		rightListModel.removeAllElements();
-		searchInput.reset();		
-		leftList.setEnabled(true);
-		leftList.requestFocusInWindow();
+		searchInput.reset();	
+		if(leftList!=null)
+		{
+			leftList.setEnabled(true);
+			leftList.requestFocusInWindow();
+		}
 		for(Modinfo prop: proposals)
 		{
 			if(prop.getSelect())

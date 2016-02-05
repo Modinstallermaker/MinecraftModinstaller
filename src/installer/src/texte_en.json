@@ -3,7 +3,7 @@
 		"name":"Minecraft Modinstaller",
 		"desc":"... makes modding easier!",
 		"lang":"de",
-		"version":"5.0.1",
+		"version":"5.0.3",
 		"zusatz": "",
 		"webplace":"http://files.minecraft-mods.de/installer/",
 		"website": "http://www.minecraft-installer.com/"
@@ -23,9 +23,7 @@
 		"inter2":"Work offline",
 		"inter3":"Exit program",
 		"inter4":"<html><body>Unfortunately, the program was unable to connect to the Internet to download the mod list.<br>Either your PC is not connected to the Internet or<br>a firewall (including the operating system) is blocking the Internet access for Java.<br><br>Java reported...<br><br>",
-		"inter4h":"Internet connection could not be established...",
-		"modver":"Which Minecraft version would you like to modify?",
-		"modverh":"Version?"
+		"inter4h":"Internet connection could not be established..."
 	},
 	"Menu": {
 		"wait":"Please wait...",
@@ -132,7 +130,7 @@
 		"email2":"Enter your email address:",
 		"email2h":"Enter email"
 	},
-	"startLauncher": {
+	"MCLauncher": {
 		"prog1":"Would you like to choose a Minecraft Launcher in order to start the game?",
 		"prog1h":"Choose Launcher",
 		"prog2":"Please choose the Minecraft Launcher"  

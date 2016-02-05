@@ -3,7 +3,7 @@
 		"name":"Minecraft Modinstaller",
 		"desc":"... makes modding easier!",
 		"lang":"de",
-		"version":"5.0.1",
+		"version":"5.0.3",
 		"zusatz": "",
 		"webplace":"http://files.minecraft-mods.de/installer/",
 		"website": "http://www.minecraft-installer.de/"
@@ -23,9 +23,7 @@
 		"inter2":"Offline arbeiten",
 		"inter3":"Programm beenden",
 		"inter4":"<html><body>Leider konnten wir keine Verbindung mit dem Internet herstellen, um die Modliste herunterzuladen.<br><br>Entweder ist Dein PC nicht mit dem Internet verbunden oder<br>eine Firewall (auch die des Betriebssystems) blockiert den Internetzugriff für Java.<br><br>Java meldete:<br><br>",
-		"inter4h":"Internetverbindung konnte nicht hergestellt werden...",
-		"modver":"Welche Minecraft Version möchtest Du modifizieren?",
-		"modverh":"Version?"
+		"inter4h":"Internetverbindung konnte nicht hergestellt werden..."
 	},
 	"Menu": {
 		"wait":"Bitte warten...",

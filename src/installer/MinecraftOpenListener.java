@@ -39,13 +39,14 @@ public class MinecraftOpenListener implements ActionListener
 	
 	public MinecraftOpenListener()
 	{
+		optionWriter("MOL", "running");
 		new Thread()
 		{
 			public void run()
 			{		
 				boolean change = false;
 				long logfileDateOLD=0;
-				while(run) //Minecraft Watchdog
+				while(run&&optionReader("MOL").equals("running")) //Minecraft Watchdog
 				{					
 					File logfile = new File(Start.mineord+"logs/latest.log");
 					Calendar cal = Calendar.getInstance();
@@ -87,11 +88,11 @@ public class MinecraftOpenListener implements ActionListener
 								{
 									public void run()
 									{
-										if(closedDialoge)
+										if(closedDialoge && optionReader("MOL").equals("running"))
 										{
+											optionWriter("MOL", "informed");
 											closedDialoge = false;
-											//TODO: Close Minecraft
-																					
+											//TODO: Close Minecraft																					
 											JOptionPane.showMessageDialog(null, Read.getTextwith("MOL", "exitmc"));
 											closedDialoge = true;
 										}
@@ -109,7 +110,7 @@ public class MinecraftOpenListener implements ActionListener
 					}
 					try 
 					{
-						Thread.sleep(1000);
+						Thread.sleep(1500);
 					} 
 					catch (InterruptedException e) 
 					{						
@@ -122,6 +123,7 @@ public class MinecraftOpenListener implements ActionListener
 	
 	private void buildAskFrame()
 	{
+		optionWriter("MOL", "question");
 		run =false;
 		if(!new File(Start.stamm + "Modinstaller/Importo/").exists()&&
 				!optionReader("lastmods").equals(optionReader("slastmods"))&&

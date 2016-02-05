@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import static installer.OP.getError;
 
 /**
  * 
@@ -33,69 +32,93 @@ public class Downloader implements Runnable
 	
 	public void run()
 	{
-		try
-		{
-		    URL url = new URL(url_str.replace(" ", "%20"));	
-		    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		    conn.setUseCaches(false);
-		    conn.setDefaultUseCaches(false);
-		    conn.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
-		    conn.setRequestProperty("Expires", "0");
-		    conn.setRequestProperty("Pragma", "no-cache");
-		    conn.setConnectTimeout(30000);
-		    conn.setReadTimeout(10000);
-		    expectedDownloadSize = conn.getContentLength();
-		    long start = System.nanoTime();
-		    conn.connect();		   
-		    elapsed = System.nanoTime() - start;
-		    
-			int responseCode = conn.getResponseCode() / 100;
-			if (responseCode == 2) 
-			{	
-				InputStream is = conn.getInputStream();
+		boolean work = false;
+		
+		do
+		{	
+			try
+			{			
+			    URL url = new URL(url_str.replace(" ", "%20"));	
+			    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			    conn.setUseCaches(false);
+			    conn.setDefaultUseCaches(false);
+			    conn.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
+			    conn.setRequestProperty("Expires", "0");
+			    conn.setRequestProperty("Pragma", "no-cache");
+			    conn.setConnectTimeout(30000);
+			    conn.setReadTimeout(10000);
+			    expectedDownloadSize = conn.getContentLength();
+			    long start = System.nanoTime();
+			    conn.connect();		   
+			    elapsed = System.nanoTime() - start;
+			    
+				int responseCode = conn.getResponseCode() / 100;
+				if (responseCode == 2) 
+				{	
+					InputStream is = conn.getInputStream();
+					
+					targetFile.getParentFile().mkdirs();
+					if(!targetFile.exists())
+						targetFile.createNewFile();
+					FileOutputStream os = new FileOutputStream(targetFile);
+					
+					long startDownload = System.nanoTime();
+					long bytesRead = 0L;
+			        byte[] buffer = new byte[65536];		       
+					try 
+					{
+			            int read = is.read(buffer);
+			            while (read >= 1) 
+			            {  
+			            	bytesRead += read;
+				            os.write(buffer, 0, read);
+				            read = is.read(buffer);
+			            }
+			        } 
+					finally 
+					{
+			            if(is!=null) is.close();
+			            if(os!=null) os.close();
+			        }	
+					long elapsedDownload = System.nanoTime() - startDownload;
 				
-				targetFile.getParentFile().mkdirs();
-				if(!targetFile.exists())
-					targetFile.createNewFile();
-				FileOutputStream os = new FileOutputStream(targetFile);
-				
-				long startDownload = System.nanoTime();
-				long bytesRead = 0L;
-		        byte[] buffer = new byte[65536];		       
-				try 
+					elapsedSeconds = (float)(1L + elapsedDownload) / 1.0E+009F;
+			        kbRead = (float)bytesRead / 1024.0F;
+				}
+				else if (responseCode == 4)
+		        {
+					throw new IllegalStateException("Remote file not found: " + url_str);
+		        }
+				else 
 				{
-		            int read = is.read(buffer);
-		            while (read >= 1) 
-		            {  
-		            	bytesRead += read;
-			            os.write(buffer, 0, read);
-			            read = is.read(buffer);
-		            }
-		        } 
-				finally 
+					if(!work)
+					{
+						System.out.println("Try downloading "+url_str+ " again.");
+						work = true;
+					}
+					else
+						throw new IllegalStateException("HTTP Response Code " + conn.getResponseCode());
+				}		
+				conn.disconnect();
+				if(expectedDownloadSize == targetFile.length() || expectedDownloadSize==-1)
+					work = false;
+				else
 				{
-		            if(is!=null) is.close();
-		            if(os!=null) os.close();
-		        }	
-				long elapsedDownload = System.nanoTime() - startDownload;
-			
-				elapsedSeconds = (float)(1L + elapsedDownload) / 1.0E+009F;
-		        kbRead = (float)bytesRead / 1024.0F;
+					System.out.println("Size different "+url_str+ ": " +expectedDownloadSize +" vs "+targetFile.length());
+				}
 			}
-			else if (responseCode == 4)
-	        {
-				throw new IllegalStateException("Remote file not found: " + url_str);
-	        }
-			else 
+			catch (IOException ioe)
 			{
-				throw new IllegalStateException("HTTP Response Code " + conn.getResponseCode());
-			}		
-			conn.disconnect();
+				if(!work)
+				{
+					System.out.println("Try downloading "+url_str+ " again.");
+					work = true;
+				}
+				else
+					throw new IllegalStateException(ioe);
+			}
 		}
-		catch (Exception e)
-		{
-			throw new IllegalStateException("Download Exception by URL:\n" + url_str + "\n\n"+ getError(e));
-		}
+		while (work);
 	}
 	
 	public int getExpectedDownloadSize()

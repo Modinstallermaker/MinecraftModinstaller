@@ -46,11 +46,11 @@ public class Start extends JFrame
 	private JPanel cp;		
 	private String versionExtension, modinstallerVersion;
 	private ArrayList<String> offlineList = new ArrayList<String>();
-	private int versuch = 0;	
+	private int tryno = 0;	
 	private int heightFrame =300, widthFrame=500;
 	private Modinfo[] modtexts = null, moddownloads = null;
 	
-	public static String mcVersion="", webplace, mineord, stamm, lang ="n/a";
+	public static String mcVersion="", webplace, mineord, stamm, lang ="en";
 	public static ArrayList<String> sentImportedModInfo = new ArrayList<String>();
 	public static String[] mcVersionen;	
 	public static MCVersion[] allMCVersions, forgeMCVersions;	
@@ -173,8 +173,7 @@ public class Start extends JFrame
 								
 				searchMCVersions();
 		
-				if(!checkInstallerUpdate())
-					offline();
+				online = checkInstallerUpdate();
 				
 				mol = new MinecraftOpenListener(); // Check if Minecraft is open 
 				if(online)
@@ -185,28 +184,8 @@ public class Start extends JFrame
 				askMCVersion();
 			}
 		}.start();
-	}
+	}	
 	
-	/**
-	 * If the client pc is offline, configure Modinstaller and ask for Minecraft Version	
-	 */
-	//TODO: This method has to be integrated in the MCVersion JFrame 
-	private void offline()
-	{
-		online=false;
-		versionExtension = "Offline";								
-		mcVersionen = offlineList.toArray( new String[]{} );
-		int selected2 = JOptionPane.showOptionDialog(null, Read.getTextwith("Start", "modver") + " (Offline)", Read.getTextwith("Start", "modverh"),
-				JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null, mcVersionen, mcVersionen[mcVersionen.length-1]);
-		if(selected2 !=-1)
-		{
-			mcVersion = mcVersionen[selected2];
-		}
-		else
-		{
-			mcVersion = mcVersionen[mcVersionen.length-1];
-		}
-	}
 	
 	/**
 	 * Creates shortcuts for Minecraft Modinstaller on desktop and in start menu with a VB-Script
@@ -276,91 +255,91 @@ public class Start extends JFrame
 	 * If not a dialog is show that informs the user about the new Installer features.
 	 * @return true: if the Modinstaller can establish an Internet connection
 	 */
-	private boolean checkInstallerUpdate()  // Update testen
+	private boolean checkInstallerUpdate()
 	{		
 		prog.setText(Read.getTextwith("Start", "prog4"));
 		try 
 		{			
 			File updatetxt = new File(stamm + "Modinstaller/update.txt");
-			String quellenurl = "http://www.minecraft-installer.de//request.php?target=update&lang="+lang;
-			new Downloader(quellenurl , updatetxt).run(); // update_de.txt herunterladen
+			String quellenurl = "http://www.minecraft-installer.de//request.php?target=update&lang=" + lang;
+			new Downloader(quellenurl , updatetxt).run();
 			if(updatetxt.exists())
 			{
 				String[] cont = Textreader(updatetxt);
-				
-				boolean newVersAvail = false;				
-				String newVers ="";
-							
-				try
-				{						
-					String currVers = modinstallerVersion;
-					newVers = cont[0];
-					String s1 = normalisedVersion(currVers);
-			        String s2 = normalisedVersion(newVers);
-			        int cmp = s1.compareTo(s2); //Vergleich beider Modinstaller Versionen
-			        if(cmp<0)
-			        	newVersAvail = true;
-				}
-				catch (Exception e)
+				if(cont.length<0)
 				{
-					String body = "Text=" + String.valueOf(e) + "; Errorcode: S1x04a&MCVers=" + mcVersion + "&InstallerVers=" + 
-							Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + 
-							System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString()+ "&EMail=unkn";
-					new Postrequest("http://www.minecraft-installer.de/api/errorreceiver.php", body);
-				}					
+					new Downloader(quellenurl , updatetxt).run();
+					cont = Textreader(updatetxt);
+				}
+				if(cont.length>0)
+				{
+					boolean newVersAvail = false;				
+					String newVers ="";
 								
-				if (newVersAvail) // Wenn Programmnummer nicht identisch ist
-				{
-					prog.setText(Read.getTextwith("Start", "prog5"));
-					
-					String desc ="";
-					for (int i=1; i<cont.length; i++)
-					{
-						desc+=cont[i];
+					try
+					{						
+						String currVers = modinstallerVersion;
+						newVers = cont[0];
+						String s1 = normalisedVersion(currVers);
+				        String s2 = normalisedVersion(newVers);
+				        int cmp = s1.compareTo(s2);
+				        if(cmp<0)
+				        	newVersAvail = true;
 					}
-					int eingabe = JOptionPane.showConfirmDialog(null,
-							"<html><body><span style=\"font-weight:bold\">"+Read.getTextwith("Start", "update1")+
-							newVers + Read.getTextwith("Start", "update2")+ desc+ Read.getTextwith("Start", "update3"), 
-							Read.getTextwith("Start", "update1"), JOptionPane.YES_NO_OPTION);
-					if (eingabe == 0) 
+					catch (Exception e)
 					{
-						OperatingSystem.openLink(Read.getTextwith("installer", "website"));
+						String body = "Text=" + getError(e) + "; Errorcode: S1x04a&MCVers=" + mcVersion + "&InstallerVers=" + 
+								Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + 
+								System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString()+ "&EMail=unkn";
+						new Postrequest("http://www.minecraft-installer.de/api/errorreceiver.php", body);
+					}					
+									
+					if (newVersAvail) // Wenn Programmnummer nicht identisch ist
+					{
+						prog.setText(Read.getTextwith("Start", "prog5"));
+						
+						String desc ="";
+						for (int i=1; i<cont.length; i++)
+						{
+							desc+=cont[i];
+						}
+						int eingabe = JOptionPane.showConfirmDialog(null,
+								"<html><body><span style=\"font-weight:bold\">"+Read.getTextwith("Start", "update1")+
+								newVers + Read.getTextwith("Start", "update2")+ desc+ Read.getTextwith("Start", "update3"), 
+								Read.getTextwith("Start", "update1"), JOptionPane.YES_NO_OPTION);
+						if (eingabe == 0) 
+						{
+							OperatingSystem.openLink(Read.getTextwith("installer", "website"));
+						}
+					}
+					else
+					{
+						prog.setText(Read.getTextwith("Start", "prog6"));
+				    	
 					}
 				}
-				else
-				{
-					prog.setText(Read.getTextwith("Start", "prog6"));
-			    	
-				}
+				else 
+					new IllegalStateException("Update file cannot be downloaded correctly");
 			}			
 			online=true;	
 			del(updatetxt);
 		}		 
 		catch (Exception ex) 
 		{
-			if(versuch<2)
+			if(tryno<2)
 			{
-				versuch++;				
+				tryno++;				
 				return checkInstallerUpdate();				
 			}
-			try 
+			try  //Send error message
 			{
-				String body = "Text=" + String.valueOf(ex) + "; Errorcode: S1x04&MCVers=" + mcVersion + "&InstallerVers=" +
+				String body = "Text=" + getError(ex) + "; Errorcode: S1x04&MCVers=" + mcVersion + "&InstallerVers=" +
 						Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + 
 						System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString()+ "&EMail=unkn";
 				new Postrequest("http://www.minecraft-installer.de/error.php", body);
 			} 
 			catch (Exception e) {}
-
-			Object[] options2 = {Read.getTextwith("Start", "inter1"), Read.getTextwith("Start", "inter2"), Read.getTextwith("Start", "inter3")};
-			int selected2 = JOptionPane.showOptionDialog(null, Read.getTextwith("Start", "inter4")+ex.toString(), 
-					Read.getTextwith("Start", "inter4h"), JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null, options2, options2[0]);
-			switch(selected2)
-			{
-				case 0: OperatingSystem.openLink(Read.getTextwith("Start", "intercon"));//TODO: check intercon
-						break;
-				case 2: System.exit(0);
-			}
+			
 			online = false;
 		}
 		return online;		

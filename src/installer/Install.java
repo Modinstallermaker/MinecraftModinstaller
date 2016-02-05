@@ -389,8 +389,7 @@ public class Install extends InstallGUI
 					add = add.replace("${arch}", arch);
 			}
 			if (jo.has("rules")) 
-			{
-				
+			{				
 				JsonArray ja = jo.get("rules").getAsJsonArray();
 				for(JsonElement el : ja)
 				{
@@ -407,16 +406,24 @@ public class Install extends InstallGUI
 								{
 									take = false;
 									String name = oso.get("name").getAsString();
-									if (os == OperatingSystem.WINDOWS )
+									if (os == OperatingSystem.WINDOWS) 
+									{
 										if(name.equals("windows"))
 											take = true;
+									}
 									else if (os == OperatingSystem.OSX)
+									{
 										if(name.equals("osx"))
 											take = true;
+									}
 									else if (os == OperatingSystem.LINUX)
+									{
 										if(name.equals("linux"))
 											take = true;
+									}
 								}
+								else
+									take = true;
 							}
 							else
 								take = true;
@@ -428,16 +435,24 @@ public class Install extends InstallGUI
 								JsonObject oso = obj.get("os").getAsJsonObject();
 								if(oso.has("name"))
 								{
-									String name = oso.get("name").getAsString();
+									String name2 = oso.get("name").getAsString();
 									if (os == OperatingSystem.WINDOWS)
-										if(name.equals("windows"))
+									{
+										if(name2.equals("windows"))
 											take = false;
+									}
 									else if (os == OperatingSystem.OSX)
-										if(name.equals("osx"))
+									{
+										if(name2.equals("osx"))
 											take = false;
-									else if (os == OperatingSystem.LINUX)
-										if(name.equals("linux"))
+									}
+									else if (os == OperatingSystem.LINUX) 
+									{
+										if(name2.equals("linux"))
+										{
 											take = false;
+										}
+									}
 								}
 							}
 						}
@@ -446,6 +461,7 @@ public class Install extends InstallGUI
 			}
 			else
 				take = true;
+			
 			if(!take)
 				add = "false";
 		}
@@ -454,7 +470,7 @@ public class Install extends InstallGUI
 			detBarInf.setText("Errorcode: S3xna: "+ String.valueOf(e));
 			errors += getError(e) + " Errorcode: S3xna\n\n";
 		}
-		System.out.println(jo.get("name").getAsString()+add);
+		System.out.println(jo.get("name").getAsString()+": "+add);
 		return add;
 	}		
 	
@@ -656,6 +672,7 @@ public class Install extends InstallGUI
 					        	sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
 					        }
 					        File shafile = new File(libPath.getParentFile(), libPath.getName()+".sha");
+					        System.out.println(sb.toString());
 					        Textwriters(shafile, sb.toString(), false);
 						} 
 						catch (Exception e) 
@@ -779,7 +796,7 @@ public class Install extends InstallGUI
 	 */
 	private void importMods()
 	{
-		File impf = new File(stamm + "Modinstaller/Import/");
+		File impf = new File(stamm, "Modinstaller/Import");
 		if (impf.exists()) 
 		{
 			stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/import.png")));
@@ -788,7 +805,7 @@ public class Install extends InstallGUI
 				try 
 				{
 					for (File modim : impf.listFiles())
-						copy(modim, new File(sport + "Result/"));
+						copy(modim, new File(sport, "Result"));
 				} 
 				catch (Exception e) 
 				{
@@ -800,7 +817,7 @@ public class Install extends InstallGUI
 			{
 				try 
 				{
-					copy(impf, new File(mineord + "mods/"));
+					copy(impf, new File(mineord, "mods"));
 				} 
 				catch (Exception e) 
 				{

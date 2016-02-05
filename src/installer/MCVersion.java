@@ -16,6 +16,9 @@ public class MCVersion
 	}	
 	public String getVersion() {
 		return Version;
+	}
+	public void setVersion(String Version) {
+		this.Version = Version;
 	}	
 	public int getStripMeta(){
 		return stripMeta;

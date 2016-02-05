@@ -9,6 +9,7 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -26,8 +27,8 @@ public class MCVersions extends javax.swing.JFrame implements MouseWheelListener
 	private ArrayList<String> offlineList;
 	private Cursor curs1 = new Cursor(Cursor.HAND_CURSOR);
 	private Menu menu =null;
-		
-    public MCVersions(Modinfo[] modlist, Modinfo[] downloadlist, ArrayList<String> offlineList) 
+	
+	public MCVersions(Modinfo[] modlist, Modinfo[] downloadlist, ArrayList<String> offlineList) 
     {
     	this.modlist = modlist;
     	this.downloadlist=downloadlist;
@@ -60,16 +61,46 @@ public class MCVersions extends javax.swing.JFrame implements MouseWheelListener
 		else
 			text_rightb.setEnabled(true);
 		
+		if(MCVersionsx == null || MCVersionsx.length<1 || !Start.online) //Offline
+		{
+			if(offlineList.size()==0)
+			{
+				setAlwaysOnTop(false);
+				JOptionPane.showMessageDialog(null, "No Minecraft Version is found. Please install at least one Minecraft Version manually.");
+				System.exit(0);
+			}
+			else
+			{
+				MCVersionsx = new MCVersion[offlineList.size()];
+			}
+		}
+		
+		if(MCVersionsx.length==1)
+		{
+			verg = 1;
+			text[0].setEnabled(false);
+			text[2].setEnabled(false);
+		}
+		else if(MCVersionsx.length==2)
+		{
+			text[2].setEnabled(false);
+		}
+		
 		for (int i=MCVersionsx.length-1; i>=0; i--)
-		{			
+		{		
+			if(MCVersionsx[i]==null)
+			{
+				MCVersionsx[i] = new MCVersion();
+				MCVersionsx[i].setVersion(offlineList.get(i));
+				forge_only.setVisible(false);
+			}
 			if(posp>0)
 			{
 				posp--;
 				continue;
 			}
 			if(verg<0)
-				break;
-			
+				break;			
 					
 			String mcVersion = MCVersionsx[i].getVersion();
 			String installt = Read.getTextwith("MCVersions", "t2");
@@ -89,18 +120,24 @@ public class MCVersions extends javax.swing.JFrame implements MouseWheelListener
 			if(sum>1)
 				sp+=Read.getTextwith("MCVersions", "t4b");
 			
+			String quan = String.valueOf(sum);		
+			String ut = installt+" "+Read.getTextwith("MCVersions", "t1");
+			if(!Start.online)
+			{
+				quan = "Offline";
+				ut = "Import mods";
+			}
+			
 			String stext = "<html><center><b><span style='font-size:16px'>"+mcVersion+
-					"</span></b><br> <br> <b><span style='font-size:12px'>"+String.valueOf(sum)+
-					"</b></b><br>"+sp+"<br><br><i>"+
-					installt+" "+Read.getTextwith("MCVersions", "t1")+"</i></center></html>";
+					"</span></b><br> <br> <b><span style='font-size:12px'>"+quan+
+					"</b></b><br>"+sp+"<br><br><i>"+ut+"</i></center></html>";
 			
 			if(verg==1) //Mitte
 			{
 				stext = "<html><center><b><span style='font-size:22px'>"+mcVersion+
-						"</span></b><br> <br> <b><span style='font-size:18px'>"+String.valueOf(sum)+
+						"</span></b><br> <br> <b><span style='font-size:18px'>"+quan+
 						"</b></b><br>"+sp+"<br> <br><i><span style='font-size:10px'>"+
-						installt+" "+Read.getTextwith("MCVersions", "t1")+"</span></i></center></html>";
-				
+						ut+"</span></i></center></html>";				
 			}
 			if(verg==0 && i==0)
 				inside=true;
@@ -108,7 +145,7 @@ public class MCVersions extends javax.swing.JFrame implements MouseWheelListener
 			text[verg].setText(stext);
 			verg--;
 		}
-		if(inside)
+		if(inside || MCVersionsx.length<4)
 			text_leftb.setEnabled(false);
 		else
 			text_leftb.setEnabled(true);
@@ -375,19 +412,28 @@ public class MCVersions extends javax.swing.JFrame implements MouseWheelListener
     	
     }
 
-    private void text_leftMouseClicked(java.awt.event.MouseEvent evt) {                                       
-    	Start.mcVersion = MCVersionStr[0];
-    	openMenu();  
+    private void text_leftMouseClicked(java.awt.event.MouseEvent evt) {    
+    	if(text[0].isEnabled())
+    	{
+	    	Start.mcVersion = MCVersionStr[0];
+	    	openMenu();
+    	}
     }                                      
 
-    private void text_centerMouseClicked(java.awt.event.MouseEvent evt) {                                         
-    	Start.mcVersion = MCVersionStr[1];
-    	openMenu();  
+    private void text_centerMouseClicked(java.awt.event.MouseEvent evt) {   
+    	if(text[1].isEnabled())
+    	{
+	    	Start.mcVersion = MCVersionStr[1];
+	    	openMenu();  
+    	}
     }                                        
 
-    private void text_rightMouseClicked(java.awt.event.MouseEvent evt) {                                        
-    	Start.mcVersion = MCVersionStr[2];    	
-    	openMenu();    	
+    private void text_rightMouseClicked(java.awt.event.MouseEvent evt) {      
+    	if(text[2].isEnabled())
+    	{
+	    	Start.mcVersion = MCVersionStr[2];    	
+	    	openMenu();
+    	}
     }
     
     private void openMenu()
@@ -405,11 +451,13 @@ public class MCVersions extends javax.swing.JFrame implements MouseWheelListener
     }
 
     private void text_leftbMouseClicked(java.awt.event.MouseEvent evt) {
-    	back();
+    	if(text_leftb.isEnabled())
+    		back();
     }
     
-    private void text_rightbMouseClicked(java.awt.event.MouseEvent evt) {                                         
-		next();
+    private void text_rightbMouseClicked(java.awt.event.MouseEvent evt) {   
+    	if(text_rightb.isEnabled())
+    		next();
     }    
     
     private void next()
