@@ -1,9 +1,5 @@
 package installer;
 
-import static installer.OP.copy;
-import static installer.OP.del;
-import static installer.OP.makedirs;
-
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -33,30 +29,29 @@ import com.google.gson.JsonObject;
 public class Import 
 {
 	private String stamm = Start.stamm;
-	private boolean Modloader = Menu.isModloader;
-	private File sport = new File(stamm + "Modinstaller/Import/");
-	private File sportn = new File(stamm + "Modinstaller/Importn/");
-	private File extr = new File(stamm + "Modinstaller/Importc/");
-	private File extr2 = new File(stamm + "Modinstaller/Importc2/");
+	private File sport = new File(stamm, "Modinstaller/Import/");
+	private File sportn = new File(stamm, "Modinstaller/Importn/");
+	private File extr = new File(stamm, "Modinstaller/Importc/");
+	private File extr2 = new File(stamm, "Modinstaller/Importc2/");
 	private String modName = "", modVersion = "",
 			mcVersion = "", description = "", authors = "",
 			website = "", credits = "", requiredMods = "", modLogo = "";
 	private MenuGUI men;
 
-	public Import(File datei, MenuGUI men) 
+	public Import(File impFile, MenuGUI men) 
 	{		
 		this.men = men;
 		setImport();
-		del(extr);
-		del(extr2);
-		makedirs(sportn);
-		makedirs(extr);
+		OP.del(extr);
+		OP.del(extr2);
+		OP.makedirs(sportn);
+		OP.makedirs(extr);
 
-		if (!Modloader) // Forge
+		if (!Menu.isModloader) // Forge
 		{
 			try 
 			{
-				sucher(datei);
+				sucher(impFile);
 			} 
 			catch (Exception e) {}
 
@@ -65,18 +60,18 @@ public class Import
 				description = Read.getTextwith("Import", "nomodinfo"); //keine Modinfos vorhanden
 				website = Read.getTextwith("installer", "website")+"faq.php?id=nomodinfo";
 				
-				if (datei.isFile()) // Datei --> alles vor der Endung --> Titel --> Datei in mods Ordner
+				if (impFile.isFile()) // Datei --> alles vor der Endung --> Titel --> Datei in mods Ordner
 				{
-					modName = datei.getName().substring(0, datei.getName().lastIndexOf("."));
+					modName = impFile.getName().substring(0, impFile.getName().lastIndexOf("."));
 				} 
 				else // Ordner --> Ordnername --> Titel --> Ordner in mods Ordner
 				{
-					modName = datei.getName();
+					modName = impFile.getName();
 				}				
 				File importf = new File(sport + "/" + modName + ".jar");
 				try 
 				{
-					copy(datei, importf);
+					OP.copy(impFile, importf);
 				}
 				catch (Exception e) {}
 			}
@@ -101,18 +96,19 @@ public class Import
 		} 
 		else // Modloader
 		{
-			String name = datei.getName();
-			File modspo = new File(sport.getAbsolutePath() + "/" + name);
+			String name = impFile.getName();
+			this.modName = name.substring(0, name.lastIndexOf('.'));
+			File modspo = new File(sport, modName);
 			modspo.mkdirs();
-			if (datei.isFile()) // Modloader Datei
+			if (impFile.isFile()) // Modloader Datei
 			{
-				String Dateiendung = datei.getName().substring(datei.getName().lastIndexOf("."));
+				String Dateiendung = impFile.getName().substring(impFile.getName().lastIndexOf("."));
 				if (Dateiendung.equals(".jar") || Dateiendung.equals(".zip"))
 				// Modloader ZIP oder JAR Datei --> Extrahieren und Kopieren in Minecraft.jar
 				{
 					try 
 					{
-						new Extract(datei, modspo);
+						new Extract(impFile, modspo);
 					} 
 					catch (Exception e) {
 						e.printStackTrace();
@@ -122,7 +118,7 @@ public class Import
 				{
 					try 
 					{
-						copy(datei, new File(modspo.getAbsolutePath() + "/" + name));
+						OP.copy(impFile, new File(modspo.getAbsolutePath() + "/" + name));
 					} 
 					catch (Exception e) {
 						e.printStackTrace();
@@ -133,16 +129,12 @@ public class Import
 			{
 				try 
 				{
-					copy(datei, modspo);
+					OP.copy(impFile, modspo);
 				} 
 				catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
-			setListEntry(name);	
-			modName = name;
-			description = Read.getTextwith("Menu", "importm"); //Modloader Mod Info Text
-			website = Read.getTextwith("installer", "website")+"faq.php?id=importm";
 		}
 		
 		if (sport.exists()) // rechte Liste im Modinstaller aktualisieren
@@ -153,7 +145,7 @@ public class Import
 				setListEntry(modi.getName().substring(0, modi.getName().lastIndexOf(".")));				
 			}		
 		}
-		make(new File(sport + "/" + modName + ".jar"));		
+		make(new File(sport, modName + ".jar"));		
 	}
 	
 	private void setImport()
@@ -167,7 +159,7 @@ public class Import
 
 	public void sucher(File datei)
 	{
-		del(extr);
+		OP.del(extr);
 		if (datei.isFile()) // Wenn Datei
 		{
 			String Dateiendung = datei.getName().substring(datei.getName().lastIndexOf("."));
@@ -179,10 +171,10 @@ public class Import
 					if (!info.equals("")) 
 					{
 						this.modName = updateCat(info);
-						File importf = new File(sport + "/" + modName + ".jar");
+						File importf = new File(sport, modName + ".jar");
 						try 
 						{
-							copy(datei, importf);
+							OP.copy(datei, importf);
 						} 
 						catch (Exception e) {}				
 					}
@@ -199,7 +191,7 @@ public class Import
 							File[] jars = searchFile(extr, ".jar");
 							for (int j = 0; j < jars.length; j++) 
 							{
-								del(extr2);
+								OP.del(extr2);
 								new Extract(jars[j], extr2);
 								searchInfo(extr2);
 							}
@@ -211,7 +203,7 @@ public class Import
 							File[] zips = searchFile(extr, ".zip");
 							for (int z = 0; z < zips.length; z++) 
 							{
-								del(extr2);
+								OP.del(extr2);
 								new Extract(zips[z], extr2);
 								searchInfo(extr2);
 							}
@@ -243,16 +235,16 @@ public class Import
 				if (file.getName().equals("mcmod.info")) 
 				{
 					String modname = updateCat(getModinfoStringFromFile(file));
-					File path = new File(sportn.getAbsolutePath() + "/" + modname);
+					File path = new File(sportn, modname);
 					path.mkdirs();
 					try 
 					{
-						copy(datei, path);
+						OP.copy(datei, path);
 					}
 					catch (Exception e) {
 						e.printStackTrace();
 					}
-					new Compress(path, new File(sport.getAbsolutePath() + "/" + modname + ".jar"));
+					new Compress(path, new File(sport, modname + ".jar"));
 				}
 			} 
 			else 
@@ -402,15 +394,30 @@ public class Import
 
 	public Import(String modName, MenuGUI men) {		
 		this.modName = modName;
-		this.men = men;
-		setImport();
-		File jarfile = new File(sport.getAbsolutePath() + "/" + modName + ".jar");
-		if (jarfile.exists()) {
-			String cont = getModinfoStringFromJAR(jarfile);
-			if (!cont.equals(""))
-				updateCat(cont);
-			make(jarfile);
-		}		
+	    this.men = men;
+	    setImport();
+	    String cont;
+	    if (!Menu.isModloader)
+	    {
+	      File jarfile = new File(this.sport, modName + ".jar");
+	      if (jarfile.exists())
+	      {
+	        cont = getModinfoStringFromJAR(jarfile);
+	        if (!cont.equals("")) {
+	          updateCat(cont);
+	        }
+	        make(jarfile);
+	      }
+	    }
+	    else
+	    {
+	      for (File f : sport.listFiles())
+	      {
+	        if (f.isDirectory()) {
+	          make(f);
+	        }
+	      }
+	    }	
 	}
 
 	public void make(File jarfile) {
@@ -434,18 +441,24 @@ public class Import
 			} 
 			catch (Exception e){		
 			}
-		}
-		
+		}		
 		if(!picfound)
 		{
 			men.picture.setIcon(new ImageIcon(this.getClass().getResource("src/mods.png")));
 		}
-		
-		men.sizeLabel.setText(new OP().getSizeAsString(jarfile.length()));
-		men.website = website;
-		
-		men.modNameLabel.setText(modName);
-		men.modVersionL.setText("Mod v. "+modVersion);
+		men.website = this.website;
+		men.modNameLabel.setText(this.modName);
+		if (!Menu.isModloader)
+		{
+			men.sizeLabel.setText(new OP().getSizeAsString(jarfile.length()));
+		    men.modVersionL.setText("Mod v. " + this.modVersion);
+		}
+		else
+		{
+			description = Read.getTextwith("Menu", "importm");
+			website = (Read.getTextwith("installer", "website") + "faq.php?id=importm");
+			men.modVersionL.setText("Modloader Mod");
+		}
 		String text = "<html><body>";
 		if (!mcVersion.equals("")&& !mcVersion.contains(Start.mcVersion))
 		{

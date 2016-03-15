@@ -1,6 +1,5 @@
 package installer;
 
-import static installer.OP.copy;
 import static installer.OP.del;
 import static installer.OP.getError;
 import static installer.OP.optionReader;
@@ -47,9 +46,17 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 {
 	private static final long serialVersionUID = 1L;	
 	private String mineord = Start.mineord, stamm = Start.stamm, mcVersion = Start.mcVersion;	
+	private String modx="";
+	private String YT = "";
 	private boolean online = Start.online;
-	private double proz=0.0,  rating = 0.0;	
 	private boolean manual=false;
+	public static boolean isModloader=true;
+	private boolean importmod=false, searchfocus = false, ist=false;
+	private double proz=0.0,  rating = 0.0;		
+	private int modID=-1;
+	private File impo = new File(stamm, "Modinstaller/Importo");
+	private File sport = new File(this.stamm, "Modinstaller");
+	private File modsport = new File(this.mineord, "versions/Modinstaller");
 	private ArrayList<Modinfo> modlArrL = new ArrayList<Modinfo>();
 	private ArrayList<Modinfo> forgeArrL = new ArrayList<Modinfo>();
 	private ArrayList<Modinfo> proposals = new ArrayList<Modinfo>();
@@ -57,14 +64,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	private Modinfo[] modtexts, moddownloads;
 	private JList<String> leftList;	
 	private DefaultListModel<String> leftListModel;	
-	private int modID=-1;
-	private String YT = "";
-	private boolean importmod=false, searchfocus = false, ist=false;
-	private String modx="";
-	private File impo=new File(stamm+"Modinstaller/Importo");
 	private Thread bart = null, picThread =null;
-	
-	public static boolean isModloader=true;
 
 	public Menu(Modinfo[] modtexts, Modinfo[] moddownloads, ArrayList<String> offlineList) 
 	{
@@ -95,7 +95,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 					modlArrL.clear();
 					forgeArrL.clear();	
 					
-					del(new File(stamm + "Modinstaller/Import"));
+					del(new File(sport, "Import"));
 					
 					try
 					{
@@ -252,7 +252,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		{
 			public void run()
 			{		
-				File impf=new File(stamm+"Modinstaller/Import");
+				File impf=new File(sport, "Import");
 				
 				String mode ="Forge";
 				if(isModloader)
@@ -275,12 +275,24 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 				if(impf.exists())
 				{			
 					File[] imports = impf.listFiles();
-					for(File modi : imports)
-					{				
-						String name =modi.getName().substring(0, modi.getName().lastIndexOf("."));
-						rightListModel.addElement("+ "+name);
-						nextButton.setEnabled(true);
-					}
+			          for (File modi : imports) 
+			          {
+			            if (!Menu.isModloader)
+			            {
+			              if (modi.isFile())
+			              {
+			                String name = modi.getName().substring(0, modi.getName().lastIndexOf("."));
+			                Menu.this.rightListModel.addElement("+ " + name);
+			                Menu.this.nextButton.setEnabled(true);
+			              }
+			            }
+			            else if (modi.isDirectory())
+			            {
+			              String name = modi.getName();
+			              Menu.this.rightListModel.addElement("+ " + name);
+			              Menu.this.nextButton.setEnabled(true);
+			            }
+			          }
 				}
 			}
 		}.start();
@@ -586,9 +598,9 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		del(new File(mineord+"versions/Modinstaller"));
 		try 
 		{
-			copy(new File(stamm+"Modinstaller/Backup/Modinstaller.jar"), new File(mineord+"versions/Modinstaller.jar"));
-			copy(new File(stamm+"Modinstaller/Backup/Modinstaller.json"), new File(mineord+"versions/Modinstaller.json"));
-			copy(new File(stamm+"Modinstaller/Backup/mods"), new File(mineord+"mods"));
+			OP.copy(new File(sport, "Backup/Modinstaller.jar"), new File(modsport, "Modinstaller.jar"));
+			OP.copy(new File(sport, "Backup/Modinstaller.json"), new File(modsport, "Modinstaller.json"));
+			OP.copy(new File(sport, "Backup/mods"), new File(mineord, "mods"));
 			JOptionPane.showMessageDialog(null,	Read.getTextwith("Menu", "restore"), Read.getTextwith("Menu", "restoreh"), JOptionPane.INFORMATION_MESSAGE);
 		} 
 		catch (Exception e) 

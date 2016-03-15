@@ -284,14 +284,14 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 
 	public void mouseWheelMoved(MouseWheelEvent arg0) 
 	{
-		  int notches = arg0.getWheelRotation();
-	       if (notches < 0) 
-	       {
-	           next();	                      
-	       }
-	       else 
-	       {
-	          back();
-	       }	
+		int notches = arg0.getWheelRotation();
+		if (notches < 0) 
+		{
+			next();	                      
+		}
+		else 
+		{
+			back();
+		}	
 	}
 }

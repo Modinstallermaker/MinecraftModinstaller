@@ -53,8 +53,8 @@ public class Install extends InstallGUI
 	private String mineord = Start.mineord, stamm = Start.stamm, mcVersion = Start.mcVersion;	
 	private boolean online = Start.online;
 	private double mainVal=0.00;
-	private String modsport = mineord + "versions/Modinstaller/";
-	private String sport = stamm + "Modinstaller/";	
+	private File sport = new File(stamm, "Modinstaller");
+	private File modsport = new File(mineord, "versions/Modinstaller");
 	private ArrayList<Modinfo> mods;
 	private boolean isModloader; 
 	private static FileInputStream fis;
@@ -91,12 +91,12 @@ public class Install extends InstallGUI
 					try
 					{	
 						detBarInf.setText(Read.getTextwith("Install", "def1"));
-						stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/restore2.png")));		
-						del(new File(sport + "Backup"));					
-						copy(new File(modsport), new File(sport + "Backup"));	
-						mainState(mainVal += 2);	//3
-						copy(new File(mineord +"mods"), new File(sport + "Backup/mods"));	
-					}
+						stateIcon.setIcon(new ImageIcon(getClass().getResource("src/restore2.png")));
+						del(new File(sport, "Backup"));
+						copy(modsport, new File(sport, "Backup"));
+						mainState(mainVal += 2.0D);
+						copy(new File(mineord, "mods"), new File(sport, "Backup/mods"));
+				    }
 					catch (Exception e)
 					{
 						mainState(mainVal += 2);	//3
@@ -108,20 +108,20 @@ public class Install extends InstallGUI
 					
 					//Delete old files
 					detBarInf.setText(Read.getTextwith("Install", "def2"));		
-					del(new File(sport + "Result"));
-					del(new File(sport + "Original"));					
-					del(new File(mineord +"mods"));
-					del(new File(mineord +"coremods"));
-					del(new File(mineord +"config"));	
-					del(new File(modsport));
+					  OP.del(new File(Install.this.sport, "Result"));
+			          OP.del(new File(Install.this.sport, "Original"));
+			          OP.del(new File(Install.this.mineord, "mods"));
+			          OP.del(new File(Install.this.mineord, "coremods"));
+			          OP.del(new File(Install.this.mineord, "config"));
+			          OP.del(Install.this.modsport);
 					
 					mainState(mainVal += 1);	//6
 					
 					//Create new folders
 					detBarInf.setText(Read.getTextwith("Install", "def3"));
-					makedirs(new File(sport + "Result"));
-					makedirs(new File(sport + "Backup"));	
-					makedirs(new File(modsport));
+					OP.makedirs(new File(Install.this.sport, "Result"));
+			        OP.makedirs(new File(Install.this.sport, "Backup"));
+			        OP.makedirs(Install.this.modsport);
 					File mcVersionFolder = new File(mineord + "versions/"+mcVersion);
 					mcVersionFolder.mkdirs();
 					
@@ -133,7 +133,7 @@ public class Install extends InstallGUI
 						mainBarInf.setText(Read.getTextwith("Install", "main2"));
 						
 						//Downloading JSON file											
-						File jsonFile = new File(mineord + "versions/"+mcVersion+"/"+mcVersion+".json");	
+						File jsonFile = new File(mineord, "versions/"+mcVersion+"/"+mcVersion+".json");	
 						if(!jsonFile.exists())
 						{
 							detBarInf.setText(Read.getTextwith("Install", "def4"));
@@ -141,7 +141,7 @@ public class Install extends InstallGUI
 						}
 						
 						//Downloading Minecraft JAR						
-						File jarFile = new File(mineord + "versions/"+mcVersion+"/"+mcVersion+".jar");
+						File jarFile = new File(mineord, "versions/"+mcVersion+"/"+mcVersion+".jar");
 						if(!jarFile.exists())
 						{
 							stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));
@@ -159,12 +159,12 @@ public class Install extends InstallGUI
 					
 					//Copy and edit new Minecraft version in Modinstaller folder
 					detBarInf.setText(Read.getTextwith("Install", "def6"));	
-					copy(mcVersionFolder, new File(modsport));
+					copy(mcVersionFolder, modsport);
 					
 					//Rename JAR and JSON into "Modinstaller"
 					File newJson = new File(modsport + "Modinstaller.json");
-					rename(new File(modsport + mcVersion+".jar"), new File(modsport + "Modinstaller.jar"));
-					rename(new File(modsport + mcVersion+".json"), newJson);
+					rename(new File(modsport, mcVersion+".jar"), new File(modsport, "Modinstaller.jar"));
+					rename(new File(modsport, mcVersion+".json"), newJson);
 					
 					mainState(mainVal += 1); //10	
 					
@@ -179,7 +179,7 @@ public class Install extends InstallGUI
 						mainBarInf.setText(Read.getTextwith("Install", "main4")); 
 						detBarInf.setText("");
 						stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/extract.png")));
-						new Extract(new File(modsport+"Modinstaller.jar"), new File(sport + "Result/"));  
+						new Extract(new File(modsport, "Modinstaller.jar"), new File(sport + "Result/"));  
 						mainState(mainVal += 10); //+10 =20 (Modloader has only one library JSON file)
 					}
 					
@@ -213,7 +213,7 @@ public class Install extends InstallGUI
 				{	
 					mainBarInf.setText(Read.getTextwith("Install", "main7"));
 					stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/compress.png")));
-					new Compress(new File(sport + "Result/"), new File(modsport +"Modinstaller.jar"));
+					new Compress(new File(sport, "Result/"), new File(modsport, "Modinstaller.jar"));
 					
 					mainState(mainVal += 5); //+5 =20, da keine 2 Libraries
 				}			
@@ -233,8 +233,8 @@ public class Install extends InstallGUI
 				
 				//Copy sound files
 				detBarInf.setText(Read.getTextwith("Install", "def8"));
-				File sound = new File(mineord + "assets/indexes/"+mcVersion+".json");
-				File soundc = new File(mineord + "assets/indexes/Modinstaller.json");
+				File sound = new File(mineord, "assets/indexes/"+mcVersion+".json");
+				File soundc = new File(mineord, "assets/indexes/Modinstaller.json");
 				if(sound.exists())
 				{
 					try 
@@ -285,20 +285,22 @@ public class Install extends InstallGUI
 	{
 		try 
 		{				
-			makedirs(new File(sport + "Mods"));
+			makedirs(new File(sport, "Mods"));
 			
+			int i = 1;
 			double add = 50.0/(double)mods.size();
 			for (Modinfo mod : mods) 
 			{
 				detBarInf.setText(Read.getTextwith("Install", "dow1a") + mod.getName() + "</b>"+Read.getTextwith("Install", "dow1b"));
+				mainBarInf.setText(Read.getTextwith("Install", "main5") + "(" + i + "/" + this.mods.size() + ").");
 				stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));
-				
+				i++;
 				String DownloadURL = "http://www.minecraft-installer.de/api/download3.php?id="+mod.getID(); //Downloadlink für ZIP Datei
 								
-				File ZIPFile= new File(sport + "Mods/"+ mod.getID()+".zip");				
+				File ZIPFile= new File(sport, "Mods/"+ mod.getID()+".zip");				
 				File ZIPExtract = new File(mineord);				
 				if(isModloader)
-					 ZIPExtract = new File(sport + "Result");
+					 ZIPExtract = new File(sport, "Result");
 											
 				try
 				{	
@@ -389,76 +391,81 @@ public class Install extends InstallGUI
 					add = add.replace("${arch}", arch);
 			}
 			if (jo.has("rules")) 
-			{				
-				JsonArray ja = jo.get("rules").getAsJsonArray();
-				for(JsonElement el : ja)
-				{
-					JsonObject obj = el.getAsJsonObject();
-					if(obj.has("action"))
-					{
-						String action = obj.get("action").getAsString();
-						if(action.equals("allow"))
-						{
-							if(obj.has("os"))
-							{								
-								JsonObject oso = obj.get("os").getAsJsonObject();
-								if(oso.has("name"))
-								{
-									take = false;
-									String name = oso.get("name").getAsString();
-									if (os == OperatingSystem.WINDOWS) 
-									{
-										if(name.equals("windows"))
-											take = true;
-									}
-									else if (os == OperatingSystem.OSX)
-									{
-										if(name.equals("osx"))
-											take = true;
-									}
-									else if (os == OperatingSystem.LINUX)
-									{
-										if(name.equals("linux"))
-											take = true;
-									}
-								}
-								else
-									take = true;
-							}
-							else
-								take = true;
-						}
-						else if(action.equals("disallow"))
-						{
-							if(obj.has("os"))
-							{
-								JsonObject oso = obj.get("os").getAsJsonObject();
-								if(oso.has("name"))
-								{
-									String name2 = oso.get("name").getAsString();
-									if (os == OperatingSystem.WINDOWS)
-									{
-										if(name2.equals("windows"))
-											take = false;
-									}
-									else if (os == OperatingSystem.OSX)
-									{
-										if(name2.equals("osx"))
-											take = false;
-									}
-									else if (os == OperatingSystem.LINUX) 
-									{
-										if(name2.equals("linux"))
-										{
-											take = false;
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+			  {
+		        JsonArray ja = jo.get("rules").getAsJsonArray();
+		        for (JsonElement el : ja)
+		        {
+		          JsonObject obj = el.getAsJsonObject();
+		          if (obj.has("action"))
+		          {
+		            String action = obj.get("action").getAsString();
+		            if (action.equals("allow"))
+		            {
+		              if (obj.has("os"))
+		              {
+		                JsonObject oso = obj.get("os").getAsJsonObject();
+		                if (oso.has("name"))
+		                {
+		                  take = false;
+		                  String name = oso.get("name").getAsString();
+		                  if (os == OperatingSystem.WINDOWS)
+		                  {
+		                    if (name.equals("windows")) {
+		                      take = true;
+		                    }
+		                  }
+		                  else if (os == OperatingSystem.OSX)
+		                  {
+		                    if (name.equals("osx")) {
+		                      take = true;
+		                    }
+		                  }
+		                  else if (os == OperatingSystem.LINUX) {
+		                    if (name.equals("linux")) {
+		                      take = true;
+		                    }
+		                  }
+		                }
+		                else
+		                {
+		                  take = true;
+		                }
+		              }
+		              else
+		              {
+		                take = true;
+		              }
+		            }
+		            else if (action.equals("disallow")) {
+		              if (obj.has("os"))
+		              {
+		                JsonObject oso = obj.get("os").getAsJsonObject();
+		                if (oso.has("name"))
+		                {
+		                  String name2 = oso.get("name").getAsString();
+		                  if (os == OperatingSystem.WINDOWS)
+		                  {
+		                    if (name2.equals("windows")) {
+		                      take = false;
+		                    }
+		                  }
+		                  else if (os == OperatingSystem.OSX)
+		                  {
+		                    if (name2.equals("osx")) {
+		                      take = false;
+		                    }
+		                  }
+		                  else if (os == OperatingSystem.LINUX) {
+		                    if (name2.equals("linux")) {
+		                      take = false;
+		                    }
+		                  }
+		                }
+		              }
+		            }
+		          }
+		        }
+		      }
 			else
 				take = true;
 			
@@ -481,7 +488,7 @@ public class Install extends InstallGUI
 	{
 		mainBarInf.setText(Read.getTextwith("Install", "forge1"));  		
 		
-		new File(sport + "Forge/").mkdirs();
+		new File(sport, "Forge/").mkdirs();
 		
 		//Downloading Forge JSON File
 		detBarInf.setText(Read.getTextwith("Install", "forge2"));  
@@ -552,9 +559,12 @@ public class Install extends InstallGUI
 		}
 		
 		//Set ID to Modinstaller
-		JsonObject main = gson.fromJson(content, JsonObject.class);		
+		JsonObject main = (JsonObject)gson.fromJson(content, JsonObject.class);
 		main.addProperty("id", "Modinstaller");
-				
+		if (main.has("downloads")) 
+		{
+			main.remove("downloads");
+		}		
 		if(main.has("libraries") && online)
 		{
 			JsonArray arr = main.get("libraries").getAsJsonArray();
@@ -796,7 +806,7 @@ public class Install extends InstallGUI
 	 */
 	private void importMods()
 	{
-		File impf = new File(stamm, "Modinstaller/Import");
+		File impf = new File(sport, "Import");
 		if (impf.exists()) 
 		{
 			stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/import.png")));
@@ -817,7 +827,8 @@ public class Install extends InstallGUI
 			{
 				try 
 				{
-					copy(impf, new File(mineord, "mods"));
+					 for (File modim : impf.listFiles())
+						 copy(impf, new File(mineord, "mods/" + modim.getName()));					
 				} 
 				catch (Exception e) 
 				{
@@ -825,7 +836,7 @@ public class Install extends InstallGUI
 					errors += getError(e) + " Errorcode: S3x06\n\n";
 				}
 			}
-			File impo = new File(stamm + "Modinstaller/Importo/");
+			File impo = new File(sport, "Importo");
 			del(impo);
 			try 
 			{
@@ -840,7 +851,7 @@ public class Install extends InstallGUI
 	 */
 	private void setProfiles()	
 	{
-		File profiles = new File(mineord + "launcher_profiles.json"); 	
+		File profiles = new File(mineord, "launcher_profiles.json"); 	
 		boolean emty = false;
 		if(!profiles.exists())
 		{	

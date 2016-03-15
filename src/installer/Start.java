@@ -56,6 +56,7 @@ public class Start extends JFrame
 	public static MCVersion[] allMCVersions, forgeMCVersions;	
 	public static MinecraftOpenListener mol;
 	public static boolean online = false;
+	private File sport;
 	
 	/**
 	 * Setting up design of Minecraft Modinstaller
@@ -167,21 +168,19 @@ public class Start extends JFrame
 		{
 			public void run() 
 			{					
-				del(new File(stamm+"Modinstaller/zusatz.txt"));
-				del(new File(stamm+"Modinstaller/Importn/"));
-				del(new File(stamm + "Modinstaller/modlist.txt"));				
+				del(new File(sport, "zusatz.txt"));
+			    del(new File(sport, "Importn"));
+			    del(new File(sport, "modlist.txt"));				
 								
 				searchMCVersions();
-		
-				online = checkInstallerUpdate();
 				
-				mol = new MinecraftOpenListener(); // Check if Minecraft is open 
-				if(online)
-				{
-					makeShortcuts();
-					downloadReqInfo();
-				}
-				askMCVersion();
+				Start.online = Start.this.checkInstallerUpdate();
+		        if (Start.online)
+		        {
+		          makeShortcuts();
+		          downloadReqInfo();
+		        }
+		        askMCVersion();
 			}
 		}.start();
 	}	
@@ -248,6 +247,7 @@ public class Start extends JFrame
 			mineord = System.getProperty("user.home").replace("\\", "/") + "/.minecraft/";
 		    stamm = System.getProperty("user.home").replace("\\", "/")+"/";
 		 }	
+		 sport = new File(stamm, "Modinstaller");
 	}	  
 	
 	/**
