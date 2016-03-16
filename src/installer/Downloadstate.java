@@ -14,6 +14,8 @@ public class Downloadstate implements Runnable
 	public Downloadstate(Downloader dow, double max, double start) 
 	{
 		this.dow = dow;
+		this.max = max;
+		this.start = start;
 	}
 
 	public void run() 

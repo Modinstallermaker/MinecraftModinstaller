@@ -50,13 +50,12 @@ public class Start extends JFrame
 	private int heightFrame =300, widthFrame=500;
 	private Modinfo[] modtexts = null, moddownloads = null;
 	
-	public static String mcVersion="", webplace, mineord, stamm, lang ="en";
+	public static String mcVersion="", webplace, lang ="en";
+	public static File stamm, mineord, sport;
 	public static ArrayList<String> sentImportedModInfo = new ArrayList<String>();
 	public static String[] mcVersionen;	
-	public static MCVersion[] allMCVersions, forgeMCVersions;	
-	public static MinecraftOpenListener mol;
+	public static MCVersion[] allMCVersions, forgeMCVersions;
 	public static boolean online = false;
-	private File sport;
 	
 	/**
 	 * Setting up design of Minecraft Modinstaller
@@ -115,7 +114,7 @@ public class Start extends JFrame
 		
 		if(!optionReader("modinstaller").equals(modinstallerVersion))
 		{
-			del(new File(stamm + "Modinstaller"));
+			del(new File(stamm, "Modinstaller"));
 			del(new File(System.getProperty("user.home") + "/Desktop/MC Modinstaller 4.1.lnk"));
 			del(new File(System.getProperty("user.home") + "/Microsoft/Windows/Start Menu/Programs/MC Modinstaller 4.1.lnk"));	
 			del(new File(System.getProperty("user.home") + "/Desktop/MC Modinstaller 4.2.lnk"));
@@ -128,7 +127,7 @@ public class Start extends JFrame
 			del(new File(System.getProperty("user.home") + "/Microsoft/Windows/Start Menu/Programs/MC Modinstaller 4.5.lnk"));
 		}
 		
-		makedirs(new File(stamm + "Modinstaller"));	
+		makedirs(new File(stamm, "Modinstaller"));	
 		
 		optionWriter("language", lang);
 		optionWriter("modinstaller", modinstallerVersion);
@@ -194,7 +193,7 @@ public class Start extends JFrame
 		try
 		{	
 			String str = System.getProperty("os.name").toLowerCase(); // Ordner Appdata den Betriebssystemen anpassen
-			File installer = new File(stamm+"Modinstaller/MCModinstaller.exe");
+			File installer = new File(stamm, "Modinstaller/MCModinstaller.exe");
 			 
 			if (str.contains("win") && !installer.exists())
 			{	
@@ -234,18 +233,18 @@ public class Start extends JFrame
 		
 		 if (str.contains("win"))
 		 {
-			 mineord = System.getenv("APPDATA").replace("\\", "/") + "/.minecraft/";
-			 stamm = System.getenv("APPDATA").replace("\\", "/")+"/";			 
+			 mineord = new File(System.getenv("APPDATA").replace("\\", File.separator), ".minecraft");
+			 stamm = new File(System.getenv("APPDATA").replace("\\", File.separator));			 
 		 }
 		 else if (str.contains("mac")) 
 		 {
-			 mineord = System.getProperty("user.home").replace("\\", "/") + "/Library/Application Support/minecraft/";
-			 stamm =  System.getProperty("user.home").replace("\\", "/") + "/Library/Application Support/";
+			 mineord = new File(System.getProperty("user.home").replace("\\", File.separator), "Library/Application Support/minecraft");
+			 stamm =  new File(System.getProperty("user.home").replace("\\", File.separator), "Library/Application Support");
 		 }
 		 else 
 		 {
-			mineord = System.getProperty("user.home").replace("\\", "/") + "/.minecraft/";
-		    stamm = System.getProperty("user.home").replace("\\", "/")+"/";
+			mineord = new File(System.getProperty("user.home").replace("\\", File.separator), ".minecraft");
+		    stamm = new File(System.getProperty("user.home").replace("\\", File.separator));
 		 }	
 		 sport = new File(stamm, "Modinstaller");
 	}	  
@@ -260,7 +259,7 @@ public class Start extends JFrame
 		prog.setText(Read.getTextwith("Start", "prog4"));
 		try 
 		{			
-			File updatetxt = new File(stamm + "Modinstaller/update.txt");
+			File updatetxt = new File(stamm, "Modinstaller/update.txt");
 			String quellenurl = "http://www.minecraft-installer.de//request.php?target=update&lang=" + lang;
 			new Downloader(quellenurl , updatetxt).run();
 			if(updatetxt.exists())
@@ -350,14 +349,14 @@ public class Start extends JFrame
 	 */	
 	private void searchMCVersions()
 	{		
-		File file = new File(mineord + "versions");
+		File file = new File(mineord, "versions");
 		if (file.exists()) 
 		{
 			File[] li = file.listFiles();
 			for (int i=0; i<li.length; i++)
 			{
-				File jarfile = new File(li[i].getAbsolutePath()+"/"+li[i].getName()+".jar");
-				File jsonfile = new File(li[i].getAbsolutePath()+"/"+li[i].getName()+".json");
+				File jarfile = new File(li[i], li[i].getName()+".jar");
+				File jsonfile = new File(li[i], li[i].getName()+".json");
 				if(jarfile.exists()&&jsonfile.exists()&&(!li[i].getName().equals("Modinstaller")))
 				{					
 					offlineList.add(li[i].getName());
@@ -376,7 +375,7 @@ public class Start extends JFrame
 			try 
 			{
 				prog.setText(Read.getTextwith("Start", "prog12"));
-				File texte = new File(stamm+"Modinstaller/modtexts.json"); 
+				File texte = new File(stamm, "Modinstaller/modtexts.json"); 
 				new Downloader("http://www.minecraft-installer.de//api/mods2.php", texte).run(); //all mod texts
 				
 				if(texte.exists())
@@ -395,7 +394,7 @@ public class Start extends JFrame
 			try 
 			{
 				prog.setText(Read.getTextwith("Start", "prog13"));
-				File downloadt = new File(stamm+"Modinstaller/downloadtexts.json");
+				File downloadt = new File(stamm, "Modinstaller/downloadtexts.json");
 				new Downloader("http://www.minecraft-installer.de//api/offer3.php", downloadt).run();  //All mod downloads
 				
 				if(downloadt.exists())
@@ -413,7 +412,7 @@ public class Start extends JFrame
 			
 	    	try
 	    	{
-	    		File mcversions = new File(Start.stamm+"Modinstaller/mcversions.json"); 
+	    		File mcversions = new File(stamm, "Modinstaller/mcversions.json"); 
 	    		new Downloader("http://www.minecraft-installer.de//api/mcversions.php", mcversions).run(); //MC versions + number of mods
 	    		if(mcversions.exists())
 	        	{
@@ -444,7 +443,7 @@ public class Start extends JFrame
 	    	}
 	    	try
 	    	{
-	    		File backgr = new File(Start.stamm+"Modinstaller/modinstallerbg.png"); //Background picture
+	    		File backgr = new File(stamm, "Modinstaller/modinstallerbg.png"); //Background picture
 	    		new Downloader("http://www.minecraft-installer.de/Dateien/modinstallerbg.png", backgr).run();	    		
 	    	}
 	    	catch (Exception e)

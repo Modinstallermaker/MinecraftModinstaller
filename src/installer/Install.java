@@ -50,11 +50,10 @@ import com.google.gson.JsonObject;
 public class Install extends InstallGUI
 {
 	private static final long serialVersionUID = 1L;
-	private String mineord = Start.mineord, stamm = Start.stamm, mcVersion = Start.mcVersion;	
+	private String mcVersion = Start.mcVersion;	
 	private boolean online = Start.online;
 	private double mainVal=0.00;
-	private File sport = new File(stamm, "Modinstaller");
-	private File modsport = new File(mineord, "versions/Modinstaller");
+	private File modsport = new File(Start.mineord, "versions/Modinstaller");
 	private ArrayList<Modinfo> mods;
 	private boolean isModloader; 
 	private static FileInputStream fis;
@@ -92,10 +91,10 @@ public class Install extends InstallGUI
 					{	
 						detBarInf.setText(Read.getTextwith("Install", "def1"));
 						stateIcon.setIcon(new ImageIcon(getClass().getResource("src/restore2.png")));
-						del(new File(sport, "Backup"));
-						copy(modsport, new File(sport, "Backup"));
+						del(new File(Start.sport, "Backup"));
+						copy(modsport, new File(Start.sport, "Backup"));
 						mainState(mainVal += 2.0D);
-						copy(new File(mineord, "mods"), new File(sport, "Backup/mods"));
+						copy(new File(Start.mineord, "mods"), new File(Start.sport, "Backup/mods"));
 				    }
 					catch (Exception e)
 					{
@@ -108,21 +107,21 @@ public class Install extends InstallGUI
 					
 					//Delete old files
 					detBarInf.setText(Read.getTextwith("Install", "def2"));		
-					  OP.del(new File(Install.this.sport, "Result"));
-			          OP.del(new File(Install.this.sport, "Original"));
-			          OP.del(new File(Install.this.mineord, "mods"));
-			          OP.del(new File(Install.this.mineord, "coremods"));
-			          OP.del(new File(Install.this.mineord, "config"));
-			          OP.del(Install.this.modsport);
+					  OP.del(new File(Start.sport, "Result"));
+			          OP.del(new File(Start.sport, "Original"));
+			          OP.del(new File(Start.mineord, "mods"));
+			          OP.del(new File(Start.mineord, "coremods"));
+			          OP.del(new File(Start.mineord, "config"));
+			          OP.del(modsport);
 					
 					mainState(mainVal += 1);	//6
 					
 					//Create new folders
 					detBarInf.setText(Read.getTextwith("Install", "def3"));
-					OP.makedirs(new File(Install.this.sport, "Result"));
-			        OP.makedirs(new File(Install.this.sport, "Backup"));
-			        OP.makedirs(Install.this.modsport);
-					File mcVersionFolder = new File(mineord + "versions/"+mcVersion);
+					OP.makedirs(new File(Start.sport, "Result"));
+			        OP.makedirs(new File(Start.sport, "Backup"));
+			        OP.makedirs(modsport);
+					File mcVersionFolder = new File(Start.mineord, "versions/"+mcVersion);
 					mcVersionFolder.mkdirs();
 					
 					mainState(mainVal += 1); //7											
@@ -133,7 +132,7 @@ public class Install extends InstallGUI
 						mainBarInf.setText(Read.getTextwith("Install", "main2"));
 						
 						//Downloading JSON file											
-						File jsonFile = new File(mineord, "versions/"+mcVersion+"/"+mcVersion+".json");	
+						File jsonFile = new File(Start.mineord, "versions/"+mcVersion+"/"+mcVersion+".json");	
 						if(!jsonFile.exists())
 						{
 							detBarInf.setText(Read.getTextwith("Install", "def4"));
@@ -141,7 +140,7 @@ public class Install extends InstallGUI
 						}
 						
 						//Downloading Minecraft JAR						
-						File jarFile = new File(mineord, "versions/"+mcVersion+"/"+mcVersion+".jar");
+						File jarFile = new File(Start.mineord, "versions/"+mcVersion+"/"+mcVersion+".jar");
 						if(!jarFile.exists())
 						{
 							stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));
@@ -162,7 +161,7 @@ public class Install extends InstallGUI
 					copy(mcVersionFolder, modsport);
 					
 					//Rename JAR and JSON into "Modinstaller"
-					File newJson = new File(modsport + "Modinstaller.json");
+					File newJson = new File(modsport, "Modinstaller.json");
 					rename(new File(modsport, mcVersion+".jar"), new File(modsport, "Modinstaller.jar"));
 					rename(new File(modsport, mcVersion+".json"), newJson);
 					
@@ -179,7 +178,7 @@ public class Install extends InstallGUI
 						mainBarInf.setText(Read.getTextwith("Install", "main4")); 
 						detBarInf.setText("");
 						stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/extract.png")));
-						new Extract(new File(modsport, "Modinstaller.jar"), new File(sport + "Result/"));  
+						new Extract(new File(modsport, "Modinstaller.jar"), new File(Start.sport, "Result"));  
 						mainState(mainVal += 10); //+10 =20 (Modloader has only one library JSON file)
 					}
 					
@@ -213,7 +212,7 @@ public class Install extends InstallGUI
 				{	
 					mainBarInf.setText(Read.getTextwith("Install", "main7"));
 					stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/compress.png")));
-					new Compress(new File(sport, "Result/"), new File(modsport, "Modinstaller.jar"));
+					new Compress(new File(Start.sport, "Result"), new File(modsport, "Modinstaller.jar"));
 					
 					mainState(mainVal += 5); //+5 =20, da keine 2 Libraries
 				}			
@@ -233,8 +232,8 @@ public class Install extends InstallGUI
 				
 				//Copy sound files
 				detBarInf.setText(Read.getTextwith("Install", "def8"));
-				File sound = new File(mineord, "assets/indexes/"+mcVersion+".json");
-				File soundc = new File(mineord, "assets/indexes/Modinstaller.json");
+				File sound = new File(Start.mineord, "assets/indexes/"+mcVersion+".json");
+				File soundc = new File(Start.mineord, "assets/indexes/Modinstaller.json");
 				if(sound.exists())
 				{
 					try 
@@ -272,7 +271,6 @@ public class Install extends InstallGUI
 					startinfo.setVisible(true);
 					stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/play.png")));							
 					info.setText(Read.getTextwith("Install", "head1"));	
-					Start.mol.askUser(true);
 				}
 			}
 		}.start();
@@ -285,7 +283,7 @@ public class Install extends InstallGUI
 	{
 		try 
 		{				
-			makedirs(new File(sport, "Mods"));
+			makedirs(new File(Start.sport, "Mods"));
 			
 			int i = 1;
 			double add = 50.0/(double)mods.size();
@@ -297,10 +295,10 @@ public class Install extends InstallGUI
 				i++;
 				String DownloadURL = "http://www.minecraft-installer.de/api/download3.php?id="+mod.getID(); //Downloadlink für ZIP Datei
 								
-				File ZIPFile= new File(sport, "Mods/"+ mod.getID()+".zip");				
-				File ZIPExtract = new File(mineord);				
+				File ZIPFile= new File(Start.sport, "Mods/"+ mod.getID()+".zip");				
+				File ZIPExtract = Start.mineord;				
 				if(isModloader)
-					 ZIPExtract = new File(sport, "Result");
+					 ZIPExtract = new File(Start.sport, "Result");
 											
 				try
 				{	
@@ -488,12 +486,12 @@ public class Install extends InstallGUI
 	{
 		mainBarInf.setText(Read.getTextwith("Install", "forge1"));  		
 		
-		new File(sport, "Forge/").mkdirs();
+		new File(Start.sport, "Forge/").mkdirs();
 		
 		//Downloading Forge JSON File
 		detBarInf.setText(Read.getTextwith("Install", "forge2"));  
 		stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));	
-		File jsonFile = new File(sport+"Forge/"+mcVersion+".json");	
+		File jsonFile = new File(Start.sport, "Forge/"+mcVersion+".json");	
 		del(jsonFile);
 		new Downloader("http://files.minecraft-mods.de/installer/MCForge/versions/"+mcVersion+".json", jsonFile).run();
 		
@@ -501,7 +499,7 @@ public class Install extends InstallGUI
 		if(jsonFile.exists())
 			installLibraries(jsonFile);
 				
-		File jsonFile2 = new File(mineord, "versions/Modinstaller/Modinstaller.json");	
+		File jsonFile2 = new File(Start.mineord, "versions/Modinstaller/Modinstaller.json");	
 		try 
 		{
 			copy(jsonFile, jsonFile2);
@@ -523,7 +521,7 @@ public class Install extends InstallGUI
 					try 
 					{
 						File jar =new File(modsport, "Modinstaller.jar");
-						File resx = new File(sport + "Resultx/");
+						File resx = new File(Start.sport, "Resultx");
 						del(resx);
 						new Extract(jar, resx, 50, 0);						
 						del(jar);
@@ -610,7 +608,7 @@ public class Install extends InstallGUI
 						libURL = jo.get("url").getAsString();
 					libURL += artifact.getPath();
 					
-					File libPath = artifact.getLocalPath(new File(mineord+"libraries/"));
+					File libPath = artifact.getLocalPath(new File(Start.mineord, "libraries"));
 					if(!libPath.exists())
 					{
 						 detBarInf.setText(Read.getTextwith("Install", "lib2")+artifact.getDescriptor());
@@ -715,7 +713,7 @@ public class Install extends InstallGUI
 		try 
 		{		
 			String sourceurl = "http://files.minecraft-mods.de/installer/Extra/downloadsrc.txt";
-			File fileurl = new File(sport + "downloadsrc.txt");
+			File fileurl = new File(Start.sport, "downloadsrc.txt");
 			
 			new Downloader(sourceurl, fileurl).run();
 			
@@ -729,7 +727,7 @@ public class Install extends InstallGUI
 				{
 					for (int i=1; i<sp2.length; i++)
 					{
-						File exra = new File(sport + "Extra.zip"); 				
+						File exra = new File(Start.sport, "Extra.zip"); 				
 						Downloader dowf = new Downloader(sp2[i], exra);						
 						try 
 						{
@@ -739,7 +737,7 @@ public class Install extends InstallGUI
 							}			
 							try
 							{
-								new Extract(exra, new File(mineord));
+								new Extract(exra, Start.mineord);
 							}
 							catch(Exception ex)
 							{	
@@ -806,7 +804,7 @@ public class Install extends InstallGUI
 	 */
 	private void importMods()
 	{
-		File impf = new File(sport, "Import");
+		File impf = new File(Start.sport, "Import");
 		if (impf.exists()) 
 		{
 			stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/import.png")));
@@ -815,7 +813,7 @@ public class Install extends InstallGUI
 				try 
 				{
 					for (File modim : impf.listFiles())
-						copy(modim, new File(sport, "Result"));
+						copy(modim, new File(Start.sport, "Result"));
 				} 
 				catch (Exception e) 
 				{
@@ -828,7 +826,7 @@ public class Install extends InstallGUI
 				try 
 				{
 					 for (File modim : impf.listFiles())
-						 copy(impf, new File(mineord, "mods/" + modim.getName()));					
+						 copy(impf, new File(Start.mineord, "mods/" + modim.getName()));					
 				} 
 				catch (Exception e) 
 				{
@@ -836,7 +834,7 @@ public class Install extends InstallGUI
 					errors += getError(e) + " Errorcode: S3x06\n\n";
 				}
 			}
-			File impo = new File(sport, "Importo");
+			File impo = new File(Start.sport, "Importo");
 			del(impo);
 			try 
 			{
@@ -851,7 +849,7 @@ public class Install extends InstallGUI
 	 */
 	private void setProfiles()	
 	{
-		File profiles = new File(mineord, "launcher_profiles.json"); 	
+		File profiles = new File(Start.mineord, "launcher_profiles.json"); 	
 		boolean emty = false;
 		if(!profiles.exists())
 		{	
@@ -923,7 +921,7 @@ public class Install extends InstallGUI
 	 */
 	private void modifyServerlist()
 	{
-		File jsonfile = new File(stamm+"Modinstaller/serverlist.json");
+		File jsonfile = new File(Start.sport, "serverlist.json");
 		try 
 		{				
 			new Downloader("http://www.minecraft-installer.de/api/serverlist.json", jsonfile).run();
@@ -937,7 +935,7 @@ public class Install extends InstallGUI
 			try 
 			{
 				List<CompoundTag> oldserverentries = new ArrayList<CompoundTag>();	  
-				File sd = new File(mineord+"servers.dat");				
+				File sd = new File(Start.mineord, "servers.dat");				
 				if(sd.exists())
 				{
 					FileInputStream fis = null;
@@ -945,7 +943,7 @@ public class Install extends InstallGUI
 					
 					try
 					{
-						fis = new FileInputStream(mineord+"servers.dat");
+						fis = new FileInputStream(sd);
 						nis = new NBTInputStream(fis, false);						
 						
 						CompoundTag master = (CompoundTag) nis.readTag();						

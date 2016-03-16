@@ -92,8 +92,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	
 	JProgressBar ratingBar = new JProgressBar();
 	
-	private Cursor c = new Cursor(Cursor.HAND_CURSOR);		
-	private String stamm = Start.stamm;		
+	private Cursor c = new Cursor(Cursor.HAND_CURSOR);	
 	private int hoehe =600, breite=1024;	
 	String hyperlink = Read.getTextwith("installer", "website"), website=Read.getTextwith("installer", "website");
 	
@@ -310,7 +309,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		restoreButton.setIcon(new ImageIcon(this.getClass().getResource("src/restore.png")));		
 		restoreButton.addMouseListener(this); 
 		restoreButton.setCursor(c);			
-		File backupfile = new File(stamm +"Modinstaller/Backup/");
+		File backupfile = new File(Start.sport, "Backup");
 		if (!backupfile.exists()) // Check, if restore possible	
 		{
 			restoreButton.setEnabled(false);

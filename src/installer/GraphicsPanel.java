@@ -58,7 +58,7 @@ public class GraphicsPanel extends JPanel
     Image image = null;
     BufferedImage bufferedImage = null;  
    
-    File backgr = new File(Start.stamm+"Modinstaller/modinstallerbg.png");    
+    File backgr = new File(Start.sport, "modinstallerbg.png");    
     if (!backgr.exists()||backgr.length()<10)
     	return null;
     

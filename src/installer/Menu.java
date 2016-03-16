@@ -44,19 +44,16 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Menu extends MenuGUI implements ActionListener, MouseListener, ChangeListener, KeyListener
 {
-	private static final long serialVersionUID = 1L;	
-	private String mineord = Start.mineord, stamm = Start.stamm, mcVersion = Start.mcVersion;	
+	private static final long serialVersionUID = 1L;
+	public static boolean isModloader=true;
+	private String mcVersion = Start.mcVersion;	
+	
 	private String modx="";
 	private String YT = "";
-	private boolean online = Start.online;
-	private boolean manual=false;
-	public static boolean isModloader=true;
+	private boolean manual=false;	
 	private boolean importmod=false, searchfocus = false, ist=false;
 	private double proz=0.0,  rating = 0.0;		
 	private int modID=-1;
-	private File impo = new File(stamm, "Modinstaller/Importo");
-	private File sport = new File(this.stamm, "Modinstaller");
-	private File modsport = new File(this.mineord, "versions/Modinstaller");
 	private ArrayList<Modinfo> modlArrL = new ArrayList<Modinfo>();
 	private ArrayList<Modinfo> forgeArrL = new ArrayList<Modinfo>();
 	private ArrayList<Modinfo> proposals = new ArrayList<Modinfo>();
@@ -83,7 +80,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	 */
 	private void load()
 	{
-		if(online)
+		if(Start.online)
 		{			
 			SwingUtilities.invokeLater(new Runnable() 
 			{					   
@@ -95,7 +92,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 					modlArrL.clear();
 					forgeArrL.clear();	
 					
-					del(new File(sport, "Import"));
+					del(new File(Start.sport, "Import"));
 					
 					try
 					{
@@ -138,7 +135,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	{
 		if(off==true)
 		{
-			online=false;
+			Start.online=false;
 			leftListMModel.removeAllElements();
 			leftListFModel.removeAllElements();
 			rightListModel.removeAllElements();	
@@ -148,7 +145,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		}
 		else
 		{
-			online=true;	
+			Start.online=true;	
 			searchInput.setEnabled(true);
 			selectArrow.setEnabled(true);
 		}
@@ -252,7 +249,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		{
 			public void run()
 			{		
-				File impf=new File(sport, "Import");
+				File impf=new File(Start.sport, "Import");
 				
 				String mode ="Forge";
 				if(isModloader)
@@ -261,6 +258,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 				//Adds all mods that are imported at the last time
 				if(optionReader("lastmc").equals(mcVersion) && optionReader("lastmode").equals(mode))
 				{	
+					File impo = new File(Start.sport, "Importo");
 					if(impo.exists())
 					{
 						try 
@@ -275,8 +273,8 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 				if(impf.exists())
 				{			
 					File[] imports = impf.listFiles();
-			          for (File modi : imports) 
-			          {
+			        for (File modi : imports) 
+			        {
 			            if (!Menu.isModloader)
 			            {
 			              if (modi.isFile())
@@ -292,7 +290,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 			              Menu.this.rightListModel.addElement("+ " + name);
 			              Menu.this.nextButton.setEnabled(true);
 			            }
-			          }
+			        }
 				}
 			}
 		}.start();
@@ -506,9 +504,9 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 				if (name.substring(0, 1).equals("+")) // Importierter Mod löschen
 				{
 					name = name.substring(2);
-					del(new File(stamm+"Modinstaller/Import/"+name));
-					del(new File(stamm+"Modinstaller/Import/"+name+".jar"));
-					del(new File(stamm+"Modinstaller/Importn/"+name+"/"));
+					del(new File(Start.sport, "Import/"+name));
+					del(new File(Start.sport, "Import/"+name+".jar"));
+					del(new File(Start.sport, "Importn/"+name+"/"));
 				}  
 				else  // sonst nach Liste links kopieren
 				{			
@@ -595,12 +593,13 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	 */
 	private void restore()
 	{
-		del(new File(mineord+"versions/Modinstaller"));
+		del(new File(Start.mineord, "versions/Modinstaller"));
 		try 
 		{
-			OP.copy(new File(sport, "Backup/Modinstaller.jar"), new File(modsport, "Modinstaller.jar"));
-			OP.copy(new File(sport, "Backup/Modinstaller.json"), new File(modsport, "Modinstaller.json"));
-			OP.copy(new File(sport, "Backup/mods"), new File(mineord, "mods"));
+			File modsport = new File(Start.mineord, "versions/Modinstaller");
+			OP.copy(new File(Start.sport, "Backup/Modinstaller.jar"), new File(modsport, "Modinstaller.jar"));
+			OP.copy(new File(Start.sport, "Backup/Modinstaller.json"), new File(modsport, "Modinstaller.json"));
+			OP.copy(new File(Start.sport, "Backup/mods"), new File(Start.mineord, "mods"));
 			JOptionPane.showMessageDialog(null,	Read.getTextwith("Menu", "restore"), Read.getTextwith("Menu", "restoreh"), JOptionPane.INFORMATION_MESSAGE);
 		} 
 		catch (Exception e) 
@@ -816,7 +815,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 			if(importmod)
 				importMod();
 			else
-			 if(online)
+			 if(Start.online)
 				 new Fullscreen(modtexts, modNameLabel.getText(), proposals);
 		}
 		else if(s==exitButton)

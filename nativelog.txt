@@ -1,23 +1,23 @@
 ﻿Set run directory to C:\Program Files (x86)\Minecraft
-Native Launcher Version: 286
+Native Launcher Version: 301
 Operating System: Windows 10 Pro
-Application Hash: 8f1d31dfea0301cfa2ca7aaedc34da8e9fa25b31
+Application Hash: 21880fed62e16988cda4de8d7591a6d2f5078044
 Application Data directory: C:\Users\Dirk\AppData\Roaming
 Executable Path: MinecraftLauncher.exe
 App Directory dir: C:\Program Files (x86)\Minecraft
 Start dir: C:/Program Files (x86)/Minecraft
 Launcher dir: C:/Program Files (x86)/Minecraft/game
 TmpDir dir: C:/Program Files (x86)/Minecraft/game
-Java Launcher hash: 5e357bf1f1318e35c779a85c7213c3b4d39a5f59
+Java Launcher hash: ccb4a2df12fa3bd8c4d27ece46f692d12f91a01b
 Java Version: 1.8.0_25
 x64: 1
 LauncherConfiguration from: https://launchermeta.mojang.com/mc/launcher.json
 Downloaded config
 Native launcher is current
 Native launcher is current
-Java launcher is current: 5e357bf1f1318e35c779a85c7213c3b4d39a5f59(5e357bf1f1318e35c779a85c7213c3b4d39a5f59)
+Java launcher is current: ccb4a2df12fa3bd8c4d27ece46f692d12f91a01b(ccb4a2df12fa3bd8c4d27ece46f692d12f91a01b)
 Check to see if we can run the launcher
 Native launcher is current
 runJavaLauncher
-Started application ./runtime/jre-x64/1.8.0_25/bin/java.exe -cp "C:/Program Files (x86)/Minecraft/game/launcher.jar" net.minecraft.launcher.Main --winTen --nativeLauncherVersion 286
+Started application ./runtime/jre-x64/1.8.0_25/bin/java.exe -cp "C:/Program Files (x86)/Minecraft/game/launcher.jar" net.minecraft.launcher.Main --winTen --nativeLauncherVersion 301
 Application still running, assuming all's fine.

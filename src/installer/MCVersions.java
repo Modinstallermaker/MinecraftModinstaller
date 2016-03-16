@@ -471,16 +471,24 @@ public class MCVersions extends javax.swing.JFrame implements MouseWheelListener
     
     private void back()
     {
-    	int anz;
-    	if(onlyForge)
-    		anz=Start.forgeMCVersions.length;
-    	else
+    	int anz = 0;
+    	if ((Start.forgeMCVersions != null) && (this.onlyForge)) 
+    	{
+    	      anz = Start.forgeMCVersions.length;
+    	}
+    	else if (Start.allMCVersions != null)
+    	{
     		anz = Start.allMCVersions.length;
-        if(pos<anz-3)
-        {
-	    	pos++;
-	        fillComponents();
-        }
+    	}
+    	else
+    	{
+    		anz = this.offlineList.size();
+    	}
+		if (this.pos < anz - 3)
+		{
+			this.pos += 1;
+			fillComponents();
+		}
     }
     
     @Override

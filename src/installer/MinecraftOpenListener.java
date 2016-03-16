@@ -48,7 +48,7 @@ public class MinecraftOpenListener implements ActionListener
 				long logfileDateOLD=0;
 				while(run&&optionReader("MOL").equals("running")) //Minecraft Watchdog
 				{					
-					File logfile = new File(Start.mineord+"logs/latest.log");
+					File logfile = new File(Start.mineord, "logs/latest.log");
 					Calendar cal = Calendar.getInstance();
 					cal.setTimeInMillis(logfile.lastModified());
 					Date logfileDate = cal.getTime(); //Letzer Eintrag
@@ -125,7 +125,7 @@ public class MinecraftOpenListener implements ActionListener
 	{
 		optionWriter("MOL", "question");
 		run =false;
-		if(!new File(Start.stamm + "Modinstaller/Importo/").exists()&&
+		if(!new File(Start.sport, "Importo").exists()&&
 				!optionReader("lastmods").equals(optionReader("slastmods"))&&
 				optionReader("changed").equals("true"))
 		{
