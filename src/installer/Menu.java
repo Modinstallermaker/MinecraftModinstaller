@@ -49,7 +49,6 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	private String mcVersion = Start.mcVersion;	
 	
 	private String modx="";
-	private String YT = "";
 	private boolean manual=false;	
 	private boolean importmod=false, searchfocus = false, ist=false;
 	private double proz=0.0,  rating = 0.0;		
@@ -400,6 +399,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 				 	String inh = modt.getText();
 				 	modID= modt.getID();
 				 	website =  modt.getSource();
+				 	YouTube = modt.getYouTube();
 					hyperlink = Read.getTextwith("installer", "website") + "/modinfo.php?modname=" + modname.replace(" ", "+");
 					if(!inh.startsWith("<html>"))
 					{
@@ -803,7 +803,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		else if(s==helpButton)
 			OperatingSystem.openLink(Read.getTextwith("installer", "website")+"/faq.php");
 		else if(s== videoButton)
-			OperatingSystem.openLink(YT);
+			OperatingSystem.openLink(YouTube);
 		else if(s==modinstWebLnk)
 		{
 			 if(modinstWebLnk.isEnabled())

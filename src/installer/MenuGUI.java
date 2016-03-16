@@ -95,6 +95,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	private Cursor c = new Cursor(Cursor.HAND_CURSOR);	
 	private int hoehe =600, breite=1024;	
 	String hyperlink = Read.getTextwith("installer", "website"), website=Read.getTextwith("installer", "website");
+	String YouTube = "https://www.youtube.com/watch?v=0ityNMZTDug";
 	
 	public void GUI() 
 	{
@@ -223,28 +224,27 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		topIcon.setVisible(false);
 		cp.add(topIcon);
 		
-		sizeLabel.setBounds(mittexa+picturex-160-50-10, infol+5, 40+50, 40); // Download size		
+		sizeLabel.setBounds(mittexa+picturex-160-50-13, infol+5, 40+50, 40); // Download size		
 		sizeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		sizeLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
 		sizeLabel.setFont(new Font("Dialog", Font.PLAIN, 18));
 		cp.add(sizeLabel);
 		
-		videoButton.setBounds(mittexa+picturex-120, infol+5, 40, 40); // Link to mod video	
+		videoButton.setBounds(mittexa+picturex-118, infol+5, 40, 40); // Link to mod video	
 		videoButton.setIcon(new ImageIcon(this.getClass().getResource("src/video.png")));
 		videoButton.addMouseListener(this); 
 		videoButton.setToolTipText(Read.getTextwith("MenuGUI", "t4"));
 		videoButton.setCursor(c);
-		videoButton.setVisible(false);
 		cp.add(videoButton);	
 		
-		modinstWebLnk.setBounds(mittexa+picturex-80, infol+5, 40, 40); // Link to Modinstaller website	
+		modinstWebLnk.setBounds(mittexa+picturex-78, infol+5, 40, 40); // Link to Modinstaller website	
 		modinstWebLnk.setIcon(new ImageIcon(this.getClass().getResource("src/infokl.png")));
 		modinstWebLnk.addMouseListener(this); 
 		modinstWebLnk.setToolTipText(Read.getTextwith("MenuGUI", "t5"));
 		modinstWebLnk.setCursor(c);
 		cp.add(modinstWebLnk);		
 		
-		devWebLnk.setBounds(mittexa+picturex-40, infol+5, 40, 40); // Link to mod developer	
+		devWebLnk.setBounds(mittexa+picturex-38, infol+5, 40, 40); // Link to mod developer	
 		devWebLnk.setIcon(new ImageIcon(this.getClass().getResource("src/devLnk.png")));
 		devWebLnk.addMouseListener(this); 
 		devWebLnk.setToolTipText(Read.getTextwith("MenuGUI", "t6"));

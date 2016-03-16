@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 
 public class Modinfo
 {
-	private String Name="", TxtDE="", TxtEN="", Source="", MC="";
+	private String Name="", TxtDE="", TxtEN="", Source="", MC="", YouTubeDE="", YouTubeEN="";
 	private boolean selected = false;
 	private int Cat=3, Size=0, ID=0;
 	private double Proz=0.0;
@@ -51,7 +51,15 @@ public class Modinfo
 		this.selected = sel;
 	}
 	public void setDate(Timestamp date) {
-		Date = date;
+		this.Date = date;
+	}
+	
+	public void setYouTubeDE(String YouTubeDE) {
+		this.YouTubeDE = YouTubeDE;
+	}
+	
+	public void setYouTubeEN(String YouTubeEN) {
+		this.YouTubeEN = YouTubeEN;
 	}
 	
 	public int getID()
@@ -100,5 +108,11 @@ public class Modinfo
 	}
 	public Timestamp getDate() {
 		return Date;
+	}
+	public String getYouTube() {
+		if(Start.lang.equals("en"))
+			return YouTubeEN;
+		else
+			return YouTubeDE;
 	}
 }
