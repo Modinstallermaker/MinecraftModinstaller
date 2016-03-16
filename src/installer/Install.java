@@ -226,7 +226,8 @@ public class Install extends InstallGUI
 				mainState(mainVal += 2);
 				
 				//Modify Minecraft Serverlist
-				modifyServerlist();
+				if(Start.online)
+					modifyServerlist();
 				
 				mainState(mainVal += 2);
 				
@@ -290,7 +291,7 @@ public class Install extends InstallGUI
 			for (Modinfo mod : mods) 
 			{
 				detBarInf.setText(Read.getTextwith("Install", "dow1a") + mod.getName() + "</b>"+Read.getTextwith("Install", "dow1b"));
-				mainBarInf.setText(Read.getTextwith("Install", "main5") + "(" + i + "/" + this.mods.size() + ").");
+				mainBarInf.setText(Read.getTextwith("Install", "main5") + " (" + i + "/" + mods.size() + ")");
 				stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));
 				i++;
 				String DownloadURL = "http://www.minecraft-installer.de/api/download3.php?id="+mod.getID(); //Downloadlink für ZIP Datei

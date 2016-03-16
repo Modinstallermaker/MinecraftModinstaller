@@ -12,12 +12,8 @@ Java Launcher hash: ccb4a2df12fa3bd8c4d27ece46f692d12f91a01b
 Java Version: 1.8.0_25
 x64: 1
 LauncherConfiguration from: https://launchermeta.mojang.com/mc/launcher.json
-Downloaded config
-Native launcher is current
-Native launcher is current
-Java launcher is current: ccb4a2df12fa3bd8c4d27ece46f692d12f91a01b(ccb4a2df12fa3bd8c4d27ece46f692d12f91a01b)
-Check to see if we can run the launcher
-Native launcher is current
+Failed to download config file
+Failed to download manifest
 runJavaLauncher
 Started application ./runtime/jre-x64/1.8.0_25/bin/java.exe -cp "C:/Program Files (x86)/Minecraft/game/launcher.jar" net.minecraft.launcher.Main --winTen --nativeLauncherVersion 301
 Application still running, assuming all's fine.

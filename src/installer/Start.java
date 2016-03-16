@@ -330,16 +330,26 @@ public class Start extends JFrame
 				tryno++;				
 				return checkInstallerUpdate();				
 			}
-			try  //Send error message
-			{
-				String body = "Text=" + getError(ex) + "; Errorcode: S1x04&MCVers=" + mcVersion + "&InstallerVers=" +
-						Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + 
-						System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString()+ "&EMail=unkn";
-				new Postrequest("http://www.minecraft-installer.de/error.php", body);
-			} 
-			catch (Exception e) {}
-			
-			online = false;
+			 online = false;
+		      Object[] options2 = { Read.getTextwith("Start", "inter1"), Read.getTextwith("Start", "inter2"), Read.getTextwith("Start", "inter3") };
+		      int selected2 = JOptionPane.showOptionDialog(null, Read.getTextwith("Start", "inter4") + ex.toString(), 
+		        Read.getTextwith("Start", "inter4h"), -1, 3, null, options2, options2[0]);
+		      switch (selected2)
+		      {
+		      case 0: 
+		        OperatingSystem.openLink(Read.getTextwith("Start", "intercon"));
+		        break;
+		      case 2: 
+		        System.exit(0);
+		      }
+		      try
+		      {
+		        String body = "Text=" + OP.getError(ex) + "; Errorcode: S1x04&MCVers=" + mcVersion + "&InstallerVers=" + 
+		          Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + 
+		          System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString() + "&EMail=unkn";
+		        new Postrequest("http://www.minecraft-installer.de/error.php", body);
+		      }
+		      catch (Exception localException1) {}
 		}
 		return online;		
 	}

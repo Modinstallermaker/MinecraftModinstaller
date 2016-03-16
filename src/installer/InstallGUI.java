@@ -110,21 +110,24 @@ public class InstallGUI extends JFrame implements MouseListener {
 		
 		setVisible(true);
 		
-		try 
+		if(Start.online)
 		{
-			banner.setIcon(new ImageIcon(ImageIO.read(new URL("http://minecraft-installer.de/api/getAds.php?channel=installlarge&type=img"))));
-			
-			banner.setBounds(0, 55, (int)(breite), 105);
-			banner.setVerticalAlignment(SwingConstants.CENTER);
-			banner.setCursor(c);
-			banner.setHorizontalAlignment(SwingConstants.CENTER);
-			banner.addMouseListener(this);
-			cp.add(banner);
+			try 
+			{
+				banner.setIcon(new ImageIcon(ImageIO.read(new URL("http://minecraft-installer.de/api/getAds.php?channel=installlarge&type=img"))));
+				
+				banner.setBounds(0, 55, (int)(breite), 105);
+				banner.setVerticalAlignment(SwingConstants.CENTER);
+				banner.setCursor(c);
+				banner.setHorizontalAlignment(SwingConstants.CENTER);
+				banner.addMouseListener(this);
+				cp.add(banner);
+			}
+			catch (Exception e) 
+			{			
+				e.printStackTrace();
+			}
 		}
-		catch (Exception e) 
-		{			
-			e.printStackTrace();
-		}	
 		
 		String[] Bilder = {"src/facebook.png", "src/google.png", "src/twitter.png", "src/proposal.png", "src/support.png"};
 		int abstand = 20;
