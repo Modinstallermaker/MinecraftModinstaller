@@ -70,7 +70,11 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		this.offlineList = offlineList;
 		GUI();	    
 	    setVisible(true);			
-	    load();	 		
+	    load();	 
+	    if (Start.online)
+	    {
+	    	new Survey();
+	    }
 	}
 	
 	/**
