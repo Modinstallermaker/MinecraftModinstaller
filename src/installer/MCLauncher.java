@@ -23,7 +23,6 @@ public class MCLauncher
 	
 	public MCLauncher()
 	{
-		makedirs(new File(Start.stamm, "Modinstaller"));
 		boolean ausf = true;		
 		
 		String str = System.getProperty("os.name").toLowerCase(); 
@@ -41,12 +40,12 @@ public class MCLauncher
 				if(spo2.exists())
 					runExe(spo);
 			}
-			speicherort = new File(Start.stamm, "Modinstaller/MCLauncher.exe");
+			speicherort = new File(Start.sport, "MCLauncher.exe");
 		 	downloadort = Start.webplace + "Launcher2.exe";
 		 }
 		 else
 		 {
-			 speicherort = new File(Start.stamm, "Modinstaller/MCLauncher.jar");	
+			 speicherort = new File(Start.sport, "MCLauncher.jar");	
 			 downloadort = Start.webplace.replace("\\", "/") + "Launcher2.jar";
 		 }
 		if(!hasstarted)	

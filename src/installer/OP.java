@@ -198,7 +198,7 @@ public class OP
 		if(!folder.exists()) folder.mkdirs();
 	}
 	
-	final static public void Textwriters(File file, String line, boolean append) throws IOException
+	final static public void Textwriter(File file, String line, boolean append) throws IOException
 	{		
 		String lines[] = {line};
 		Textwriter(file, lines, append);
@@ -360,7 +360,7 @@ public class OP
 		
 	final static public String optionReader(String attrib)
 	{
-		File configf = new File(Start.stamm + "/Modinstaller/config.txt");
+		File configf = new File(Start.sport + "config.txt");
 		String text=null;
 		boolean exist=false;
 		String[] inhalt = null;
@@ -386,7 +386,7 @@ public class OP
 	
 	final static public void optionWriter(String attrib, String content)
 	{
-		File configf = new File(Start.stamm + "/Modinstaller/config.txt");
+		File configf = new File(Start.sport + "config.txt");
 		String[] inhalt = null;
 		boolean inside = false;
 		if(configf.exists())

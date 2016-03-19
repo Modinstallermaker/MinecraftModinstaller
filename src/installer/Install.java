@@ -1,7 +1,7 @@
 package installer;
 
 import static installer.OP.Textreaders;
-import static installer.OP.Textwriters;
+import static installer.OP.Textwriter;
 import static installer.OP.copy;
 import static installer.OP.del;
 import static installer.OP.getError;
@@ -682,7 +682,7 @@ public class Install extends InstallGUI
 					        }
 					        File shafile = new File(libPath.getParentFile(), libPath.getName()+".sha");
 					        System.out.println(sb.toString());
-					        Textwriters(shafile, sb.toString(), false);
+					        Textwriter(shafile, sb.toString(), false);
 						} 
 						catch (Exception e) 
 						{			
@@ -697,7 +697,7 @@ public class Install extends InstallGUI
 		try 
 		{
 			Gson gson2 = new GsonBuilder().setPrettyPrinting().create();
-			Textwriters(jsonFile, gson2.toJson(main), false);
+			Textwriter(jsonFile, gson2.toJson(main), false);
 		} 
 		catch (IOException e) 
 		{
@@ -908,7 +908,7 @@ public class Install extends InstallGUI
         try 
         {
         	Gson gson2 = new GsonBuilder().setPrettyPrinting().create();
-			Textwriters(profiles, gson2.toJson(jfile), false);
+			Textwriter(profiles, gson2.toJson(jfile), false);
 		} 
         catch (IOException e) 
         {

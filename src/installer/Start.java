@@ -51,7 +51,7 @@ public class Start extends JFrame
 	private Modinfo[] modtexts = null, moddownloads = null;
 	
 	public static String mcVersion="", webplace, lang ="en";
-	public static File stamm, mineord, sport;
+	public static File mineord, sport;
 	public static ArrayList<String> sentImportedModInfo = new ArrayList<String>();
 	public static String[] mcVersionen;	
 	public static MCVersion[] allMCVersions, forgeMCVersions;
@@ -114,7 +114,7 @@ public class Start extends JFrame
 		
 		if(!optionReader("modinstaller").equals(modinstallerVersion))
 		{
-			del(new File(stamm, "Modinstaller"));
+			del(sport);
 			del(new File(System.getProperty("user.home") + "/Desktop/MC Modinstaller 4.1.lnk"));
 			del(new File(System.getProperty("user.home") + "/Microsoft/Windows/Start Menu/Programs/MC Modinstaller 4.1.lnk"));	
 			del(new File(System.getProperty("user.home") + "/Desktop/MC Modinstaller 4.2.lnk"));
@@ -127,7 +127,7 @@ public class Start extends JFrame
 			del(new File(System.getProperty("user.home") + "/Microsoft/Windows/Start Menu/Programs/MC Modinstaller 4.5.lnk"));
 		}
 		
-		makedirs(new File(stamm, "Modinstaller"));	
+		makedirs(sport);	
 		
 		optionWriter("language", lang);
 		optionWriter("modinstaller", modinstallerVersion);
@@ -193,7 +193,7 @@ public class Start extends JFrame
 		try
 		{	
 			String str = System.getProperty("os.name").toLowerCase(); // Ordner Appdata den Betriebssystemen anpassen
-			File installer = new File(stamm, "Modinstaller/MCModinstaller.exe");
+			File installer = new File(sport, "MCModinstaller.exe");
 			 
 			if (str.contains("win") && !installer.exists())
 			{	
@@ -230,7 +230,7 @@ public class Start extends JFrame
 	private void getMCDir()
 	{	
 		String str = System.getProperty("os.name").toLowerCase(); // Ordner Appdata den Betriebssystemen anpassen
-		
+		File stamm;
 		 if (str.contains("win"))
 		 {
 			 mineord = new File(System.getenv("APPDATA").replace("\\", File.separator), ".minecraft");
@@ -259,7 +259,7 @@ public class Start extends JFrame
 		prog.setText(Read.getTextwith("Start", "prog4"));
 		try 
 		{			
-			File updatetxt = new File(stamm, "Modinstaller/update.txt");
+			File updatetxt = new File(sport, "update.txt");
 			String quellenurl = "http://www.minecraft-installer.de//request.php?target=update&lang=" + lang;
 			new Downloader(quellenurl , updatetxt).run();
 			if(updatetxt.exists())
@@ -385,7 +385,7 @@ public class Start extends JFrame
 			try 
 			{
 				prog.setText(Read.getTextwith("Start", "prog12"));
-				File texte = new File(stamm, "Modinstaller/modtexts.json"); 
+				File texte = new File(sport, "modtexts.json"); 
 				new Downloader("http://www.minecraft-installer.de//api/mods2.php", texte).run(); //all mod texts
 				
 				if(texte.exists())
@@ -404,7 +404,7 @@ public class Start extends JFrame
 			try 
 			{
 				prog.setText(Read.getTextwith("Start", "prog13"));
-				File downloadt = new File(stamm, "Modinstaller/downloadtexts.json");
+				File downloadt = new File(sport, "downloadtexts.json");
 				new Downloader("http://www.minecraft-installer.de//api/offer3.php", downloadt).run();  //All mod downloads
 				
 				if(downloadt.exists())
@@ -422,7 +422,7 @@ public class Start extends JFrame
 			
 	    	try
 	    	{
-	    		File mcversions = new File(stamm, "Modinstaller/mcversions.json"); 
+	    		File mcversions = new File(sport, "mcversions.json"); 
 	    		new Downloader("http://www.minecraft-installer.de//api/mcversions.php", mcversions).run(); //MC versions + number of mods
 	    		if(mcversions.exists())
 	        	{
@@ -453,7 +453,7 @@ public class Start extends JFrame
 	    	}
 	    	try
 	    	{
-	    		File backgr = new File(stamm, "Modinstaller/modinstallerbg.png"); //Background picture
+	    		File backgr = new File(sport, "modinstallerbg.png"); //Background picture
 	    		new Downloader("http://www.minecraft-installer.de/Dateien/modinstallerbg.png", backgr).run();	    		
 	    	}
 	    	catch (Exception e)

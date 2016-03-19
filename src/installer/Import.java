@@ -12,6 +12,7 @@ import java.net.URLEncoder;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 
 import com.google.gson.Gson;
@@ -32,6 +33,7 @@ public class Import
 	private File isportn = new File(Start.sport, "Importn");
 	private File isportc = new File(Start.sport, "Importc");
 	private File isportc2 = new File(Start.sport, "Importc2");
+	private File isportinfo = new File(Start.sport, "ImportInfo");
 	
 	private String modName = "", modVersion = "", mcVersion = "", description = "", authors = "", website = "", credits = "", requiredMods = "", modLogo = "";
 	private MenuGUI men;
@@ -94,8 +96,8 @@ public class Import
 		} 
 		else // Modloader
 		{
-			String name = impFile.getName();
-			this.modName = name.substring(0, name.lastIndexOf('.'));
+			String impFileName = impFile.getName();
+			this.modName = impFileName.substring(0, impFileName.lastIndexOf('.'));
 			File modspo = new File(isport, modName);
 			modspo.mkdirs();
 			if (impFile.isFile()) // Modloader Datei
@@ -116,7 +118,7 @@ public class Import
 				{
 					try 
 					{
-						OP.copy(impFile, new File(modspo, name));
+						OP.copy(impFile, new File(modspo, impFileName));
 					} 
 					catch (Exception e) {
 						e.printStackTrace();
@@ -163,6 +165,7 @@ public class Import
 		men.modinstWebLnk.setVisible(false);
 		men.modVersionL.setVisible(true);
 		men.topIcon.setVisible(false);
+		men.videoButton.setVisible(false);
 		for (JLabel ic : men.ratIcons)
         	ic.setVisible(false);
 	}
@@ -177,16 +180,25 @@ public class Import
 			{
 				if(Dateiendung.equals(".jar"))
 				{
-					String info = getModinfoStringFromJAR(datei); // Wenn Jar Datei direkt .modinfo enthält
-					if (!info.equals("")) 
+					if (getModinfoStringFromJAR(datei)) // Wenn Jar Datei direkt .modinfo enthält
 					{
-						this.modName = updateCat(info);
 						File importf = new File(isport, modName + ".jar");
 						try 
 						{
 							OP.copy(datei, importf);
 						} 
 						catch (Exception e) {}				
+					}
+					else
+					{
+						isportc.mkdirs();
+						try {
+							new Extract(datei, isportc);
+							searchInfoFile(isportc, datei);
+						} catch (Exception e) {							
+							e.printStackTrace();
+						}
+						
 					}
 				} 
 				else 
@@ -195,7 +207,7 @@ public class Import
 					{
 						isportc.mkdirs();
 						new Extract(datei, isportc);
-						searchInfo(isportc);
+						searchInfoFile(isportc, null);
 						try 
 						{
 							File[] jars = searchFile(isportc, ".jar");
@@ -203,7 +215,7 @@ public class Import
 							{
 								OP.del(isportc2);
 								new Extract(jars[j], isportc2);
-								searchInfo(isportc2);
+								searchInfoFile(isportc2, null);
 							}
 						} 
 						catch (Exception e) {}
@@ -215,7 +227,7 @@ public class Import
 							{
 								OP.del(isportc2);
 								new Extract(zips[z], isportc2);
-								searchInfo(isportc2);
+								searchInfoFile(isportc2, null);
 							}
 						} 
 						catch (Exception e) {}
@@ -232,20 +244,20 @@ public class Import
 			File[] zips = searchFile(datei, ".zip"); // In Ordner ZIP Datei
 			for (int z = 0; z < zips.length; z++)
 				sucher(zips[z]);
-			searchInfo(datei);
+			searchInfoFile(datei, null);
 		}	
 	}
 
-	private void searchInfo(File datei) 
+	private void searchInfoFile(File datei, File jarfile) 
 	{
 		for (File file : datei.listFiles()) // In Ordner Infodatei suchen
 		{
 			if (file.isFile()) 
 			{
-				if (file.getName().equals("mcmod.info")) 
+				if (file.getName().endsWith(".info")&&!file.getName().startsWith("dependencies")) 
 				{
-					String modname = updateCat(getModinfoStringFromFile(file));
-					File path = new File(isportn, modname);
+					getModinfoStringFromFile(file, jarfile);
+					File path = new File(isportn, modName);
 					path.mkdirs();
 					try 
 					{
@@ -254,63 +266,77 @@ public class Import
 					catch (Exception e) {
 						e.printStackTrace();
 					}
-					new Compress(path, new File(isport, modname + ".jar"));
+					new Compress(path, new File(isport, modName + ".jar"));
 				}
 			} 
 			else 
 			{
-				searchInfo(file);
+				searchInfoFile(file, jarfile);
 			}
 		}
 	}
 
-	public String getModinfoStringFromFile(File modinfo) 
+	public boolean getModinfoStringFromFile(File modinfo, File jarfile) 
 	{
-		new OP();
 		try 
 		{
-			return OP.Textreaders(modinfo);
+			String cont = OP.Textreaders(modinfo);
+			if (!cont.equals(""))
+			{
+				return readModinfo(cont, jarfile);
+			}				
 		} 
-		catch (IOException e) {}
-		return "";
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
-	public String getModinfoStringFromJAR(File jarfile) 
+	public boolean getModinfoStringFromJAR(File jarfile) 
 	{
 		StringBuilder builder = new StringBuilder();
+		
+		String inputFile = "jar:file:/" + jarfile.getAbsolutePath() + "!/mcmod.info";	
 		InputStream in = null;
-		String inputFile = "jar:file:/" + jarfile.getAbsolutePath() + "!/mcmod.info";
-		if (inputFile.startsWith("jar:")) 
-		{
-			URL inputURL;
-			try 
-			{
-				inputURL = new URL(inputFile);
-
-				JarURLConnection conn = (JarURLConnection) inputURL.openConnection();
-				in = conn.getInputStream();
-
-				int ch;
-				while ((ch = in.read()) != -1) {
-					builder.append((char) ch);
-				}
-				in.close();
-				return builder.toString();
-			} 
-			catch (Exception e) 
-			{
-				return "";
-			}
-		}
-		else
-			return "";
-	}
-
-	public String updateCat(String jsontext) 
-	{
-		Gson gson = new Gson();
 		try 
 		{
+			URL inputURL = new URL(inputFile);
+
+			JarURLConnection conn = (JarURLConnection) inputURL.openConnection();
+			in = conn.getInputStream();
+
+			int ch;
+			while ((ch = in.read()) != -1) {
+				builder.append((char) ch);
+			}
+		} 
+		catch (Exception e) 
+		{
+		}
+		finally
+		{
+			if(in!=null)
+			{
+				try {
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		String cont = builder.toString();
+		if (!cont.equals(""))
+		{					
+			return readModinfo(cont, jarfile);
+		}
+		return false;
+	}
+
+	public boolean readModinfo(String jsontext, File jarfile) 
+	{		
+		Gson gson = new Gson();
+		try 
+		{			
 			JsonArray jsona1 = null;
 			JsonObject jsono1 = null;
 			try {
@@ -323,6 +349,9 @@ public class Import
 
 			try {
 				modName = jsono1.get("name").getAsString();
+				
+				isportinfo.mkdirs();
+				OP.Textwriter(new File(isportinfo, modName+".json"), jsontext, false);
 			} catch (Exception e) {
 			}
 			try {
@@ -331,8 +360,58 @@ public class Import
 			}
 			try {
 				modLogo = jsono1.get("logoFile").getAsString().replace("\\","/");
+				if(modLogo.startsWith("/"))
+					modLogo = modLogo.substring(1, modLogo.length());
+				File modpicfile = new File(isportinfo, modName+".png");
+				if(!modpicfile.exists()&&jarfile.exists())
+				{
+					modpicfile.createNewFile();
+					InputStream in = null;
+					BufferedImage bi = null;
+					try 
+					{
+						String inputFile = "jar:file:/" + jarfile.getAbsolutePath() + "!/"+modLogo;			
+						URL inputURL = new URL(inputFile);
+						JarURLConnection conn = (JarURLConnection) inputURL.openConnection();
+						in = conn.getInputStream();						
+						bi = ImageIO.read(in);	
+						ImageIO.write(bi, "png", modpicfile);	
+						men.picture.setIcon(new ImageIcon(new ImageScaler().scaleImage(bi, new Dimension(400, 225))));					    	
+					} 
+					catch (Exception e){
+						e.printStackTrace();
+					}
+					finally
+					{
+						if(in!=null)
+							in.close();	
+						if(bi!=null)
+						{
+							bi.flush();
+							bi.flush();
+						}
+					}					
+				}
+				if(modpicfile.exists()&&modpicfile.length()>10)
+				{
+					BufferedImage bi = null;
+					try {
+						bi = ImageIO.read(modpicfile);
+						men.picture.setIcon(new ImageIcon(new ImageScaler().scaleImage(bi, new Dimension(400, 225))));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					finally
+					{
+						if(bi !=null)
+						{
+							bi.flush();
+							bi.flush();
+						}
+					}
+				}
 			} catch (Exception e) {
-			}	
+			}			
 			try {
 				mcVersion = jsono1.get("mcversion").getAsString();				
 			} catch (Exception e) {
@@ -377,11 +456,12 @@ public class Import
 				}
 			} catch (Exception e) {
 			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
+			return true;	
 		}
-		return modName;
+		catch (Exception e) {
+			e.printStackTrace();
+			return false;			
+		}		
 	}
 
 	private void setListEntry(String name) {
@@ -406,26 +486,29 @@ public class Import
 		this.modName = modName;
 	    this.men = men;
 	    setImport();
-	    String cont;
-	    if (!Menu.isModloader)
+	    if (!Menu.isModloader) //Forge
 	    {
 	      File jarfile = new File(this.isport, modName + ".jar");
+	      File modjsonfile = new File(isportinfo, this.modName+".json");     
 	      if (jarfile.exists())
 	      {
-	        cont = getModinfoStringFromJAR(jarfile);
-	        if (!cont.equals("")) 
+	        if (modjsonfile.exists()) 	        
 	        {
-	          updateCat(cont);
+	        	try {
+					readModinfo(OP.Textreaders(modjsonfile), jarfile);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 	        }
-	        else //keine Modinfos vorhanden
+	        else
 	        {
 	        	description = Read.getTextwith("Import", "nomodinfo");
-				website = Read.getTextwith("installer", "website")+"faq.php?id=nomodinfo";				
+				website = Read.getTextwith("installer", "website")+"faq.php?id=nomodinfo";	
 	        }
 	        make(jarfile);
 	      }	      
 	    }
-	    else
+	    else //Modloader
 	    {
 	      for (File f : isport.listFiles())
 	      {
@@ -437,29 +520,15 @@ public class Import
 	}
 
 	public void make(File jarfile) {
-		boolean picfound = false;
 		
 		if (!modLogo.equals("")) 
 		{
 			JLabel bild = new JLabel();
-			bild.setHorizontalAlignment(SwingConstants.CENTER);			
-			InputStream in = null;
-			try 
-			{
-				String inputFile = "jar:file:/" + jarfile.getAbsolutePath().replace("\\", "/") + "!/"+modLogo;			
-				URL inputURL = new URL(inputFile);
-				JarURLConnection conn = (JarURLConnection) inputURL.openConnection();
-				in = conn.getInputStream();						
-				BufferedImage bi = ImageIO.read(in);
-				men.picture.setIcon(new ImageIcon(new ImageScaler().scaleImage(bi, new Dimension(390, 215))));
-				in.close();	
-				picfound = true;
-			} 
-			catch (Exception e){		
-			}
-		}		
-		if(!picfound)
-		{
+			bild.setHorizontalAlignment(SwingConstants.CENTER);	
+		}	
+		File modpicfile = new File(isportinfo, this.modName+".png");		
+		if(modpicfile.length()<10)
+		{			
 			men.picture.setIcon(new ImageIcon(this.getClass().getResource("src/mods.png")));
 		}
 		men.website = this.website;

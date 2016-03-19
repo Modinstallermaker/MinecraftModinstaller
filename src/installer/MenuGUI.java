@@ -235,6 +235,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		videoButton.addMouseListener(this); 
 		videoButton.setToolTipText(Read.getTextwith("MenuGUI", "t4"));
 		videoButton.setCursor(c);
+		videoButton.setVisible(false);
 		cp.add(videoButton);	
 		
 		modinstWebLnk.setBounds(mittexa+picturex-78, infol+5, 40, 40); // Link to Modinstaller website	

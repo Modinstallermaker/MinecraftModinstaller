@@ -27,7 +27,7 @@ public class Survey  extends JFrame implements ActionListener
   public Survey()
   {
     setTitle("Minecraft Modinstaller - Mods ok?");
-    if ((!new File(Start.stamm + "Modinstaller/Importo/").exists()) && 
+    if ((!new File(Start.sport + "Importo").exists()) && 
       (!OP.optionReader("lastmods").equals(OP.optionReader("slastmods"))) && 
       (OP.optionReader("changed").equals("true")))
     {

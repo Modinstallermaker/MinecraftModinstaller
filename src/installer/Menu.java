@@ -507,10 +507,12 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 				String name = String.valueOf(listitem);
 				if (name.substring(0, 1).equals("+")) // Importierter Mod löschen
 				{
-					name = name.substring(2);
-					del(new File(Start.sport, "Import/"+name));
-					del(new File(Start.sport, "Import/"+name+".jar"));
-					del(new File(Start.sport, "Importn/"+name+"/"));
+					name = name.substring(2);					
+					File importf = new File(Start.sport, "Import");
+					File importfn = new File(Start.sport, "Importn");
+					del(new File(importf, name+".jar"));
+					del(new File(importf, name));					
+					del(new File(importfn, name));					
 				}  
 				else  // sonst nach Liste links kopieren
 				{			
@@ -588,6 +590,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		modinstWebLnk.setVisible(!yes);
 		modVersionL.setVisible(yes);
 		topIcon.setVisible(!yes);
+		videoButton.setVisible(!yes);
 		for (JLabel ic : ratIcons)
         	ic.setVisible(!yes);
 	}
@@ -676,7 +679,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	 * @param e MouseEvent of the right list
 	 */
 	private void rightListItemSelected(MouseEvent e)
-	{
+	{		
 		if (rightListModel.getSize() > 0 && Menu.this.rightList.isEnabled()) 
 		{			
 			JList<?> list = (JList<?>) e.getSource();
@@ -686,7 +689,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 			{
 				removeMod();
 			}	
-			else if (e.getButton() == 1)
+			else
 			{	
 				//If the user clicked on a mod with a "+" the imported mod description is shown
 				if (Auswahl.substring(0, 1).equals("+"))
@@ -830,6 +833,12 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		{			
 			new MCVersions(modtexts, moddownloads, offlineList, this).setVisible(true);
 		}
+		else if (s == leftList)
+			leftListItemSelected(e);
+		else if (s == rightList) 
+			rightListItemSelected(e);
+		else if ((s == nextButton) && (nextButton.isEnabled())) 
+			startInstallation();		
 		
 		for(int i=0; i<ratIcons.length; i++)
 		{
@@ -888,13 +897,6 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	
 	@Override
 	public void mousePressed(MouseEvent e) {
-		Object s = e.getSource();
-	    if (s == leftList)
-	    	leftListItemSelected(e);
-	    else if (s == rightList) 
-	    	rightListItemSelected(e);
-	    else if ((s == nextButton) && (nextButton.isEnabled())) 
-	    	startInstallation();		
 	}
 	
 	@Override
