@@ -20,6 +20,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
@@ -404,7 +406,13 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 					if(!inh.startsWith("<html>"))
 					{
 						inh="<html><body>"+inh+"</body></html>";
-					}				
+					}	
+					String suche = searchInput.getText();
+					if(!suche.equals(""))
+					{						
+						inh = inh.replace(toUpperCase1(suche), "<font style='background-color:#9C2717; color:white;'>"+toUpperCase1(suche)+"</font>");
+						inh = inh.replace(suche.toLowerCase(), "<font style='background-color:#9C2717; color:white;'>"+suche.toLowerCase()+"</font>");
+					}
 					modDescPane.setText(inh);							
 					modDescPane.setCaretPosition(0);
 					manual=false;
@@ -475,6 +483,21 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	    picThread.start();
 	}
 	
+	static String toUpperCase(final Pattern pattern, final String s) {
+	      StringBuffer sb = new StringBuffer(s.length());
+	      Matcher m = pattern.matcher(s);
+	      while(m.find()) {
+	         m.appendReplacement(sb, m.group().toUpperCase());
+	      }
+	      m.appendTail(sb);
+	      return sb.toString();
+	   }
+	
+	 static final Pattern PATTERN1 = Pattern.compile("(\\b.{1})"); 
+	   static String toUpperCase1(String s) {
+	      return toUpperCase(PATTERN1, s);
+	   }
+
 	/**
 	 * Install mod: Method detects the selected mods in the left list and moves the selected mods to the right list
 	 */
@@ -740,21 +763,41 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		else
 		{
 			leftListModel.removeAllElements();	
-			
 			String needle = searchInput.getText().toLowerCase().replace(" ", "");	
+			
 			for(Modinfo prop : proposals) //Filter 1: Starts with the first letter
 			{					
-				String modname = prop.getName().toLowerCase().replace(" ", "");			
+				String modname = prop.getName().toLowerCase().replace(" ", "");
 				if(modname.startsWith(needle)&&!prop.getSelect())
 					leftListModel.addElement(prop.getName());			
 			}	
 			for(Modinfo prop : proposals) //Filter 2: Contains the whole String
 			{					
-				String modname = prop.getName().toLowerCase().replace(" ", "");			
+				String modname = prop.getName().toLowerCase().replace(" ", "");	
 				if(modname.contains(needle)&&!modname.startsWith(needle)&&!prop.getSelect())
 					leftListModel.addElement(prop.getName());			
 			}
-			if(needle.length()>2) //Filter 3: Remove the first and the last letter of the String
+			for(Modinfo prop : proposals) //Filter 3: Contains the whole String
+			{	
+				f1: for(Modinfo info : modtexts)
+				{	
+					if(info.getName().equals(prop.getName()))
+					{
+						String modtext = info.getText().toLowerCase().replace(" ", "");
+						modtext =modtext.replace("&auml;", "ä");
+						modtext =modtext.replace("&uuml;", "ü");
+						modtext =modtext.replace("&ouml;", "ö");
+						modtext =modtext.replace("&szlig;", "ß");
+						if(modtext.contains(needle)&&!leftListModel.contains(prop.getName()))
+						{
+							leftListModel.addElement(prop.getName());
+							break f1;
+						}
+					}
+				}	
+			}	
+			/*
+			if(needle.length()>2) //Filter 4: Remove the first and the last letter of the String
 			{
 				String needle2 = needle.substring(0, needle.length()-1);
 				if(needle2.length()>2)
@@ -766,12 +809,12 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 						leftListModel.addElement(prop.getName());			
 				}
 			}
-		
+			*/
 			if(leftListModel.size()>0)
-			{	
+			{		
 				if(!modx.equals(leftListModel.getElementAt(0)))
 				{
-					modx=leftListModel.getElementAt(0).toString();
+					modx=leftListModel.getElementAt(0).toString();					
 					setInfoText(modx);			
 				}
 				leftList.setSelectedIndex(0);

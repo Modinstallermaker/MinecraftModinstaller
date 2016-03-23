@@ -827,7 +827,7 @@ public class Install extends InstallGUI
 				try 
 				{
 					 for (File modim : impf.listFiles())
-						 copy(impf, new File(Start.mineord, "mods/" + modim.getName()));					
+						 copy(modim, new File(Start.mineord, "mods/" + modim.getName()));					
 				} 
 				catch (Exception e) 
 				{

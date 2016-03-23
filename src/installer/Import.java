@@ -12,7 +12,6 @@ import java.net.URLEncoder;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 
 import com.google.gson.Gson;
