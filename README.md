@@ -1,9 +1,10 @@
-===Der Minecraft Modinstaller===
-
+Der Minecraft Modinstaller
+<br><br>
 Der Minecraft Modinstaller ist eine Anwendung, die Mods einfach und schnell installiert. Sie schlägt in einer Liste zur ausgewählten Minecraftversion Mods vor, die durch das Programm automatisch installiert werden können. Eine deutschsprachige Beschreibung mit Bildern und Bewertungen hilft bei der Auswahl der Mods.
+<br><br>
 
-
-==Vorbereitungen==
+Vorbereitungen
+<br><br>
 Auf der Herstellerwebseite wird das Programm kostenlos zum Download für Windows, Mac und Linux angeboten. Die einzige Voraussetzung für das Tool ist eine aktuelle Java-Version, die kostenlos erhältlich ist. Der aktuellste Minecraft Modinstaller ist mit den mit den neusten Versionen von Minecraft kompatibel. Das Programm benötigt keinerlei Administratorrechte und kann direkt von der heruntergeladenen Datei aus gestartet werden. Nach der Auswahl der Sprache muss lediglich die Minecraft Version ausgewählt werden, die modifiziert werden soll. Direkt nach der Akzeptanz der Lizenzbedingungen folgt direkt die Startoberfläche für die Modauswahl. Es kann nur eine Minecraftversion im Modinstaller ausgewählt werden, wenn diese bereits manuell über den Minecraft Launcher installiert wurde (d.h. nur installierte Minecraftversionen können modifiziert werden)!
 
 ==Auswahl der Mods==
