@@ -50,7 +50,7 @@ public class Import
 		{
 			try 
 			{
-				sucher(impFile);
+				seachArchive(impFile);
 			} 
 			catch (Exception e) {}
 
@@ -155,8 +155,46 @@ public class Import
 					setListEntry(name);			
 				}					
 			}		
-		}
+		}		
+		
 		make(new File(isport, modName + ".jar"));		
+	}
+	
+	public Import(String modName, MenuGUI men) {		
+		this.modName = modName;
+	    this.men = men;
+	    setImport();
+	    if (!Menu.isModloader) //Forge
+	    {
+	      File jarfile = new File(this.isport, modName + ".jar");
+	      File modjsonfile = new File(isportinfo, this.modName+".json");     
+	      if (jarfile.exists())
+	      {
+	        if (modjsonfile.exists()) 	        
+	        {
+	        	try {
+					readModinfo(OP.Textreaders(modjsonfile));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	        }
+	        else
+	        {
+	        	description = Read.getTextwith("Import", "nomodinfo");
+				website = Read.getTextwith("installer", "website")+"faq.php?id=nomodinfo";	
+	        }
+	        make(jarfile);
+	      }	      
+	    }
+	    else //Modloader
+	    {
+	      for (File f : isport.listFiles())
+	      {
+	        if (f.isDirectory()) {
+	          make(f);
+	        }
+	      }
+	    }	
 	}
 	
 	private void setImport()
@@ -169,7 +207,7 @@ public class Import
         	ic.setVisible(false);
 	}
 
-	public void sucher(File datei)
+	private void seachArchive(File datei)
 	{
 		OP.del(isportc);
 		if (datei.isFile()) // Wenn Datei
@@ -193,7 +231,7 @@ public class Import
 						isportc.mkdirs();
 						try {
 							new Extract(datei, isportc);
-							searchInfoFile(isportc, datei);
+							searchInfoFile(isportc);
 						} catch (Exception e) {							
 							e.printStackTrace();
 						}
@@ -206,7 +244,7 @@ public class Import
 					{
 						isportc.mkdirs();
 						new Extract(datei, isportc);
-						searchInfoFile(isportc, null);
+						searchInfoFile(isportc);
 						try 
 						{
 							File[] jars = searchFile(isportc, ".jar");
@@ -214,7 +252,7 @@ public class Import
 							{
 								OP.del(isportc2);
 								new Extract(jars[j], isportc2);
-								searchInfoFile(isportc2, null);
+								searchInfoFile(isportc2);
 							}
 						} 
 						catch (Exception e) {}
@@ -226,7 +264,7 @@ public class Import
 							{
 								OP.del(isportc2);
 								new Extract(zips[z], isportc2);
-								searchInfoFile(isportc2, null);
+								searchInfoFile(isportc2);
 							}
 						} 
 						catch (Exception e) {}
@@ -239,28 +277,39 @@ public class Import
 		{
 			File[] jars = searchFile(datei, ".jar"); // In Ordner JAR Datei
 			for (int j = 0; j < jars.length; j++)
-				sucher(jars[j]);
+				seachArchive(jars[j]);
 			File[] zips = searchFile(datei, ".zip"); // In Ordner ZIP Datei
 			for (int z = 0; z < zips.length; z++)
-				sucher(zips[z]);
-			searchInfoFile(datei, null);
+				seachArchive(zips[z]);
+			searchInfoFile(datei);
 		}	
 	}
 
-	private void searchInfoFile(File datei, File jarfile) 
+	private void searchInfoFile(File parent) 
 	{
-		for (File file : datei.listFiles()) // In Ordner Infodatei suchen
+		for (File child : parent.listFiles()) // In Ordner Infodatei suchen
 		{
-			if (file.isFile()) 
+			if (child.isFile()) 
 			{
-				if (file.getName().endsWith(".info")&&!file.getName().startsWith("dependencies")) 
+				if (child.getName().endsWith(".info")&&!child.getName().startsWith("dependencies")) 
 				{
-					getModinfoStringFromFile(file, jarfile);
+					try 
+					{
+						String cont = OP.Textreaders(child);
+						if (!cont.equals(""))
+						{
+							readModinfo(cont);
+						}				
+					} 
+					catch (IOException e) {
+						e.printStackTrace();
+					}
 					File path = new File(isportn, modName);
+					OP.del(path);
 					path.mkdirs();
 					try 
 					{
-						OP.copy(datei, path);
+						OP.copy(parent, path);
 					}
 					catch (Exception e) {
 						e.printStackTrace();
@@ -270,28 +319,12 @@ public class Import
 			} 
 			else 
 			{
-				searchInfoFile(file, jarfile);
+				searchInfoFile(child);
 			}
 		}
 	}
 
-	public boolean getModinfoStringFromFile(File modinfo, File jarfile) 
-	{
-		try 
-		{
-			String cont = OP.Textreaders(modinfo);
-			if (!cont.equals(""))
-			{
-				return readModinfo(cont, jarfile);
-			}				
-		} 
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	public boolean getModinfoStringFromJAR(File jarfile) 
+	private boolean getModinfoStringFromJAR(File jarfile) 
 	{
 		StringBuilder builder = new StringBuilder();
 		
@@ -323,15 +356,15 @@ public class Import
 				}
 			}
 		}
-		String cont = builder.toString();
-		if (!cont.equals(""))
+		String jsontext = builder.toString();
+		if (!jsontext.equals(""))
 		{					
-			return readModinfo(cont, jarfile);
+			return readModinfo(jsontext);
 		}
 		return false;
 	}
 
-	public boolean readModinfo(String jsontext, File jarfile) 
+	private boolean readModinfo(String jsontext) 
 	{		
 		Gson gson = new Gson();
 		try 
@@ -345,7 +378,6 @@ public class Import
 				JsonObject jsonoa = gson.fromJson(jsontext, JsonObject.class);
 				jsono1 = jsonoa.get("modList").getAsJsonArray().get(0).getAsJsonObject();
 			}
-
 			try {
 				modName = jsono1.get("name").getAsString();
 				
@@ -361,54 +393,7 @@ public class Import
 				modLogo = jsono1.get("logoFile").getAsString().replace("\\","/");
 				if(modLogo.startsWith("/"))
 					modLogo = modLogo.substring(1, modLogo.length());
-				File modpicfile = new File(isportinfo, modName+".png");
-				if(!modpicfile.exists()&&jarfile.exists())
-				{
-					modpicfile.createNewFile();
-					InputStream in = null;
-					BufferedImage bi = null;
-					try 
-					{
-						String inputFile = "jar:file:/" + jarfile.getAbsolutePath() + "!/"+modLogo;			
-						URL inputURL = new URL(inputFile);
-						JarURLConnection conn = (JarURLConnection) inputURL.openConnection();
-						in = conn.getInputStream();						
-						bi = ImageIO.read(in);	
-						ImageIO.write(bi, "png", modpicfile);	
-						men.picture.setIcon(new ImageIcon(new ImageScaler().scaleImage(bi, new Dimension(400, 225))));					    	
-					} 
-					catch (Exception e){
-						e.printStackTrace();
-					}
-					finally
-					{
-						if(in!=null)
-							in.close();	
-						if(bi!=null)
-						{
-							bi.flush();
-							bi.flush();
-						}
-					}					
-				}
-				if(modpicfile.exists()&&modpicfile.length()>10)
-				{
-					BufferedImage bi = null;
-					try {
-						bi = ImageIO.read(modpicfile);
-						men.picture.setIcon(new ImageIcon(new ImageScaler().scaleImage(bi, new Dimension(400, 225))));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					finally
-					{
-						if(bi !=null)
-						{
-							bi.flush();
-							bi.flush();
-						}
-					}
-				}
+				
 			} catch (Exception e) {
 			}			
 			try {
@@ -461,6 +446,58 @@ public class Import
 			e.printStackTrace();
 			return false;			
 		}		
+	}	
+	
+	private void loadPic() throws IOException
+	{
+		File jarfile = new File(this.isport, modName + ".jar");
+		File modpicfile = new File(isportinfo, modName+".png");
+		if(!modpicfile.exists()&&jarfile.exists())
+		{
+			modpicfile.createNewFile();
+			InputStream in = null;
+			BufferedImage bi = null;
+			try 
+			{
+				String inputFile = "jar:file:/" + jarfile.getAbsolutePath() + "!/"+modLogo;			
+				URL inputURL = new URL(inputFile);
+				JarURLConnection conn = (JarURLConnection) inputURL.openConnection();
+				in = conn.getInputStream();						
+				bi = ImageIO.read(in);	
+				ImageIO.write(bi, "png", modpicfile);	
+				men.picture.setIcon(new ImageIcon(new ImageScaler().scaleImage(bi, new Dimension(400, 225))));					    	
+			} 
+			catch (Exception e){
+			}
+			finally
+			{
+				if(in!=null)
+					in.close();	
+				if(bi!=null)
+				{
+					bi.flush();
+					bi.flush();
+				}
+			}					
+		}
+		if(modpicfile.exists()&&modpicfile.length()>10)
+		{
+			BufferedImage bi = null;
+			try {
+				bi = ImageIO.read(modpicfile);
+				men.picture.setIcon(new ImageIcon(new ImageScaler().scaleImage(bi, new Dimension(400, 225))));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			finally
+			{
+				if(bi !=null)
+				{
+					bi.flush();
+					bi.flush();
+				}
+			}
+		}
 	}
 
 	private void setListEntry(String name) {
@@ -471,7 +508,7 @@ public class Import
 		}
 	}
 
-	public File[] searchFile(File ordner, String suche) {
+	private File[] searchFile(File ordner, String suche) {
 		FileFinder ff = new FileFinder();
 		ff.sucheDatei(suche, ordner, null);
 		File[] fs = new File[ff.findings.size()];
@@ -481,50 +518,18 @@ public class Import
 		return fs;
 	}
 
-	public Import(String modName, MenuGUI men) {		
-		this.modName = modName;
-	    this.men = men;
-	    setImport();
-	    if (!Menu.isModloader) //Forge
-	    {
-	      File jarfile = new File(this.isport, modName + ".jar");
-	      File modjsonfile = new File(isportinfo, this.modName+".json");     
-	      if (jarfile.exists())
-	      {
-	        if (modjsonfile.exists()) 	        
-	        {
-	        	try {
-					readModinfo(OP.Textreaders(modjsonfile), jarfile);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-	        }
-	        else
-	        {
-	        	description = Read.getTextwith("Import", "nomodinfo");
-				website = Read.getTextwith("installer", "website")+"faq.php?id=nomodinfo";	
-	        }
-	        make(jarfile);
-	      }	      
-	    }
-	    else //Modloader
-	    {
-	      for (File f : isport.listFiles())
-	      {
-	        if (f.isDirectory()) {
-	          make(f);
-	        }
-	      }
-	    }	
-	}
-
-	public void make(File jarfile) {
+	private void make(File jarfile) {
 		
 		if (!modLogo.equals("")) 
 		{
 			JLabel bild = new JLabel();
 			bild.setHorizontalAlignment(SwingConstants.CENTER);	
 		}	
+		try {
+			loadPic();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		File modpicfile = new File(isportinfo, this.modName+".png");		
 		if(modpicfile.length()<10)
 		{			

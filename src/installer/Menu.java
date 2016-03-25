@@ -388,9 +388,19 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	 */
 	private void setInfoText(final String modname)
 	{	
+		boolean newt = false;
+		if(modname.equals(modNameLabel.getText()))
+		{
+			newt = true;
+		}
+		else
+		{
+			picture.setIcon(new ImageIcon(this.getClass().getResource("src/wait.gif")));	
+		}
+		
 		setImport(false);
 		modNameLabel.setText(modname);	
-		picture.setIcon(new ImageIcon(this.getClass().getResource("src/wait.gif")));	
+		
 		
 		for(Modinfo modt : modtexts)
 		{
@@ -402,17 +412,33 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 				 	modID= modt.getID();
 				 	website =  modt.getSource();
 				 	YouTube = modt.getYouTube();
-					hyperlink = Read.getTextwith("installer", "website") + "/modinfo.php?modname=" + modname.replace(" ", "+");
+					hyperlink = Read.getTextwith("installer", "website") + "/modinfo.php?modname=" + modname.replace(" ", "+");					
+					String suche = searchInput.getText().replaceAll("\\(", "").replaceAll("\\)", ""); //mark seach text
+					if(!suche.equals("")&&suche.length()>1)
+					{	
+						inh = inh.replaceAll("&auml;", "ä");
+						inh = inh.replaceAll("&uuml;", "ü");
+						inh = inh.replaceAll("&ouml;", "ö");
+						inh = inh.replaceAll("&szlig;", "ß");
+						inh = inh.replaceAll("&quot;", "\"");
+						inh = inh.replaceAll("<m>", "");
+						inh = inh.replaceAll("</m>", "");
+						inh = inh.replaceAll("\\(", "");
+						inh = inh.replaceAll("\\)", "");
+						String rep ="";
+						Pattern word = Pattern.compile(suche, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+						Matcher match = word.matcher(inh);
+						while (match.find()) {
+							rep = inh.substring(match.start(), match.end());
+						}
+						inh = inh.replaceAll("(?i)" + suche, "<m>" + rep+ "</m>");
+						inh = inh.replaceAll("<m>", "<font style='background-color:#9C2717; color:white;'>");
+						inh = inh.replaceAll("</m>", "</font>");
+					}
 					if(!inh.startsWith("<html>"))
 					{
 						inh="<html><body>"+inh+"</body></html>";
 					}	
-					String suche = searchInput.getText();
-					if(!suche.equals(""))
-					{						
-						inh = inh.replace(toUpperCase1(suche), "<font style='background-color:#9C2717; color:white;'>"+toUpperCase1(suche)+"</font>");
-						inh = inh.replace(suche.toLowerCase(), "<font style='background-color:#9C2717; color:white;'>"+suche.toLowerCase()+"</font>");
-					}
 					modDescPane.setText(inh);							
 					modDescPane.setCaretPosition(0);
 					manual=false;
@@ -458,45 +484,33 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 			}
 		}
 		//Load picture of mod
-		if(picThread!=null)
-			picThread.interrupt();
-		picThread = new Thread() 
- 	    {
-    	  public void run() 
-    	  {	 	    		
-    		try 
-		    {	
-    			String url = "http://www.minecraft-installer.de/Dateien/BilderPre/"+modname+".jpg";
-    			url = url.replace(" ", "%20");
-			 	BufferedImage img = ImageIO.read(new URL(url));			 	
-				picture.setIcon((Icon) new ImageIcon(img));	
-				img.flush();
-				picture.setText("");
-			} 
-		    catch (Exception e) 
-		    {
-				picture.setText(Read.getTextwith("Menu", "nopic"));				
-				picture.setIcon(null);
-			}	
-    	 }
-	    };
-	    picThread.start();
+		if(!newt)
+		{
+			if(picThread!=null)
+				picThread.interrupt();
+			picThread = new Thread() 
+	 	    {
+	    	  public void run() 
+	    	  {	 	    		
+	    		try 
+			    {	
+	    			String url = "http://www.minecraft-installer.de/Dateien/BilderPre/"+modname+".jpg";
+	    			url = url.replace(" ", "%20");
+				 	BufferedImage img = ImageIO.read(new URL(url));			 	
+					picture.setIcon((Icon) new ImageIcon(img));	
+					img.flush();
+					picture.setText("");
+				} 
+			    catch (Exception e) 
+			    {
+					picture.setText(Read.getTextwith("Menu", "nopic"));				
+					picture.setIcon(null);
+				}	
+	    	 }
+		    };
+		    picThread.start();
+		}
 	}
-	
-	static String toUpperCase(final Pattern pattern, final String s) {
-	      StringBuffer sb = new StringBuffer(s.length());
-	      Matcher m = pattern.matcher(s);
-	      while(m.find()) {
-	         m.appendReplacement(sb, m.group().toUpperCase());
-	      }
-	      m.appendTail(sb);
-	      return sb.toString();
-	   }
-	
-	 static final Pattern PATTERN1 = Pattern.compile("(\\b.{1})"); 
-	   static String toUpperCase1(String s) {
-	      return toUpperCase(PATTERN1, s);
-	   }
 
 	/**
 	 * Install mod: Method detects the selected mods in the left list and moves the selected mods to the right list
@@ -520,33 +534,30 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	 * Uninstall mod: Method detects the selected mods in the right list and moves the selected mods to the left list
 	 */
 	private void removeMod() // Entfernen von Mods
-	{
-		if(rightList.isFocusOwner())
+	{		
+		List<String> strlist = new ArrayList<String>();
+		strlist = rightList.getSelectedValuesList();
+		for (String listitem : strlist)	
 		{
-			List<String> strlist = new ArrayList<String>();
-			strlist = rightList.getSelectedValuesList();
-			for (String listitem : strlist)	
+			String name = String.valueOf(listitem);
+			if (name.substring(0, 1).equals("+")) // Importierter Mod löschen
 			{
-				String name = String.valueOf(listitem);
-				if (name.substring(0, 1).equals("+")) // Importierter Mod löschen
-				{
-					name = name.substring(2);					
-					File importf = new File(Start.sport, "Import");
-					File importfn = new File(Start.sport, "Importn");
-					del(new File(importf, name+".jar"));
-					del(new File(importf, name));					
-					del(new File(importfn, name));					
-				}  
-				else  // sonst nach Liste links kopieren
-				{			
-					leftList.setEnabled(true);
-					for(Modinfo prop : proposals)
-						if(prop.getName().equals(listitem))
-							prop.setSelect(false);	
-				}	
-			}
-			updateLists();			
+				name = name.substring(2);					
+				File importf = new File(Start.sport, "Import");
+				File importfn = new File(Start.sport, "Importn");
+				del(new File(importf, name+".jar"));
+				del(new File(importf, name));					
+				del(new File(importfn, name));					
+			}  
+			else  // sonst nach Liste links kopieren
+			{			
+				leftList.setEnabled(true);
+				for(Modinfo prop : proposals)
+					if(prop.getName().equals(listitem))
+						prop.setSelect(false);	
+			}	
 		}
+		updateLists();	
 	}
 
 	/**
@@ -788,6 +799,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 						modtext =modtext.replace("&uuml;", "ü");
 						modtext =modtext.replace("&ouml;", "ö");
 						modtext =modtext.replace("&szlig;", "ß");
+						modtext =modtext.replace("&quot;", "\"");
 						if(modtext.contains(needle)&&!leftListModel.contains(prop.getName()))
 						{
 							leftListModel.addElement(prop.getName());
@@ -812,16 +824,12 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 			*/
 			if(leftListModel.size()>0)
 			{		
-				if(!modx.equals(leftListModel.getElementAt(0)))
-				{
-					modx=leftListModel.getElementAt(0).toString();					
-					setInfoText(modx);			
-				}
+				modx=leftListModel.getElementAt(0).toString();					
+				setInfoText(modx);
 				leftList.setSelectedIndex(0);
 				leftListMSP.getVerticalScrollBar().setValue(0); //2x notwendig
 				leftListFSP.getVerticalScrollBar().setValue(0);	
-				leftList.setEnabled(true);
-						
+				leftList.setEnabled(true);						
 			}
 			else
 			{
@@ -875,11 +883,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		else if(s==mcVersLabel)
 		{			
 			new MCVersions(modtexts, moddownloads, offlineList, this).setVisible(true);
-		}
-		else if (s == leftList)
-			leftListItemSelected(e);
-		else if (s == rightList) 
-			rightListItemSelected(e);
+		}		
 		else if ((s == nextButton) && (nextButton.isEnabled())) 
 			startInstallation();		
 		
@@ -940,6 +944,11 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	
 	@Override
 	public void mousePressed(MouseEvent e) {
+		Object s = e.getSource();
+		if (s == leftList)
+			leftListItemSelected(e);
+		else if (s == rightList) 
+			rightListItemSelected(e);
 	}
 	
 	@Override
