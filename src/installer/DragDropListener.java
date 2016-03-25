@@ -30,21 +30,11 @@ class DragDropListener implements DropTargetListener
 	        {		         
 	          if (flavor.isFlavorJavaFileListType()) 
 	          {  
-				@SuppressWarnings("unchecked")
-				List<File>  files = (List<File>) transferable.getTransferData(flavor);
-		            
-			       for (final File filex : files) 
-			       {	
-			    	   men.modNameLabel.setText("Loading Mod...");
-			    	   men.modDescPane.setText("Loading mod file \""+filex.getName()+"\"...");
-			    	   men.picture.setIcon(new ImageIcon(this.getClass().getResource("src/wait.gif")));
-						new Thread(){
-							public void run()
-							{
-								  new Import(filex, men);									
-							}
-						}.start();					
-		           }		            
+					@SuppressWarnings("unchecked")
+					List<File>  files = (List<File>) transferable.getTransferData(flavor);	
+					men.modNameLabel.setText("Loading Mods...");
+					men.picture.setIcon(new ImageIcon(this.getClass().getResource("src/wait.gif"))); 
+					new ImportThread(files, men).start();		                 
 	          }	          
 	        } 
 	        catch (Exception e) 

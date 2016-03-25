@@ -594,7 +594,9 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
         if(rueckgabeWert == JFileChooser.APPROVE_OPTION)
         {
         	for(File modfile : chooser.getSelectedFiles())
-        		new Import(modfile, this);	            
+        	{
+        		new Import(modfile, this);
+        	}
         }
 	}
 	
