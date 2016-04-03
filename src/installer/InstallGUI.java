@@ -180,7 +180,8 @@ public class InstallGUI extends JFrame implements MouseListener {
 		
 		//Button: Back to Menu
 		backButton.setBounds(rand, height-40-rand, 200, 40);	
-		backButton.setText(Read.getTextwith("InstallGUI", "t2"));		
+		backButton.setText(Read.getTextwith("InstallGUI", "t2"));
+		backButton.setIcon(new ImageIcon(this.getClass().getResource("src/back.png")));		
 		backButton.setFont(startMCButton.getFont().deriveFont(Font.BOLD, 18));	
 		backButton.addMouseListener(this);
 		backButton.setCursor(c);		

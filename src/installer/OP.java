@@ -360,7 +360,7 @@ public class OP
 		
 	final static public String optionReader(String attrib)
 	{
-		File configf = new File(Start.sport + "config.txt");
+		File configf = new File(Start.sport, "config.txt");
 		String text=null;
 		boolean exist=false;
 		String[] inhalt = null;
@@ -386,7 +386,7 @@ public class OP
 	
 	final static public void optionWriter(String attrib, String content)
 	{
-		File configf = new File(Start.sport + "config.txt");
+		File configf = new File(Start.sport, "config.txt");
 		String[] inhalt = null;
 		boolean inside = false;
 		if(configf.exists())
