@@ -3,7 +3,7 @@
 		"name":"Minecraft Modinstaller",
 		"desc":"... makes modding easier!",
 		"lang":"de",
-		"version":"5.0.6",
+		"version":"5.0.7",
 		"zusatz": "",
 		"webplace":"http://files.minecraft-mods.de/installer/",
 		"website": "http://www.minecraft-installer.com/"
@@ -86,7 +86,11 @@
 		"t1":"Please run the Minecraft version \"Modinstaller\" (instead of ",
 		"t2":"<< Back to Menu",
 		"t3":"Start Minecraft",
-		"facebook":"https://www.facebook.com/modinstalleren"
+		"facebook":"https://www.facebook.com/modinstalleren",
+		"t4":"The mods are not installed completly!\nWould you like to exit the Modinstaller?",
+		"t4h":"Exit Modinstaller?",
+		"t5":"The mods are not installed completly!\nWould you like to cancel the installation?",
+		"t5h":"Cancel installation?"
 	},
 	"MCVersions": {
 		"t1":"installed",

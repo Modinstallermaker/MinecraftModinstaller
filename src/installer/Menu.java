@@ -58,17 +58,14 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	private ArrayList<Modinfo> modlArrL = new ArrayList<Modinfo>();
 	private ArrayList<Modinfo> forgeArrL = new ArrayList<Modinfo>();
 	private ArrayList<Modinfo> proposals = new ArrayList<Modinfo>();
-	private ArrayList<String> offlineList;
-	private Modinfo[] modtexts, moddownloads;
+
+	private Modinfo[] modtexts = Start.modtexts, moddownloads = Start.moddownloads;
 	private JList<String> leftList;	
 	private DefaultListModel<String> leftListModel;	
 	private Thread bart = null, picThread =null;
 
-	public Menu(Modinfo[] modtexts, Modinfo[] moddownloads, ArrayList<String> offlineList) 
+	public Menu() 
 	{
-		this.modtexts=modtexts;
-		this.moddownloads=moddownloads;
-		this.offlineList = offlineList;
 		GUI();	    
 	    setVisible(true);			
 	    load();	 
@@ -924,7 +921,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 			 setState(ICONIFIED);	
 		else if(s==mcVersLabel)
 		{			
-			new MCVersions(modtexts, moddownloads, offlineList, this).setVisible(true);
+			new MCVersions(this).setVisible(true);
 		}		
 		else if ((s == nextButton) && (nextButton.isEnabled())) 
 			startInstallation();		

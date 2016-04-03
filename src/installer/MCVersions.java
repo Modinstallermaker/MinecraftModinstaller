@@ -23,25 +23,18 @@ public class MCVersions extends javax.swing.JFrame implements MouseWheelListener
 	private int pos = 0;
 	private String[] MCVersionStr = new String[3];
 	private boolean[] isInstalled = new boolean[3];
-	private Modinfo[] modlist, downloadlist;
 	private ArrayList<String> offlineList;
 	private Cursor curs1 = new Cursor(Cursor.HAND_CURSOR);
 	private Menu menu =null;
 	
-	public MCVersions(Modinfo[] modlist, Modinfo[] downloadlist, ArrayList<String> offlineList) 
+	public MCVersions() 
     {
-    	this.modlist = modlist;
-    	this.downloadlist=downloadlist;
-    	this.offlineList=offlineList;
         initComponents();
         fillComponents();
     }
     
-    public MCVersions(Modinfo[] modlist, Modinfo[] downloadlist, ArrayList<String> offlineList, Menu menu) {
+    public MCVersions(Menu menu) {
 		this.menu = menu;
-		this.modlist = modlist;
-    	this.downloadlist=downloadlist;
-    	this.offlineList=offlineList;
     	menu.setEnabled(false);
         initComponents();
         fillComponents();
@@ -104,7 +97,7 @@ public class MCVersions extends javax.swing.JFrame implements MouseWheelListener
 					
 			String mcVersion = MCVersionsx[i].getVersion();
 			String installt = Read.getTextwith("MCVersions", "t2");
-			if(offlineList.contains(mcVersion))
+			if(Start.offlineList.contains(mcVersion))
 			{
 				installt = Read.getTextwith("MCVersions", "t3");
 				isInstalled[verg] = true;		
@@ -445,7 +438,7 @@ public class MCVersions extends javax.swing.JFrame implements MouseWheelListener
     	}
     	else
     	{
-    		new Menu(modlist, downloadlist, offlineList);    	        	
+    		new Menu();    	        	
     	}
     	dispose();
     }

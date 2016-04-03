@@ -44,12 +44,12 @@ public class Start extends JFrame
 	private JLabel prog = new JLabel();	
 	private JLabel logo = new JLabel();	
 	private JPanel cp;		
-	private String versionExtension, modinstallerVersion;
-	private ArrayList<String> offlineList = new ArrayList<String>();
+	private String versionExtension, modinstallerVersion;	
 	private int tryno = 0;	
 	private int heightFrame =300, widthFrame=500;
-	private Modinfo[] modtexts = null, moddownloads = null;
 	
+	public static ArrayList<String> offlineList = new ArrayList<String>();
+	public static Modinfo[] modtexts = null, moddownloads = null;	
 	public static String mcVersion="", webplace, lang ="en";
 	public static File mineord, sport;
 	public static ArrayList<String> sentImportedModInfo = new ArrayList<String>();
@@ -473,9 +473,9 @@ public class Start extends JFrame
     	String lizenz = optionReader("license");
 		
 		if(lizenz.equals("n/a")||lizenz.equals("false"))
-			new License(modtexts, moddownloads, offlineList);
+			new License();
 		else
-			new MCVersions(modtexts, moddownloads, offlineList);	
+			new MCVersions();	
 	    dispose();
 	}
 	

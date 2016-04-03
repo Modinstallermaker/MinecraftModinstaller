@@ -22,7 +22,7 @@ import javax.swing.SwingConstants;
 
 public class InstallGUI extends JFrame implements MouseListener {
 	/**
-	 * 
+	 * Install GUI JFrame
 	 */
 	private static final long serialVersionUID = 1L;	
 	public JLabel info = new JLabel();
@@ -141,27 +141,27 @@ public class InstallGUI extends JFrame implements MouseListener {
 		stateIcon.setBackground(null);
 		stateIcon.setForeground(null);
 		stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/install.png")));
-		stateIcon.setBounds(rand, 215, 80, 80);
+		stateIcon.setBounds(rand, 225, 80, 80);
 		cp.add(stateIcon);			
 		
 		int start = 110;
 		
 		//Label: Main Bar
-		mainBarInf.setBounds(start+5, 190, width-start-5-rand*2, 20);   
-		mainBarInf.setFont(mainBarInf.getFont().deriveFont(Font.PLAIN, 14));
+		mainBarInf.setBounds(start+5, 200, width-start-5-rand*2, 20);   
+		mainBarInf.setFont(mainBarInf.getFont().deriveFont(Font.PLAIN, 15));
 		cp.add(mainBarInf);
 		
 		//Bar: Main Bar
-		mainBar.setBounds(start, 210, width-start-rand*2, 30);
+		mainBar.setBounds(start, 223, width-start-rand*2, 30);
 		cp.add(mainBar);
 			
 		//Label: Detailed Bar
-		detBarInf.setBounds(start+5, 260, width-start-5-rand*2, 20); //Detailed Bar
-		detBarInf.setFont(mainBarInf.getFont().deriveFont(Font.PLAIN, 14));
+		detBarInf.setBounds(start+5, 270, width-start-5-rand*2, 20); //Detailed Bar
+		detBarInf.setFont(mainBarInf.getFont().deriveFont(Font.PLAIN, 15));
 		cp.add(detBarInf);	
 		
 		//Bar: Detailed Bar
-		detBar.setBounds(start, 280, width-start-rand*2, 30);
+		detBar.setBounds(start, 293, width-start-rand*2, 30);
 		cp.add(detBar);
 		
 		//Label: Installation complete
@@ -234,7 +234,9 @@ public class InstallGUI extends JFrame implements MouseListener {
 		else if(s==socialIcons[4])
 			OperatingSystem.openLink(Read.getTextwith("installer", "website")+"/faq.php");
 		else if(s==banner)
+		{
 			OperatingSystem.openLink("http://minecraft-installer.de/api/getAds.php?channel=installlarge&type=url");
+		}
 		else if(s==startMCButton)
 		{
 			new MCLauncher();	
@@ -244,13 +246,15 @@ public class InstallGUI extends JFrame implements MouseListener {
 		{     
 			if(!installcomplete)
 			{
-	            int reply = JOptionPane.showConfirmDialog(null, "The mods are not installed completly!\n"
-	            		+ "Would you like to exit the Modinstaller?", "Exit Modinstaller?", JOptionPane.YES_NO_OPTION);
+	            int reply = JOptionPane.showConfirmDialog(null, Read.getTextwith("InstallGUI", "t4"), Read.getTextwith("InstallGUI", "t4h"), 
+	            		JOptionPane.YES_NO_OPTION);
 	            if (reply == JOptionPane.YES_OPTION) 
 	            	 System.exit(0);
 			}
 			else
+			{
 				System.exit(0);
+			}
 		}
 		else if(s==minButton)
 		{
@@ -261,15 +265,18 @@ public class InstallGUI extends JFrame implements MouseListener {
 			boolean back = false;
 			if(!installcomplete)
 			{
-				int reply = JOptionPane.showConfirmDialog(null, "The mods are not installed completly!\n"
-						+ "Would you like to cancel the installation?", "Cancel installation?", JOptionPane.YES_NO_OPTION);
+				int reply = JOptionPane.showConfirmDialog(null, Read.getTextwith("InstallGUI", "t5"), Read.getTextwith("InstallGUI", "t5h"), 
+						JOptionPane.YES_NO_OPTION);
 	            if (reply == JOptionPane.YES_OPTION)
 	            	back = true;
 			}
 			else
+			{
 				back = true;
+			}
 			if(back)
 			{
+				new Menu();
 				dispose();
 			}
 		}
