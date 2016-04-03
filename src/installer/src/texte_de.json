@@ -83,8 +83,8 @@
 		"head1":"Installation abgeschlossen ;)"
 	},
 	"InstallGUI": {
-		"t1":"Starte bitte die Minecraft Version \"Modinstaller\" (statt ",
-		"t2":"Beenden",
+		"t1":"Starte die Minecraft Version \"Modinstaller\" (statt ",
+		"t2":"<< Zurück zum Menü",
 		"t3":"Starte Minecraft",
 		"facebook":"https://www.facebook.com/mcmodinstaller"
 	},

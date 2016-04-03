@@ -90,7 +90,7 @@ public class MCLauncher
 					}        
 				}
 			}
-		}
+		}			
 			 
 		if(ausf==true)
 		{
@@ -99,6 +99,8 @@ public class MCLauncher
 			 else
 				 runJar(speicherort);
 		}
+		
+		System.exit(0);
 	}
 
 	private void runExe(File exe)

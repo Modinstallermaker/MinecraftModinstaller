@@ -61,7 +61,7 @@ public class Install extends InstallGUI
     private static final String PACK_NAME = ".pack.xz";
 	
 	public static String errors="";
-	private RandomAccessFile f;
+	private RandomAccessFile f;	
 	
 	public Install(final ArrayList<Modinfo> mods, final boolean isModloader) 
 	{
@@ -107,12 +107,12 @@ public class Install extends InstallGUI
 					
 					//Delete old files
 					detBarInf.setText(Read.getTextwith("Install", "def2"));		
-					  OP.del(new File(Start.sport, "Result"));
-			          OP.del(new File(Start.sport, "Original"));
-			          OP.del(new File(Start.mineord, "mods"));
-			          OP.del(new File(Start.mineord, "coremods"));
-			          OP.del(new File(Start.mineord, "config"));
-			          OP.del(modsport);
+					OP.del(new File(Start.sport, "Result"));
+					OP.del(new File(Start.sport, "Original"));
+					OP.del(new File(Start.mineord, "mods"));
+					OP.del(new File(Start.mineord, "coremods"));
+					OP.del(new File(Start.mineord, "config"));
+					OP.del(modsport);
 					
 					mainState(mainVal += 1);	//6
 					
@@ -250,7 +250,8 @@ public class Install extends InstallGUI
 				
 				mainState(mainVal += 1);
 				
-				startMCButton.setEnabled(true);
+				installcomplete = true;
+				changeSymbols();
 				
 				if (!errors.equals("")) //show all Errors
 				{
@@ -258,21 +259,6 @@ public class Install extends InstallGUI
 					info.setText(Read.getTextwith("Install", "head2"));
 					detBarInf.setText(Read.getTextwith("Install", "error"));				
 				} 
-				else  //show picture gallery
-				{
-					detBar.setVisible(false);
-					mainBar.setVisible(false);
-					banner.setVisible(false);
-					detBarInf.setVisible(false);
-					mainBarInf.setVisible(false);
-					stateIcon.setVisible(false);
-					
-					for(int i=0; i<socialIcons.length; i++)
-						socialIcons[i].setVisible(true);	
-					startinfo.setVisible(true);
-					stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/play.png")));							
-					info.setText(Read.getTextwith("Install", "head1"));	
-				}
 			}
 		}.start();
 	}
@@ -1020,6 +1006,25 @@ public class Install extends InstallGUI
 				e1.printStackTrace();				
 			}	
 		}		
+	}
+	
+	/**
+	 * Show hidden symols in JFrame
+	 */
+	private void changeSymbols()
+	{
+		startMCButton.setEnabled(true);
+		detBar.setVisible(false);
+		mainBar.setVisible(false);
+		detBarInf.setVisible(false);
+		mainBarInf.setVisible(false);
+		stateIcon.setVisible(false);
+		
+		for(int i=0; i<socialIcons.length; i++)
+			socialIcons[i].setVisible(true);	
+		startinfo.setVisible(true);
+		stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/play.png")));							
+		info.setText(Read.getTextwith("Install", "head1"));
 	}
 	
 	/**
