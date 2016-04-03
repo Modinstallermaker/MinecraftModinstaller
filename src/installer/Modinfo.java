@@ -4,9 +4,9 @@ import java.sql.Timestamp;
 
 public class Modinfo
 {
-	private String Name="", TxtDE="", TxtEN="", Source="", MC="", YouTubeDE="", YouTubeEN="";
+	private String Name="", TxtDE="", TxtEN="", Source="", MC="", YouTubeDE="", YouTubeEN="", Requires=null;
 	private boolean selected = false;
-	private int Cat=3, Size=0, ID=0;
+	private int Cat=3, Size=0, ID=0, ModID;
 	private double Proz=0.0;
 	private Timestamp Date=null;
 	
@@ -65,6 +65,10 @@ public class Modinfo
 	public int getID()
 	{
 		return ID;
+	}	
+	public int getModID()
+	{
+		return ModID;
 	}
 	public String getName()
 	{
@@ -114,5 +118,12 @@ public class Modinfo
 			return YouTubeEN;
 		else
 			return YouTubeDE;
+	}
+	public String[] getRequires()
+	{	
+		if(Requires==null)
+			return null;
+		else
+			return Requires.split(";");		
 	}
 }

@@ -520,9 +520,31 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		List<String> strlist = new ArrayList<String>();
 		strlist = leftList.getSelectedValuesList();
 		for (String listitem : strlist)
+		{
 			for(Modinfo prop : proposals)
+			{
 				if(prop.getName().equals(listitem))
-					prop.setSelect(true);		
+				{
+					prop.setSelect(true);
+					String[] Requ =  prop.getRequires();
+					if(Requ!=null)
+					{
+						for (String req: prop.getRequires()) //Add required mods to right list
+						{
+							int ModID = Integer.parseInt(req);
+							for(Modinfo prop2 : proposals)
+							{
+								if(prop2.getModID()==ModID )
+								{
+									prop2.setSelect(true);
+								}
+							}
+						}
+					}
+				}		
+			}
+		}		
+		
 		updateLists();
 		
 		if(searchfocus)
@@ -552,9 +574,27 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 			else  // sonst nach Liste links kopieren
 			{			
 				leftList.setEnabled(true);
+				Modinfo propx = null;
+				ArrayList<Integer> reql = new ArrayList<Integer>();
 				for(Modinfo prop : proposals)
+				{
 					if(prop.getName().equals(listitem))
-						prop.setSelect(false);	
+					{
+						propx=prop;				
+					}
+					if(prop.getRequires()!=null&&prop.getSelect())
+					{
+						for(String s: prop.getRequires())
+						{
+							int ModID = Integer.parseInt(s);
+							reql.add(ModID);
+						}
+					}
+				}
+				if(!reql.contains(propx.getModID()))
+				{
+					propx.setSelect(false);
+				}
 			}	
 		}
 		updateLists();	

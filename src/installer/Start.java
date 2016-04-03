@@ -393,7 +393,7 @@ public class Start extends JFrame
 					Gson gson = new Gson();
 					String jsontext= Textreaders(texte);
 					modtexts = gson.fromJson(jsontext, Modinfo[].class);
-					del(texte);
+					//del(texte);
 				}
 			} 
 			catch (Exception e) 
@@ -412,7 +412,7 @@ public class Start extends JFrame
 					Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 					String jsontext= Textreaders(downloadt);
 			    	moddownloads = gson.fromJson(jsontext, Modinfo[].class);
-			    	del(downloadt);
+			    	//del(downloadt);
 				}
 			}
 			catch (Exception e)

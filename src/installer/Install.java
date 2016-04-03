@@ -476,7 +476,6 @@ public class Install extends InstallGUI
 			detBarInf.setText("Errorcode: S3xna: "+ String.valueOf(e));
 			errors += getError(e) + " Errorcode: S3xna\n\n";
 		}
-		System.out.println(jo.get("name").getAsString()+": "+add);
 		return add;
 	}		
 	
@@ -680,8 +679,7 @@ public class Install extends InstallGUI
 					        {
 					        	sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
 					        }
-					        File shafile = new File(libPath.getParentFile(), libPath.getName()+".sha");
-					        System.out.println(sb.toString());
+					        File shafile = new File(libPath.getParentFile(), libPath.getName()+".sha");;
 					        Textwriter(shafile, sb.toString(), false);
 						} 
 						catch (Exception e) 
