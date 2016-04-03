@@ -147,12 +147,13 @@ public class InstallGUI extends JFrame implements MouseListener {
 		int start = 110;
 		
 		//Label: Main Bar
-		mainBarInf.setBounds(start+5, 200, width-start-5-rand*2, 20);   
+		mainBarInf.setBounds(start+5, 200, width-start-5-rand*2, 20);   		
 		mainBarInf.setFont(mainBarInf.getFont().deriveFont(Font.PLAIN, 15));
 		cp.add(mainBarInf);
 		
 		//Bar: Main Bar
 		mainBar.setBounds(start, 223, width-start-rand*2, 30);
+		mainBar.setVisible(true);;
 		cp.add(mainBar);
 			
 		//Label: Detailed Bar
@@ -162,6 +163,7 @@ public class InstallGUI extends JFrame implements MouseListener {
 		
 		//Bar: Detailed Bar
 		detBar.setBounds(start, 293, width-start-rand*2, 30);
+		detBar.setVisible(true);
 		cp.add(detBar);
 		
 		//Label: Installation complete

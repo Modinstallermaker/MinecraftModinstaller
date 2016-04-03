@@ -66,8 +66,9 @@ public class Install extends InstallGUI
 	public Install(final ArrayList<Modinfo> mods, final boolean isModloader) 
 	{
 		this.mods=mods;
-		this.isModloader=isModloader;
+		this.isModloader=isModloader;		
 		GUI();
+		changeSymbols(false);
 		installation();
 	}
 	
@@ -251,7 +252,7 @@ public class Install extends InstallGUI
 				mainState(mainVal += 1);
 				
 				installcomplete = true;
-				changeSymbols();
+				changeSymbols(true);
 				
 				if (!errors.equals("")) //show all Errors
 				{
@@ -1011,20 +1012,24 @@ public class Install extends InstallGUI
 	/**
 	 * Show hidden symols in JFrame
 	 */
-	private void changeSymbols()
+	private void changeSymbols(boolean finished)
 	{
-		startMCButton.setEnabled(true);
-		detBar.setVisible(false);
-		mainBar.setVisible(false);
-		detBarInf.setVisible(false);
-		mainBarInf.setVisible(false);
-		stateIcon.setVisible(false);
+		startMCButton.setEnabled(finished);
+		detBar.setVisible(!finished);
+		mainBar.setVisible(!finished);
+		detBarInf.setVisible(!finished);
+		mainBarInf.setVisible(!finished);
+		stateIcon.setVisible(!finished);
 		
 		for(int i=0; i<socialIcons.length; i++)
-			socialIcons[i].setVisible(true);	
-		startinfo.setVisible(true);
-		stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/play.png")));							
-		info.setText(Read.getTextwith("Install", "head1"));
+			socialIcons[i].setVisible(finished);	
+		startinfo.setVisible(finished);
+		
+		if(finished)
+		{
+			info.setText(Read.getTextwith("Install", "head1"));			
+			stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/play.png")));	
+		}
 	}
 	
 	/**
