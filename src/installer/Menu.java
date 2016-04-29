@@ -385,15 +385,14 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	 */
 	private void setInfoText(final String modname)
 	{	
-		boolean newt = false;
+		if(modname==null)
+			return;
+		
+		boolean newt = false;		
 		if(modname.equals(modNameLabel.getText()))
-		{
-			newt = true;
-		}
+			newt = true;			
 		else
-		{
 			picture.setIcon(new ImageIcon(this.getClass().getResource("src/wait.gif")));	
-		}
 		
 		setImport(false);
 		modNameLabel.setText(modname);	
@@ -512,89 +511,95 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	/**
 	 * Install mod: Method detects the selected mods in the left list and moves the selected mods to the right list
 	 */
-	private void selectMod() // Auswählen von Mods
+	private void selectMods() // Auswählen von Mods
 	{	
-		List<String> strlist = new ArrayList<String>();
-		strlist = leftList.getSelectedValuesList();
-		for (String listitem : strlist)
+		if (leftListModel.getSize() > 0 && leftList.isEnabled()) 
 		{
-			for(Modinfo prop : proposals)
+			List<String> strlist = new ArrayList<String>();
+			strlist = leftList.getSelectedValuesList();
+			for (String listitem : strlist)
 			{
-				if(prop.getName().equals(listitem))
+				for(Modinfo prop : proposals)
 				{
-					prop.setSelect(true);
-					String[] Requ =  prop.getRequires();
-					if(Requ!=null)
+					if(prop.getName().equals(listitem))
 					{
-						for (String req: prop.getRequires()) //Add required mods to right list
+						prop.setSelect(true);
+						String[] Requ =  prop.getRequires();
+						if(Requ!=null)
 						{
-							int ModID = Integer.parseInt(req);
-							for(Modinfo prop2 : proposals)
+							for (String req: prop.getRequires()) //Add required mods to right list
 							{
-								if(prop2.getModID()==ModID )
+								int ModID = Integer.parseInt(req);
+								for(Modinfo prop2 : proposals)
 								{
-									prop2.setSelect(true);
+									if(prop2.getModID()==ModID )
+									{
+										prop2.setSelect(true);
+									}
 								}
 							}
 						}
-					}
-				}		
-			}
-		}		
-		
-		updateLists();
-		
-		if(searchfocus)
-			searchInput.requestFocus();
-		searchfocus=false;
+					}		
+				}
+			}		
+			
+			updateLists();
+			
+			if(searchfocus)
+				searchInput.requestFocus();
+			searchfocus=false;		
+		}
 	}
 	
 	/**
 	 * Uninstall mod: Method detects the selected mods in the right list and moves the selected mods to the left list
 	 */
-	private void removeMod() // Entfernen von Mods
-	{		
-		List<String> strlist = new ArrayList<String>();
-		strlist = rightList.getSelectedValuesList();
-		for (String listitem : strlist)	
-		{
-			String name = String.valueOf(listitem);
-			if (name.substring(0, 1).equals("+")) // Importierter Mod löschen
+	private void removeMods() // Entfernen von Mods
+	{	
+		if (rightListModel.getSize() > 0 && Menu.this.rightList.isEnabled()) 
+		{		
+			List<String> strlist = new ArrayList<String>();
+			strlist = rightList.getSelectedValuesList();
+			for (String listitem : strlist)	
 			{
-				name = name.substring(2);					
-				File importf = new File(Start.sport, "Import");
-				File importfn = new File(Start.sport, "Importn");
-				del(new File(importf, name+".jar"));
-				del(new File(importf, name));					
-				del(new File(importfn, name));					
-			}  
-			else  // sonst nach Liste links kopieren
-			{			
-				leftList.setEnabled(true);
-				Modinfo propx = null;
-				ArrayList<Integer> reql = new ArrayList<Integer>();
-				for(Modinfo prop : proposals)
+				String name = String.valueOf(listitem);
+				if (name.substring(0, 1).equals("+")) // Importierter Mod löschen
 				{
-					if(prop.getName().equals(listitem))
+					name = name.substring(2);					
+					File importf = new File(Start.sport, "Import");
+					File importfn = new File(Start.sport, "Importn");
+					del(new File(importf, name+".jar"));
+					del(new File(importf, name));					
+					del(new File(importfn, name));					
+				}  
+				else  // sonst nach Liste links kopieren
+				{			
+					leftList.setEnabled(true);
+					Modinfo propx = null;
+					ArrayList<Integer> reql = new ArrayList<Integer>();
+					for(Modinfo prop : proposals)
 					{
-						propx=prop;				
-					}
-					if(prop.getRequires()!=null&&prop.getSelect())
-					{
-						for(String s: prop.getRequires())
+						if(prop.getName().equals(listitem))
 						{
-							int ModID = Integer.parseInt(s);
-							reql.add(ModID);
+							propx=prop;				
+						}
+						if(prop.getRequires()!=null&&prop.getSelect())
+						{
+							for(String s: prop.getRequires())
+							{
+								int ModID = Integer.parseInt(s);
+								reql.add(ModID);
+							}
 						}
 					}
-				}
-				if(!reql.contains(propx.getModID()))
-				{
-					propx.setSelect(false);
-				}
-			}	
+					if(!reql.contains(propx.getModID()))
+					{
+						propx.setSelect(false);
+					}
+				}	
+			}
+			updateLists();	
 		}
-		updateLists();	
 	}
 
 	/**
@@ -723,69 +728,6 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	}
 	
 	/**
-	 * Detects the source of a MouseEvent in the left mod list.
-	 * Counts the number of clicks and shows the mod description.
-	 * If the user has clicked twice the mods will be selected.
-	 * @param e MouseEvent of the left list
-	 */
-	private void leftListItemSelected(MouseEvent e)
-	{
-		JList<?> list = (JList<?>) e.getSource();
-		int index = list.locationToIndex(e.getPoint());
-		if ((e.getClickCount() == 2) || (e.getButton() == 3))
-			selectMod();
-		else if (e.getButton() == 1) 
-		{	
-			if (leftListModel.getSize() > 0 && leftList.isEnabled())
-			{
-				String Auswahl = (String)leftListModel.getElementAt(index);
-				if (!modNameLabel.getText().equals(Auswahl)) 
-					setInfoText(Auswahl);
-			}
-		}
-	}
-	
-	/**
-	 * Detects the source of a MouseEvent in the left mod list.
-	 * Counts the number of clicks and shows the mod or import description.
-	 * If the user has clicked twice the mods will be removed.
-	 * @param e MouseEvent of the right list
-	 */
-	private void rightListItemSelected(MouseEvent e)
-	{		
-		if (rightListModel.getSize() > 0 && Menu.this.rightList.isEnabled()) 
-		{			
-			JList<?> list = (JList<?>) e.getSource();
-			int index = list.locationToIndex(e.getPoint());
-			final String Auswahl = (String)rightListModel.getElementAt(index);
-			if ((e.getClickCount() == 2) || (e.getButton() == 3))
-			{
-				removeMod();
-			}	
-			else
-			{	
-				//If the user clicked on a mod with a "+" the imported mod description is shown
-				if (Auswahl.substring(0, 1).equals("+"))
-				{		
-					modNameLabel.setText("Loading Mod...");	
-					picture.setIcon(new ImageIcon(this.getClass().getResource("src/wait.gif")));
-					new Thread()
-					{
-						public void run()
-						{
-							new Import(Auswahl.substring(2), Menu.this);							
-						}
-					}.start();					
-				}
-				else if (!modNameLabel.getText().equals(Auswahl))
-				{
-					setInfoText(Auswahl);
-				}
-			}	
-		}	
-	}
-	
-	/**
 	 * Update the left mod list according to the entered text the user typed in
 	 * @param e
 	 */
@@ -808,7 +750,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		else if (e.getKeyCode()==KeyEvent.VK_ENTER || e.getKeyCode()==KeyEvent.VK_RIGHT) //Enter oder rechte Pfeiltaste = Mod auswählen
 		{
 			searchfocus = true;
-			selectMod();
+			selectMods();
 		}	
 		else
 		{
@@ -839,7 +781,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 						modtext =modtext.replace("&ouml;", "ö");
 						modtext =modtext.replace("&szlig;", "ß");
 						modtext =modtext.replace("&quot;", "\"");
-						if(modtext.contains(needle)&&!leftListModel.contains(prop.getName()))
+						if(modtext.contains(needle)&&!leftListModel.contains(prop.getName())&&!rightListModel.contains(prop.getName()))
 						{
 							leftListModel.addElement(prop.getName());
 							break f1;
@@ -878,14 +820,55 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		}
 	}
 	
+	private void showTextLeft(int index)
+	{		
+		if (leftList.isEnabled())
+		{				
+			if(index>-1&&index<leftListModel.size())
+			{
+				String Auswahl = (String)leftListModel.getElementAt(index);
+				if (!modNameLabel.getText().equals(Auswahl)) 
+					setInfoText(Auswahl);
+			}
+		}
+	}
+	
+	private void showTextRight(int index)
+	{		
+		if (rightList.isEnabled())
+		{			
+			if(index>-1&&index<rightListModel.size())
+			{
+				final String Auswahl = (String)rightListModel.getElementAt(index);
+				//If the user clicked on a mod with a "+" the imported mod description is shown
+				if (Auswahl.substring(0, 1).equals("+"))
+				{		
+					modNameLabel.setText("Loading Mod...");	
+					picture.setIcon(new ImageIcon(this.getClass().getResource("src/wait.gif")));
+					new Thread()
+					{
+						public void run()
+						{
+							new Import(Auswahl.substring(2), Menu.this);							
+						}
+					}.start();					
+				}
+				else if (!modNameLabel.getText().equals(Auswahl))
+				{
+					setInfoText(Auswahl);
+				}
+			}			
+		}
+	}
+	
 	@Override
 	public void mouseClicked(MouseEvent e) 
 	{
 		Object s = e.getSource();
 		if(s==selectArrow)	
-			selectMod();
+			selectMods();
 		else if (s==removeArrow)	
-			removeMod();
+			removeMods();
 		else if(s==importButton)					
 			importMod();
 		else if(s==restoreButton)
@@ -981,17 +964,41 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		}		
 	}
 	
+	/**
+	 * Detects the source of a MouseEvent in the mod list.
+	 * Counts the number of clicks and shows the mod description.
+	 * If the user has clicked twice the mods will be selected.
+	 * @param e MouseEvent of the left list
+	 */
 	@Override
 	public void mousePressed(MouseEvent e) {
 		Object s = e.getSource();
 		if (s == leftList)
-			leftListItemSelected(e);
+		{
+			if ((e.getClickCount() == 2) || (e.getButton() == 3))
+				selectMods();
+		}
 		else if (s == rightList) 
-			rightListItemSelected(e);
+		{					
+			if ((e.getClickCount() == 2) || (e.getButton() == 3))
+			{
+				removeMods();
+			}		
+		}		
 	}
 	
 	@Override
-	public void mouseReleased(MouseEvent arg0) {		
+	public void mouseReleased(MouseEvent e) {
+		if(e.getSource()==leftList)
+		{
+			JList<?> list = (JList<?>) e.getSource();
+			showTextLeft(list.locationToIndex(e.getPoint()));
+		}
+		if(e.getSource()==rightList)
+		{
+			JList<?> list = (JList<?>) e.getSource();
+			showTextRight(list.locationToIndex(e.getPoint()));
+		}	
 	}
 	
 	@Override
@@ -1014,15 +1021,41 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	} 
 	
 	@Override
-	public void keyTyped(KeyEvent e) {				
+	public void keyTyped(KeyEvent e) {			
 	}
 	
 	@Override
-	public void keyPressed(KeyEvent e) {			
+	public void keyPressed(KeyEvent e) {		
 	}
 	
 	@Override
 	public void keyReleased(KeyEvent e) {
-		enterSearchText(e);				
+		int k = e.getKeyCode();		
+		if(e.getSource()==searchInput)
+		{
+			enterSearchText(e);	
+		}
+		else if(e.getSource()==leftList)
+		{
+			if(k == KeyEvent.VK_ENTER||k==KeyEvent.VK_RIGHT)
+			{
+				selectMods();
+			}
+			else if(k!=KeyEvent.VK_CONTROL)
+			{
+				showTextLeft(leftList.getSelectedIndex());
+			}
+		}
+		else if(e.getSource()==rightList)
+		{
+			if(k == KeyEvent.VK_ENTER||k==KeyEvent.VK_LEFT||k==KeyEvent.VK_DELETE||k==KeyEvent.VK_BACK_SPACE)
+			{
+				removeMods();
+			}
+			else if(k!=KeyEvent.VK_CONTROL)
+			{
+				showTextRight(rightList.getSelectedIndex());
+			}
+		}	
 	}
 }

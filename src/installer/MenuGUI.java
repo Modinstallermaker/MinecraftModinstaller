@@ -173,13 +173,15 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		
 		leftListMModel.addElement(Read.getTextwith("MenuGUI", "t2")); //List Modloader
 		leftListM.setModel(leftListMModel);		
-		leftListM.setCellRenderer(new CellRenderer());				
+		leftListM.setCellRenderer(new CellRenderer());
 		leftListM.addMouseListener(this);
+		leftListM.addKeyListener(this);
 				
 		leftListFModel.addElement(Read.getTextwith("MenuGUI", "t2")); //List Forge
 		leftListF.setModel(leftListFModel);
-		leftListF.setCellRenderer(new CellRenderer());				
+		leftListF.setCellRenderer(new CellRenderer());	
 		leftListF.addMouseListener(this);
+		leftListF.addKeyListener(this);
 		
 		leftListMSP.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 		leftListFSP.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
@@ -334,7 +336,8 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		
 		rightListModel.addElement("");    // right list model
 		rightList.setModel(rightListModel);   
-		rightList.setCellRenderer(new CellRenderer());  
+		rightList.setCellRenderer(new CellRenderer());
+		rightList.addKeyListener(this);
 		rightList.addMouseListener(this);
 		rightListSP.setBounds(breite-rand-listenb,  (int)(hoehe*0.35), listenb, liste2h);
 		rightListSP.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
@@ -429,5 +432,5 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	}
 	@Override
 	public void keyReleased(KeyEvent e) {
-	}
+	}	
 }
