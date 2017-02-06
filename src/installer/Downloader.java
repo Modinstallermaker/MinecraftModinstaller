@@ -6,6 +6,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * 
@@ -23,6 +34,7 @@ public class Downloader implements Runnable
 	private long elapsed=-1;
 	private float elapsedSeconds =-1;
 	private float kbRead =-1;
+	boolean work = false;
 		
 	public Downloader(String url_str, File targetFile)
 	{
@@ -31,15 +43,43 @@ public class Downloader implements Runnable
 	}
 	
 	public void run()
-	{
-		boolean work = false;
-		
+	{	
 		do
 		{	
 			try
-			{			
-			    URL url = new URL(url_str.replace(" ", "%20"));	
-			    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			{	
+				
+			  TrustManager[] trustAllCerts = new TrustManager[] {
+				       new X509TrustManager() {
+				          public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+				            return null;
+				          }
+
+				          public void checkClientTrusted(X509Certificate[] certs, String authType) {  }
+
+				          public void checkServerTrusted(X509Certificate[] certs, String authType) {  }
+
+				       }
+				    };
+
+			    SSLContext sc = SSLContext.getInstance("SSL");
+			    sc.init(null, trustAllCerts, new java.security.SecureRandom());
+			    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+			    // Create all-trusting host name verifier
+			    HostnameVerifier allHostsValid = new HostnameVerifier() {
+			        public boolean verify(String hostname, SSLSession session) {
+			          return true;
+			        }
+			    };
+			    // Install the all-trusting host verifier
+			    HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+			    /*
+			     * end of the fix
+			     */
+
+			    URL url = new URL(url_str.replace(" ", "%20"));
+			    URLConnection conn = url.openConnection();
 			    conn.setUseCaches(false);
 			    conn.setDefaultUseCaches(false);
 			    conn.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
@@ -52,8 +92,8 @@ public class Downloader implements Runnable
 			    conn.connect();		   
 			    elapsed = System.nanoTime() - start;
 			    
-				int responseCode = conn.getResponseCode() / 100;
-				if (responseCode == 2) 
+				int responseCode = ((HttpURLConnection) conn).getResponseCode() / 100;
+				if (responseCode == 2||responseCode == 3) 
 				{	
 					InputStream is = conn.getInputStream();
 					
@@ -97,17 +137,18 @@ public class Downloader implements Runnable
 						work = true;
 					}
 					else
-						throw new IllegalStateException("HTTP Response Code " + conn.getResponseCode());
+						throw new IllegalStateException("HTTP Response Code " + ((HttpURLConnection) conn).getResponseCode());
 				}		
-				conn.disconnect();
+				((HttpURLConnection) conn).disconnect();
 				if(expectedDownloadSize == targetFile.length() || expectedDownloadSize==-1)
 					work = false;
 				else
 				{
 					System.out.println("Size different "+url_str+ ": " +expectedDownloadSize +" vs "+targetFile.length());
 				}
+			    
 			}
-			catch (IOException ioe)
+			catch (IOException | NoSuchAlgorithmException | KeyManagementException ioe)
 			{
 				if(!work)
 				{
@@ -119,7 +160,8 @@ public class Downloader implements Runnable
 			}
 		}
 		while (work);
-	}
+	}	
+	
 	
 	public int getExpectedDownloadSize()
 	{

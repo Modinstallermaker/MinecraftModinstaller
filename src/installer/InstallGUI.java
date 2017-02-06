@@ -38,6 +38,7 @@ public class InstallGUI extends JFrame implements MouseListener {
 	private JLabel headlineLabel = new JLabel();
 	private Cursor c = new Cursor(Cursor.HAND_CURSOR);		
 	private int width = 784, height=441, rand = 20;
+	private JLabel helpButton = new JLabel();
 	private JLabel backButton = new JLabel();
 	private JLabel exitButton = new JLabel();
 	private JLabel maxButton = new JLabel();
@@ -90,23 +91,28 @@ public class InstallGUI extends JFrame implements MouseListener {
 		cp.setLayout(null);
 		add(cp);
 		
-		//Button: Minimize
-		minButton.setBounds(width-(35+35+3+3)-3, 3, 35, 27);	
+		helpButton.setBounds(width-(35+35+35+3+3+3+3)-3, 3, 35, 27); // FAQ anzeigen			
+		helpButton.setIcon(new ImageIcon(this.getClass().getResource("src/help.png")));
+		helpButton.setToolTipText(Read.getTextwith("MenuGUI", "t13"));	
+		helpButton.addMouseListener(this); 		
+		cp.add(helpButton);
+		
+		minButton.setBounds(width-(35+35+3+3)-3, 3, 35, 27); //Minimieren		
 		minButton.setIcon(new ImageIcon(this.getClass().getResource("src/mini.png")));			
 		minButton.addMouseListener(this);
+		minButton.setToolTipText(Read.getTextwith("MenuGUI", "t18"));
 		cp.add(minButton);
 		
-		//Button: Maximize
-		maxButton.setBounds(width-(35+35+3)-3, 3, 35, 27);
+		maxButton.setBounds(width-(35+35+3)-3, 3, 35, 27); //Maximieren
 		maxButton.setIcon(new ImageIcon(this.getClass().getResource("src/maxi.png")));			
 		maxButton.addMouseListener(this);
 		maxButton.setEnabled(false);
 		//cp.add(maxButton);
 		
-		//Button: Exit
-		exitButton.setBounds(width-35-3, 3, 35, 27);	
+		exitButton.setBounds(width-35-3, 3, 35, 27); //Beenden		
 		exitButton.setIcon(new ImageIcon(this.getClass().getResource("src/closeme.png")));			
 		exitButton.addMouseListener(this);
+		exitButton.setToolTipText(Read.getTextwith("MenuGUI", "t19"));
 		cp.add(exitButton);
 		
 		//Label: Minecraft Modinstaller
@@ -122,9 +128,8 @@ public class InstallGUI extends JFrame implements MouseListener {
 		{
 			try 
 			{
-				banner.setIcon(new ImageIcon(ImageIO.read(
-						new URL("http://minecraft-installer.de/api/getAds.php?channel=installlarge&type=img"))));
-				banner.setBounds(0, 65, (int)(width), 105);
+				banner.setIcon(new ImageIcon(ImageIO.read(new URL("http://www.minecraft-installer.de/api/getAds.php?channel=installlarge&type=img"))));
+				banner.setBounds(0, 75, (int)(width), 100);
 				banner.setVerticalAlignment(SwingConstants.CENTER);
 				banner.setCursor(c);
 				banner.setHorizontalAlignment(SwingConstants.CENTER);
@@ -147,12 +152,12 @@ public class InstallGUI extends JFrame implements MouseListener {
 		int start = 110;
 		
 		//Label: Main Bar
-		mainBarInf.setBounds(start+5, 200, width-start-5-rand*2, 20);   		
+		mainBarInf.setBounds(start+5, 195, width-start-5-rand*2, 20);   		
 		mainBarInf.setFont(mainBarInf.getFont().deriveFont(Font.PLAIN, 15));
 		cp.add(mainBarInf);
 		
 		//Bar: Main Bar
-		mainBar.setBounds(start, 223, width-start-rand*2, 30);
+		mainBar.setBounds(start, 218, width-start-rand*2, 30);
 		mainBar.setVisible(true);;
 		cp.add(mainBar);
 			
@@ -167,13 +172,13 @@ public class InstallGUI extends JFrame implements MouseListener {
 		cp.add(detBar);
 		
 		//Label: Installation complete
-		info.setBounds(0, (int)(height*0.26), (int)(width), (int)(height*0.35));          
+		info.setBounds(0, (int)(height*0.4), (int)(width), 40);          
 		info.setHorizontalAlignment(SwingConstants.CENTER);
 		info.setFont(exitButton.getFont().deriveFont(Font.PLAIN, 30));
 		cp.add(info);
 		
 		//Label: Information for user to start Minecraft Version Modinstaller
-		startinfo.setBounds(0, (int)(height*0.35), (int)(width), (int)(height*0.4));                 
+		startinfo.setBounds(0, (int)(height*0.52), (int)(width), 30);                 
 		startinfo.setHorizontalAlignment(SwingConstants.CENTER);
 		startinfo.setFont(startinfo.getFont().deriveFont(Font.PLAIN, 18));
 		startinfo.setText(Read.getTextwith("InstallGUI", "t1")+Start.mcVersion+")");

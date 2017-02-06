@@ -44,13 +44,13 @@ public class Start extends JFrame
 	private JLabel prog = new JLabel();	
 	private JLabel logo = new JLabel();	
 	private JPanel cp;		
-	private String versionExtension, modinstallerVersion;	
+	private String versionExtension;	
 	private int tryno = 0;	
 	private int heightFrame =300, widthFrame=500;
 	
 	public static ArrayList<String> offlineList = new ArrayList<String>();
 	public static Modinfo[] modtexts = null, moddownloads = null;	
-	public static String mcVersion="", webplace, lang ="en";
+	public static String mcVersion="", webplace, lang ="en", modinstallerVersion="";
 	public static File mineord, sport;
 	public static ArrayList<String> sentImportedModInfo = new ArrayList<String>();
 	public static String[] mcVersionen;	
@@ -62,6 +62,7 @@ public class Start extends JFrame
 	 */	
 	public static void main(String[] args) 
 	{
+		System.setProperty("java.net.preferIPv4Stack" , "true");
 		try 
 	    {	
 			Color red = Color.decode("#9C2717");
@@ -193,12 +194,15 @@ public class Start extends JFrame
 		try
 		{	
 			String str = System.getProperty("os.name").toLowerCase(); // Ordner Appdata den Betriebssystemen anpassen
-			File installer = new File(sport, "MCModinstaller.exe");
+			File installerf = new File(sport, "MCModinstaller.exe");
 			 
-			if (str.contains("win") && !installer.exists())
+			if (str.contains("win") && (!installerf.exists()||installerf.length()<1024*100))
 			{	
-				String downlaodexestr = "http://www.minecraft-installer.de//Dateien/Programme/MC%20Modinstaller%20"+modinstallerVersion+".exe";
-				new Downloader(downlaodexestr, installer).run();				
+				if(!installerf.exists()||installerf.length()<1024*100)
+				{
+					String downlaodexestr = "http://www.minecraft-installer.de/Dateien/Programme/MC%20Modinstaller%20"+modinstallerVersion+".exe";
+					new Downloader(downlaodexestr, installerf).run();
+				}
 				java.io.InputStream inputStream = this.getClass().getResourceAsStream("src/links.vbs");
 	
 			    File tempOutputFile = File.createTempFile("links", ".vbs"); 
@@ -260,7 +264,7 @@ public class Start extends JFrame
 		try 
 		{			
 			File updatetxt = new File(sport, "update.txt");
-			String quellenurl = "http://www.minecraft-installer.de//request.php?target=update&lang=" + lang;
+			String quellenurl = "http://www.minecraft-installer.de/api/counter.php?target=update&lang=" + lang;
 			new Downloader(quellenurl , updatetxt).run();
 			if(updatetxt.exists())
 			{
@@ -290,7 +294,7 @@ public class Start extends JFrame
 						String body = "Text=" + getError(e) + "; Errorcode: S1x04a&MCVers=" + mcVersion + "&InstallerVers=" + 
 								Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + 
 								System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString()+ "&EMail=unkn";
-						new Postrequest("http://www.minecraft-installer.de/api/errorreceiver.php", body);
+						new Postrequest("https://www.minecraft-installer.de/api/errorreceiver.php", body);
 					}					
 									
 					if (newVersAvail) // Wenn Programmnummer nicht identisch ist
@@ -347,7 +351,7 @@ public class Start extends JFrame
 		        String body = "Text=" + OP.getError(ex) + "; Errorcode: S1x04&MCVers=" + mcVersion + "&InstallerVers=" + 
 		          Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + 
 		          System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString() + "&EMail=unkn";
-		        new Postrequest("http://www.minecraft-installer.de/error.php", body);
+		        new Postrequest("http://www.minecraft-installer.de/api/error.php", body);
 		      }
 		      catch (Exception localException1) {}
 		}
@@ -386,14 +390,14 @@ public class Start extends JFrame
 			{
 				prog.setText(Read.getTextwith("Start", "prog12"));
 				File texte = new File(sport, "modtexts.json"); 
-				new Downloader("http://www.minecraft-installer.de//api/mods2.php", texte).run(); //all mod texts
+				new Downloader("http://www.minecraft-installer.de/api/mods2.php", texte).run(); //all mod texts
 				
 				if(texte.exists())
 				{
 					Gson gson = new Gson();
 					String jsontext= Textreaders(texte);
 					modtexts = gson.fromJson(jsontext, Modinfo[].class);
-					//del(texte);
+					del(texte);
 				}
 			} 
 			catch (Exception e) 
@@ -405,14 +409,14 @@ public class Start extends JFrame
 			{
 				prog.setText(Read.getTextwith("Start", "prog13"));
 				File downloadt = new File(sport, "downloadtexts.json");
-				new Downloader("http://www.minecraft-installer.de//api/offer3.php", downloadt).run();  //All mod downloads
+				new Downloader("http://www.minecraft-installer.de/api/offer3.php", downloadt).run();  //All mod downloads
 				
 				if(downloadt.exists())
 				{
 					Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 					String jsontext= Textreaders(downloadt);
 			    	moddownloads = gson.fromJson(jsontext, Modinfo[].class);
-			    	//del(downloadt);
+			    	del(downloadt);
 				}
 			}
 			catch (Exception e)
@@ -423,7 +427,7 @@ public class Start extends JFrame
 	    	try
 	    	{
 	    		File mcversions = new File(sport, "mcversions.json"); 
-	    		new Downloader("http://www.minecraft-installer.de//api/mcversions.php", mcversions).run(); //MC versions + number of mods
+	    		new Downloader("http://www.minecraft-installer.de/api/mcversions.php", mcversions).run(); //MC versions + number of mods
 	    		if(mcversions.exists())
 	        	{
 	    			Gson gson = new Gson();

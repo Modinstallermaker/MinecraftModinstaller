@@ -3,7 +3,7 @@
 		"name":"Minecraft Modinstaller",
 		"desc":"... makes modding easier!",
 		"lang":"de",
-		"version":"5.0.7",
+		"version":"5.0.8",
 		"zusatz": "",
 		"webplace":"http://files.minecraft-mods.de/installer/",
 		"website": "http://www.minecraft-installer.de/"
@@ -34,23 +34,31 @@
 		"importm":"<html><body>Versichere Dich, dass die Mod, die Du importierst, eine Modloader Mod ist. Diese Mod wird direkt in die Minecraft.JAR installiert. Wenn die Datei jedoch z.B. in den mods Ordner kopiert werden soll, dann musst Du erst im Modinstaller die Forge Liste auswählen (wenn Forge in der Minecraft Version verfügbar ist).<br><br>Ziehe dann die Mod per Drag'n'Drop in die rechte Liste oder in das gro&szlig;e Bild. Wenn eine ZIP oder auch JAR Datei ausgewählt wurde, wird diese entpackt und die enthaltenen Dateien werden in die Minecraft.JAR komprimiert. Auch kannst Du Ordner hinzufügen. Dann wird der Inhalt des Ordners (mit Unterordnern) in die Minecraft.JAR gepackt.  Einzelne Dateien (wie z.B. Java Klassendateien .class oder Bilder) können auch importiert werden.</body></html>",
 		"importf":"<html><body>Stelle sicher, dass die Mod, die Du importierst, eine Forge Mod ist. Die importierte Datei wird in den &quot;mods &quot; Order im Minecraft Ordner (mit der Minecraft Forge) automatisch installiert. Wenn die Datei bzw. der Inhalt des Archives (ZIP oder JAR Datei) direkt in die Minecraft.JAR gepackt soll, dann musst Du erst im Modinstaller die Modloader Liste ausw&auml;hlen (z.B. OptiFine).<br><br>Ziehe dann die Mod per Drag'n'Drop in die rechte Liste oder in das gro&szlig;e Bild. Wenn eine ZIP oder auch JAR Datei ausgewählt wurde, wird diese entpackt und der Archivinhalt analysiert. Der Modinstaller erkennt automatisch, wo sich Deine Mod in dem Archiv befindet und wie sie installiert wird. Anschließend werden Dir wichtige Daten zur Mod vom Modentwickler aufgelistet. Du wirst gewarnt, falls Deine importierte Mod nicht mit Deiner ausgewählten Minecraft Version kompatibel sein sollte.</body></html>",
 		"restore":"<html><body>Minecraft wurde erfolgreich zum Zeitpunkt<br>der letzten Installation wiederhergestellt!</body></html>",
-		"restoreh":"Restore erfolgreich!"
+		"restoreh":"Restore erfolgreich!",
+		"t15":"Die Mod \"",
+		"t16":"\" benötigt die Mod \"",
+		"t17":"Abhängikeiten"
 	},
 	"MenuGUI": {
 		"t1":"Mod suchen...",
 		"t2":"Bitte warten...",
 		"t3":"Offline Modus",
-		"t4":"Video ansehen",
+		"t4":"Mod Showcase auf YouTube ansehen",
 		"t5":"Beschreibung auf Minecraft-Installer.de",
-		"t6":"Entwicklerwebseite",
-		"t7":"Vollbild anzeigen",
+		"t6":"Öffne Mod Entwicklerwebseite",
+		"t7":"Bild im Vollbildmodus anzeigen",
 		"t8":"Mods hinzufügen",
 		"t9":"Mods entfernen",
 		"t10":"Restore",
 		"t11":"Mods importieren",
 		"t12":"zu installierende Mods",
-		"t13":"Hilfe anzeigen", 
-		"t14":"Installieren"
+		"t13":"Modinstaller Hilfe anzeigen", 
+		"t14":"Installieren",
+		"t15":"Letzte Modinstallation wiederherstellen",
+		"t16":"Mods von Deinem PC hinzufügen",
+		"t17":"Minecraft Version ändern",
+		"t18":"Minimieren",	
+		"t19":"Schließen"		
 	},
 	"Install": {
 		"main1":"Wir bereiten einiges vor.",

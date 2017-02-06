@@ -73,7 +73,7 @@ public class Survey  extends JFrame implements ActionListener
   
   private void send()
   {
-    String body = "Mods=" + OP.optionReader("lastmods") + "&" + "Rate=" + this.sel;
+    String body = "Mods=" + OP.optionReader("lastmods") + "&" + "Rate=" + this.sel+"&Vers="+Start.modinstallerVersion;
     try
     {
       new Postrequest("http://www.minecraft-installer.de/api/compSet.php", body);

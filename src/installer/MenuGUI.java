@@ -7,8 +7,6 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.dnd.DropTarget;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -23,7 +21,6 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -43,11 +40,10 @@ import javax.swing.text.html.StyleSheet;
  * Modinstaller main menu GUI
  */
 
-public class MenuGUI extends JFrame implements ActionListener, MouseListener, ChangeListener, KeyListener
+public class MenuGUI extends JFrame implements MouseListener, ChangeListener, KeyListener
 {		
 	private static final long serialVersionUID = 1L;
 	JTabbedPane tabbedPane = new JTabbedPane();
-	JComboBox<String> mcVersDrop;
 	JPanel cp;
 	
 	JList<String> leftListM = new JList<String>();
@@ -145,7 +141,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		int picturex = 400;
 		int picturey = 225;
 		int uber = (int)(hoehe*0.09);
-		int listeya = rand+uber;
+		int listeya = rand*2+36;
 		int listenb = (int)(breite/2-picturex+4*rand);
 		int listenh = hoehe-listeya-rand;
 		int mittexa= rand+listenb+20;
@@ -156,19 +152,21 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		int texth = listeya+listenh-textya;
 		int liste2h= (int)(listenh*0.54);
 	
-		headerLabel.setBounds(0, 0, (int)(breite), (int)(hoehe*0.1));
+		headerLabel.setBounds(250, rand-12, (int)(breite)-500, 60); //Label: Minecraft Modinstaller
 		headerLabel.setText(Read.getTextwith("installer", "name"));
 		headerLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		headerLabel.setVerticalAlignment(SwingConstants.CENTER);
+		headerLabel.setVerticalAlignment(SwingConstants.TOP);
 		headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD,45));
 		cp.add(headerLabel);
 		
-		mcVersLabel.setBounds((int)(rand), (int)(hoehe*0.05), listenb, 40); //Select Minecraft version
-		mcVersLabel.setText("Minecraft ["+Start.mcVersion+"]");
-		mcVersLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		mcVersLabel.addMouseListener(this);
-		mcVersLabel.setCursor(c);	
-		mcVersLabel.setFont(mcVersLabel.getFont().deriveFont(Font.BOLD,14));
+		
+		mcVersLabel.setBounds(rand*2-2, rand+10, listenb,40); //Select Minecraft version
+		mcVersLabel.setText("Minecraft "+Start.mcVersion);
+		mcVersLabel.setToolTipText(Read.getTextwith("MenuGUI", "t17"));
+		mcVersLabel.addMouseListener(this);			
+		mcVersLabel.setFont(mcVersLabel.getFont().deriveFont(Font.BOLD,17));
+		mcVersLabel.setCursor(c);
+		mcVersLabel.setIcon(new ImageIcon(this.getClass().getResource("src/setting.png")));
 		cp.add(mcVersLabel);
 		
 		leftListMModel.addElement(Read.getTextwith("MenuGUI", "t2")); //List Modloader
@@ -186,7 +184,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		leftListMSP.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 		leftListFSP.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 		
-		tabbedPane.addTab("Modloader", leftListMSP);
+		tabbedPane.addTab("Modloader", leftListMSP); //Tab Modloader oder Forge
 		tabbedPane.addTab("Forge", leftListFSP);
 		tabbedPane.setEnabled(false);
 		tabbedPane.addChangeListener(this);
@@ -312,6 +310,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		restoreButton.setIcon(new ImageIcon(this.getClass().getResource("src/restore.png")));		
 		restoreButton.addMouseListener(this); 
 		restoreButton.setCursor(c);			
+		restoreButton.setToolTipText(Read.getTextwith("MenuGUI", "t15"));
 		File backupfile = new File(Start.sport, "Backup");
 		if (!backupfile.exists()) // Check, if restore possible	
 		{
@@ -323,7 +322,8 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		importButton.setFont(importButton.getFont().deriveFont(Font.BOLD));
 		importButton.setIcon(new ImageIcon(this.getClass().getResource("src/importkl.png")));	
 		importButton.addMouseListener(this); 
-		importButton.setCursor(c);	
+		importButton.setCursor(c);
+		importButton.setToolTipText(Read.getTextwith("MenuGUI", "t16"));
 		importButton.setIcon(new ImageIcon(this.getClass().getResource("src/importkl.png")));	
 		importButton.setBounds(breite-rand-listenb+10, (int)(hoehe*0.2), listenb+20, 50); 
 		cp.add(BorderLayout.CENTER, importButton);
@@ -343,7 +343,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		rightListSP.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
 		cp.add(rightListSP);
 		
-	
+		 //zeigt mit einem grün-roten Balkan die Wahrscheinlichkeit an, ob die Version funktioniert
 		ratingBar.setBounds(breite-rand-listenb, (int)(hoehe*0.35)+liste2h-1, listenb, 15);
 		ratingBar.setOpaque(false);
 		ratingBar.setBorder(BorderFactory.createLineBorder(Color.decode("#9C2717")));
@@ -352,7 +352,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		
 		new DropTarget(rightList, myDragDropListener);
 		
-		helpButton.setBounds(2, 5, 50, 50); // FAQ anzeigen			
+		helpButton.setBounds(breite-(35+35+35+3+3+3+3)-3, 3, 35, 27); // FAQ anzeigen			
 		helpButton.setIcon(new ImageIcon(this.getClass().getResource("src/help.png")));
 		helpButton.setToolTipText(Read.getTextwith("MenuGUI", "t13"));	
 		helpButton.addMouseListener(this); 		
@@ -361,6 +361,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		minButton.setBounds(breite-(35+35+3+3)-3, 3, 35, 27); //Minimieren		
 		minButton.setIcon(new ImageIcon(this.getClass().getResource("src/mini.png")));			
 		minButton.addMouseListener(this);
+		minButton.setToolTipText(Read.getTextwith("MenuGUI", "t18"));
 		cp.add(minButton);
 		
 		maxButton.setBounds(breite-(35+35+3)-3, 3, 35, 27); //Maximieren
@@ -372,6 +373,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 		exitButton.setBounds(breite-35-3, 3, 35, 27); //Beenden		
 		exitButton.setIcon(new ImageIcon(this.getClass().getResource("src/closeme.png")));			
 		exitButton.addMouseListener(this);
+		exitButton.setToolTipText(Read.getTextwith("MenuGUI", "t19"));
 		cp.add(exitButton);
 	
 		nextButton.setBounds((int)(breite-250-rand), hoehe-70-rand, 250, 70); // Installieren		
@@ -418,9 +420,7 @@ public class MenuGUI extends JFrame implements ActionListener, MouseListener, Ch
 	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	}
+
 	@Override
 	public void stateChanged(ChangeEvent e) {
 	}

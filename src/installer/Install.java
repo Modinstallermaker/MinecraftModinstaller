@@ -17,12 +17,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.swing.ImageIcon;
 
@@ -247,7 +250,7 @@ public class Install extends InstallGUI
 						detBarInf.setText("Errorocde: S3xSS: " + String.valueOf(e));
 						errors += getError(e) + " Errorcode: S3xSS\n\n";
 					}
-				}
+				}			
 				
 				mainState(mainVal += 1);
 				
@@ -883,10 +886,65 @@ public class Install extends InstallGUI
     	
     	JsonObject sub = new JsonObject();
         sub.addProperty("name", "Modinstaller");
-        sub.addProperty("lastVersionId", "Modinstaller");	
+        sub.addProperty("lastVersionId", "Modinstaller");
+        Date dt = new Date();   
+        SimpleDateFormat df = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss.S" );
+     	df.setTimeZone( TimeZone.getDefault() );  
+     	String datex =  df.format(dt).replace(" ", "T") +"Z";
+        sub.addProperty("lastUsed", datex);	
+        sub.addProperty("created", datex);
+        sub.addProperty("type", "custom");
+        if(sub.has("javaDir"))
+	        sub.remove("javaDir");
+        if(sub.has("javaArgs"))
+	        sub.remove("javaArgs");
+	     
+        /*
+        long memorySize = ((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getTotalPhysicalMemorySize()/1024/1024/10*5;
+		sub.addProperty("javaArgs", "-Xmx%1%M -Xmn512M".replace("%1%", String.valueOf(memorySize)));
         
-    	jprofiles.add("Modinstaller", sub);
-    	
+		String pathj =System.getProperty("java.home").replace("\\", "/");
+		pathj= pathj.substring(0, pathj.length()-3);
+		
+		String str = System.getProperty("os.name").toLowerCase();
+		if(str.contains("win"))
+		{
+			ProcessBuilder ps = new ProcessBuilder("java.exe", "-version");
+			ps.redirectErrorStream(true);
+
+			Process pr;
+			try {
+				pr = ps.start();
+
+				BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+				String line;
+				while ((line = in.readLine()) != null) {
+				    System.out.println(line);
+				}
+				pr.waitFor();
+
+				in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}  
+
+
+		}
+		else if(str.contains("mac"))
+		{
+			
+		}
+		else
+		{
+			
+		}
+		sub.addProperty("javaDir", pathj+"/bin/javaw.exe");
+		*/
+    	jprofiles.add("Modinstaller", sub);    	
         jfile.add("profiles", jprofiles);	
         
         jfile.addProperty("selectedProfile", "Modinstaller");

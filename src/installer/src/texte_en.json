@@ -3,7 +3,7 @@
 		"name":"Minecraft Modinstaller",
 		"desc":"... makes modding easier!",
 		"lang":"de",
-		"version":"5.0.7",
+		"version":"5.0.8",
 		"zusatz": "",
 		"webplace":"http://files.minecraft-mods.de/installer/",
 		"website": "http://www.minecraft-installer.com/"
@@ -34,23 +34,31 @@
 		"importm":"<html><body>Make sure the mod you import is a Modloader mod. This mod is installed directly into the minecraft.jar. However, if the file has to be copied into the mods folder, please select the Forge list first (if Forge is available in your Minecraft Version).<br><br>Then drag the Mod file on the big picture or the right list. If a ZIP or JAR file has been selected, the file will be unpacked and all files are compressed into the minecraft.jar. You can also add folders. Then the contents of the folder (including subfolders) are packed into the minecraft.jar. Individual files (e.g. Java class files .class or images) can also be imported.</body></html>",
 		"importf":"<html><body>Make sure the mod you import is a Forge mod. The imported file will be automatically installed into the \"mods\" folder in Minecraft folder (with the Minecraft Forge). If you would like to pack the file or the content of the archive (ZIP or JAR file) directly into the minecraft.jar, please select the Modloader list in the Modinstaller fist (e.g. for OptiFine).<br><br>Then drag the mod file into the right list or big picture. If a ZIP or JAR file has been selected, the file will be extracted and the archive content will be analysed. The Modinstaller automatically detects where your mod in the archive is and how it is installed. Then it will show you important information from mod developer in a tabular form. You'll be warned if your imported mod should not be compatible with your selected Minecraft version.</body></html>",
 		"restore":"<html><body>Minecraft was successfully restored at the time of the last installation!</body></html>",
-		"restoreh":"Restore successfully!"
+		"restoreh":"Restore successfully!",
+		"t15":"The mod \"",
+		"t16":"\" requires the mod \"",
+		"t17":"Dependencies"
 	},
 	"MenuGUI": {
 		"t1":"Search mod...",
 		"t2":"Please wait...",
 		"t3":"Offline mode",
-		"t4":"Watch video",
-		"t5":"Description on Minecraft-Installer.com",
-		"t6":"Developer website",
-		"t7":"Show full screen",
+		"t4":"Watch Mod Showcase on YouTube",
+		"t5":"Read Description on Minecraft-Installer.com",
+		"t6":"Go to Mod Developer website",
+		"t7":"Show picuture in full screen",
 		"t8":"Add mods",
 		"t9":"Remove mods",
 		"t10":"Restore", 
 		"t11":"Import mods",
 		"t12":"Mods to install",
 		"t13":"Show help",
-		"t14":"Install Mods"
+		"t14":"Install Mods",
+		"t15":"Restore last mod installation",
+		"t16":"Add mods from your PC",
+		"t17":"Change Minecraft version",
+		"t18":"Minimize",	
+		"t19":"Close"		
 	},
 	"Install": {
 		"main1":"Initialisation of the installation.",

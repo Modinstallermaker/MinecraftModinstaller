@@ -6,12 +6,8 @@ import static installer.OP.optionReader;
 import static installer.OP.optionWriter;
 import static installer.OP.rename;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +29,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -44,7 +39,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author Dirk Lippke
  */
 
-public class Menu extends MenuGUI implements ActionListener, MouseListener, ChangeListener, KeyListener
+public class Menu extends MenuGUI
 {
 	private static final long serialVersionUID = 1L;
 	public static boolean isModloader=true;
@@ -371,7 +366,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	{	
 		ist=false;
 		resetSelection();
-		mcVersLabel.setText("Minecraft ["+Start.mcVersion+"]");
+		mcVersLabel.setText("Minecraft "+Start.mcVersion);
 		modDescPane.setText(Read.getTextwith("Menu", "wait"));
 		leftListMSP.getVerticalScrollBar().setValue(0);
 		leftListFSP.getVerticalScrollBar().setValue(0);
@@ -577,6 +572,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 					leftList.setEnabled(true);
 					Modinfo propx = null;
 					ArrayList<Integer> reql = new ArrayList<Integer>();
+					String namex = "";
 					for(Modinfo prop : proposals)
 					{
 						if(prop.getName().equals(listitem))
@@ -589,12 +585,29 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 							{
 								int ModID = Integer.parseInt(s);
 								reql.add(ModID);
-							}
-						}
+								namex = prop.getName();								
+							}							
+						}					
 					}
 					if(!reql.contains(propx.getModID()))
-					{
+					{						
 						propx.setSelect(false);
+					}
+					else
+					{
+						boolean includes = false;
+						for (String listitem2 : strlist)							
+						{
+							if(namex.equals(listitem2))
+							{
+								propx.setSelect(false);
+								includes = true;
+							}
+						}
+						if(!includes)
+						{
+							JOptionPane.showMessageDialog(null, Read.getTextwith("Menu", "t15")+ namex +Read.getTextwith("Menu", "t16")+propx.getName()+"\".", Read.getTextwith("Menu", "t17"), JOptionPane.OK_OPTION);
+						}
 					}
 				}	
 			}
@@ -901,13 +914,13 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		else if(s==exitButton)
 			 System.exit(0);
 		else if(s==minButton)
-			 setState(ICONIFIED);	
+			 setState(ICONIFIED);			
+		else if ((s == nextButton) && (nextButton.isEnabled())) 
+			startInstallation();	
 		else if(s==mcVersLabel)
 		{			
 			new MCVersions(this).setVisible(true);
-		}		
-		else if ((s == nextButton) && (nextButton.isEnabled())) 
-			startInstallation();		
+		}	
 		
 		for(int i=0; i<ratIcons.length; i++)
 		{
@@ -975,11 +988,15 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 		Object s = e.getSource();
 		if (s == leftList)
 		{
+			JList<?> list = (JList<?>) e.getSource();
+			showTextLeft(list.locationToIndex(e.getPoint()));
 			if ((e.getClickCount() == 2) || (e.getButton() == 3))
 				selectMods();
 		}
 		else if (s == rightList) 
-		{					
+		{	
+			JList<?> list = (JList<?>) e.getSource();
+			showTextRight(list.locationToIndex(e.getPoint()));
 			if ((e.getClickCount() == 2) || (e.getButton() == 3))
 			{
 				removeMods();
@@ -988,25 +1005,7 @@ public class Menu extends MenuGUI implements ActionListener, MouseListener, Chan
 	}
 	
 	@Override
-	public void mouseReleased(MouseEvent e) {
-		if(e.getSource()==leftList)
-		{
-			JList<?> list = (JList<?>) e.getSource();
-			showTextLeft(list.locationToIndex(e.getPoint()));
-		}
-		if(e.getSource()==rightList)
-		{
-			JList<?> list = (JList<?>) e.getSource();
-			showTextRight(list.locationToIndex(e.getPoint()));
-		}	
-	}
-	
-	@Override
-	public void actionPerformed(ActionEvent e) 
-	{
-		Object s = e.getSource();
-		 if (s == mcVersDrop) 
-			 changeVersion();		 
+	public void mouseReleased(MouseEvent e) {	
 	}
 	
 	@Override
