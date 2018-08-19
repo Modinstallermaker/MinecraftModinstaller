@@ -920,7 +920,11 @@ public class Menu extends MenuGUI
 		else if(s==mcVersLabel)
 		{			
 			new MCVersions(this).setVisible(true);
-		}	
+		}
+		else if(s==banner)
+		{
+			OperatingSystem.openLink("http://minecraft-installer.de/gewinnspiel/");
+		}
 		
 		for(int i=0; i<ratIcons.length; i++)
 		{
