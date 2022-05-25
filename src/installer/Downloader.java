@@ -22,7 +22,7 @@ import javax.net.ssl.X509TrustManager;
  * 
  * Beschreibung
  * 
- * @version 2.1 vom 14.04.2013
+ * @version 5.0
  * @author Dirk Lippke
  */
 
@@ -201,7 +201,7 @@ public class Downloader implements Runnable
 	    conn.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
 	    conn.setRequestProperty("Expires", "0");
 	    conn.setRequestProperty("Pragma", "no-cache");
-	    conn.setConnectTimeout(30000);
+	    conn.setConnectTimeout(10000);
 	    conn.setReadTimeout(10000);
 	    
 	    expectedDownloadSize = conn.getContentLength();

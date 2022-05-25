@@ -284,7 +284,7 @@ public class Install extends InstallGUI
 				mainBarInf.setText(Read.getTextwith("Install", "main5") + " (" + i + "/" + mods.size() + ")");
 				stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));
 				i++;
-				String DownloadURL = "http://www.minecraft-installer.de/api/download3.php?id="+mod.getID(); //Downloadlink für ZIP Datei
+				String DownloadURL = "https://www.minecraft-installer.de/api/download3.php?id="+mod.getID(); //Downloadlink für ZIP Datei
 								
 				File ZIPFile= new File(Start.sport, "Mods/"+ mod.getID()+".zip");				
 				File ZIPExtract = Start.mineord;				
@@ -483,7 +483,7 @@ public class Install extends InstallGUI
 		stateIcon.setIcon(new ImageIcon(this.getClass().getResource("src/download.png")));	
 		File jsonFile = new File(Start.sport, "Forge/"+mcVersion+".json");	
 		del(jsonFile);
-		new Downloader("http://files.minecraft-mods.de/installer/MCForge/versions/"+mcVersion+".json", jsonFile).run();
+		new Downloader("https://files.minecraft-mods.de/installer/MCForge/versions/"+mcVersion+".json", jsonFile).run();
 		
 		//Installing Forge libraries
 		if(jsonFile.exists())
@@ -701,7 +701,7 @@ public class Install extends InstallGUI
 	{		
 		try 
 		{		
-			String sourceurl = "http://files.minecraft-mods.de/installer/Extra/downloadsrc.txt";
+			String sourceurl = "https://files.minecraft-mods.de/installer/Extra/downloadsrc.txt";
 			File fileurl = new File(Start.sport, "downloadsrc.txt");
 			
 			new Downloader(sourceurl, fileurl).run();
@@ -968,7 +968,7 @@ public class Install extends InstallGUI
 		File jsonfile = new File(Start.sport, "serverlist.json");
 		try 
 		{				
-			new Downloader("http://www.minecraft-installer.de/api/serverlist.json", jsonfile).run();
+			new Downloader("https://www.minecraft-installer.de/api/serverlist.json", jsonfile).run();
 		} 
 		catch (Exception e) 
 		{				

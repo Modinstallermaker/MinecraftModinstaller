@@ -87,7 +87,7 @@ public class Import
 								+ "&" + "Description=" + description.replace("\'", "`")
 								+ "&" + "Web=" + URLEncoder.encode(website.replace("\'", "`"), "UTF-8");
 						Start.sentImportedModInfo.add(modName);
-						new Postrequest("http://www.minecraft-installer.de/api/imports.php", body);
+						new Postrequest("https://www.minecraft-installer.de/api/imports.php", body);
 					}
 				} 
 				catch (Exception e) {}

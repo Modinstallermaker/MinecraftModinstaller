@@ -160,7 +160,7 @@ public class Fullscreen extends JFrame implements ActionListener, KeyListener, M
 		neu=true;
 	    headl.setText(modname);	
 	    headl2.setText(modname);	    
-	    url = "http://www.minecraft-installer.de/Dateien/BilderHQ/"+modname+".jpg";		 
+	    url = "https://www.minecraft-installer.de/Dateien/BilderHQ/"+modname+".jpg";		 
 	    url = url.replace(" ", "%20");
 		
 	    try {
