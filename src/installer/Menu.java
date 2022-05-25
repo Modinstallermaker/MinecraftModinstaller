@@ -308,7 +308,7 @@ public class Menu extends MenuGUI
 					zeile= zeile.substring(0, zeile.length()-2);
 				String res ="";
 				try {
-					res = new Postrequest("http://www.minecraft-installer.de/api/compGet.php", "Mods="+zeile).toString();
+					res = new Postrequest("https://www.minecraft-installer.de/api/compGet.php", "Mods="+zeile).toString();
 				} 
 				catch (IOException e) {
 				}
@@ -403,7 +403,7 @@ public class Menu extends MenuGUI
 				 	modID= modt.getID();
 				 	website =  modt.getSource();
 				 	YouTube = modt.getYouTube();
-					hyperlink = Read.getTextwith("installer", "website") + "/modinfo.php?modname=" + modname.replace(" ", "+");					
+					hyperlink = Read.getTextwith("installer", "website") + "modinfo.php?modname=" + modname.replace(" ", "+");					
 					String suche = searchInput.getText().replaceAll("\\(", "").replaceAll("\\)", ""); //mark seach text
 					if(!suche.equals("")&&suche.length()>1)
 					{	
@@ -485,7 +485,7 @@ public class Menu extends MenuGUI
 	    	  {	 	    		
 	    		try 
 			    {	
-	    			String url = "http://www.minecraft-installer.de/Dateien/BilderPre/"+modname+".jpg";
+	    			String url = "https://www.minecraft-installer.de/Dateien/BilderPre/"+modname+".jpg";
 	    			url = url.replace(" ", "%20");
 				 	BufferedImage img = ImageIO.read(new URL(url));			 	
 					picture.setIcon((Icon) new ImageIcon(img));	
@@ -890,7 +890,7 @@ public class Menu extends MenuGUI
 				 restore();
 		}
 		else if(s==helpButton)
-			OperatingSystem.openLink(Read.getTextwith("installer", "website")+"/faq.php");
+			OperatingSystem.openLink(Read.getTextwith("installer", "website")+"faq.php");
 		else if(s== videoButton)
 			OperatingSystem.openLink(YouTube);
 		else if(s==modinstWebLnk)
@@ -923,7 +923,7 @@ public class Menu extends MenuGUI
 		}
 		else if(s==banner)
 		{
-			OperatingSystem.openLink("http://minecraft-installer.de/gewinnspiel/");
+			OperatingSystem.openLink("https://minecraft-installer.de/gewinnspiel/");
 		}
 		
 		for(int i=0; i<ratIcons.length; i++)
@@ -944,7 +944,7 @@ public class Menu extends MenuGUI
 					try
 					{
 						String body = "modID=" + modID + "&rating="+(rating+1);
-						new Postrequest("http://www.minecraft-installer.de/api/modrating.php", body);							
+						new Postrequest("https://www.minecraft-installer.de/api/modrating.php", body);							
 					} 
 					catch (Exception er) {
 						new Error(getError(er));

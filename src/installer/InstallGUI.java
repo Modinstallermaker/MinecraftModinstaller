@@ -8,9 +8,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
-import java.net.URL;
-
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -124,23 +121,7 @@ public class InstallGUI extends JFrame implements MouseListener {
 		cp.add(headlineLabel);
 		
 		//Image: Advertisment
-		if(Start.online)
-		{
-			try 
-			{
-				banner.setIcon(new ImageIcon(ImageIO.read(new URL("http://www.minecraft-installer.de/api/getAds.php?channel=installlarge&type=img"))));
-				banner.setBounds(0, 75, (int)(width), 100);
-				banner.setVerticalAlignment(SwingConstants.CENTER);
-				banner.setCursor(c);
-				banner.setHorizontalAlignment(SwingConstants.CENTER);
-				banner.addMouseListener(this);
-				cp.add(banner);
-			}
-			catch (Exception e) 
-			{			
-				e.printStackTrace();
-			}
-		}
+		
 		
 		//Image: Installation Symbol
 		stateIcon.setBackground(null);
@@ -238,12 +219,12 @@ public class InstallGUI extends JFrame implements MouseListener {
 		else if(s==socialIcons[2])
 			OperatingSystem.openLink("https://twitter.com/Modinstaller");
 		else if(s==socialIcons[3])
-			OperatingSystem.openLink(Read.getTextwith("installer", "website")+"/proposal.php");
+			OperatingSystem.openLink(Read.getTextwith("installer", "website")+"proposal.php");
 		else if(s==socialIcons[4])
-			OperatingSystem.openLink(Read.getTextwith("installer", "website")+"/faq.php");
+			OperatingSystem.openLink(Read.getTextwith("installer", "website")+"faq.php");
 		else if(s==banner)
 		{
-			OperatingSystem.openLink("http://minecraft-installer.de/api/getAds.php?channel=installlarge&type=url");
+			OperatingSystem.openLink("https://minecraft-installer.de/api/getAds.php?channel=installlarge&type=url");
 		}
 		else if(s==startMCButton)
 		{

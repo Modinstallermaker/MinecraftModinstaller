@@ -151,7 +151,7 @@ public class MenuGUI extends JFrame implements MouseListener, ChangeListener, Ke
 		int pictureya = infol+(int)(2.5*rand);		
 		int textya = picturey+pictureya+20;		
 		int texth = listeya+listenh-textya;
-		int liste2h= (int)(listenh*0.6);
+		int liste2h= (int)(listenh*0.55);
 	
 		headerLabel.setBounds(250, rand-12, (int)(breite)-500, 60); //Label: Minecraft Modinstaller
 		headerLabel.setText(Read.getTextwith("installer", "name"));
@@ -277,7 +277,7 @@ public class MenuGUI extends JFrame implements MouseListener, ChangeListener, Ke
 	    StyleSheet ss = kit.getStyleSheet();
 		try 
 		{
-			ss.importStyleSheet(new URL("http://www.minecraft-installer.de/sub/installerstyle.css"));
+			ss.importStyleSheet(new URL("https://www.minecraft-installer.de/sub/installerstyle.css"));
 		} 
 		catch (MalformedURLException e1) 
 		{			

@@ -45,7 +45,7 @@ public class Survey  extends JFrame implements ActionListener
       
       this.yesb.addActionListener(this);
       this.yesb.setCursor(this.c);
-      this.yesb.setIcon(new ImageIcon(this.getClass().getResource("src/good.png")));			
+      //this.yesb.setIcon(new ImageIcon(this.getClass().getResource("src/good.png")));			
       this.yesb.setPreferredSize(new Dimension(200, 100));
       pane.add(this.yesb, "Before");
       
@@ -65,7 +65,7 @@ public class Survey  extends JFrame implements ActionListener
       pane.add(this.errorb, "Last");
       
       add(pane);
-      //setIconImage(new ImageIcon(getClass().getResource("src/icon.png")).getImage());
+      setIconImage(new ImageIcon(getClass().getResource("src/icon.png")).getImage());
       pack();
       setLocationRelativeTo(null);
       setVisible(true);
