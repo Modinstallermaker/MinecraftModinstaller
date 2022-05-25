@@ -65,7 +65,7 @@ public class Survey  extends JFrame implements ActionListener
       pane.add(this.errorb, "Last");
       
       add(pane);
-      setIconImage(new ImageIcon(getClass().getResource("src/icon.png")).getImage());
+      //setIconImage(new ImageIcon(getClass().getResource("src/icon.png")).getImage());
       pack();
       setLocationRelativeTo(null);
       setVisible(true);
@@ -77,7 +77,7 @@ public class Survey  extends JFrame implements ActionListener
     String body = "Mods=" + OP.optionReader("lastmods") + "&" + "Rate=" + this.sel+"&Vers="+Start.modinstallerVersion;
     try
     {
-      new Postrequest("http://www.minecraft-installer.de/api/compSet.php", body);
+      new Postrequest("https://www.minecraft-installer.de/api/compSet.php", body);
     }
     catch (IOException e)
     {

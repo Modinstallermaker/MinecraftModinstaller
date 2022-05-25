@@ -264,7 +264,7 @@ public class Start extends JFrame
 		try 
 		{			
 			File updatetxt = new File(sport, "update.txt");
-			String quellenurl = "http://www.minecraft-installer.de/api/counter.php?target=update&lang=" + lang;
+			String quellenurl = "https://www.minecraft-installer.de/api/counter.php?target=update&lang=" + lang;
 			new Downloader(quellenurl , updatetxt).run();
 			if(updatetxt.exists())
 			{
@@ -351,7 +351,7 @@ public class Start extends JFrame
 		        String body = "Text=" + OP.getError(ex) + "; Errorcode: S1x04&MCVers=" + mcVersion + "&InstallerVers=" + 
 		          Read.getTextwith("installer", "version") + "&OP=" + System.getProperty("os.name").toString() + "; " + 
 		          System.getProperty("os.version").toString() + "; " + System.getProperty("os.arch").toString() + "&EMail=unkn";
-		        new Postrequest("http://www.minecraft-installer.de/api/error.php", body);
+		        new Postrequest("https://www.minecraft-installer.de/api/error.php", body);
 		      }
 		      catch (Exception localException1) {}
 		}
@@ -390,7 +390,7 @@ public class Start extends JFrame
 			{
 				prog.setText(Read.getTextwith("Start", "prog12"));
 				File texte = new File(sport, "modtexts.json"); 
-				new Downloader("http://www.minecraft-installer.de/api/mods2.php", texte).run(); //all mod texts
+				new Downloader("https://www.minecraft-installer.de/api/mods2.php", texte).run(); //all mod texts
 				
 				if(texte.exists())
 				{
@@ -409,7 +409,7 @@ public class Start extends JFrame
 			{
 				prog.setText(Read.getTextwith("Start", "prog13"));
 				File downloadt = new File(sport, "downloadtexts.json");
-				new Downloader("http://www.minecraft-installer.de/api/offer3.php", downloadt).run();  //All mod downloads
+				new Downloader("https://www.minecraft-installer.de/api/offer3.php", downloadt).run();  //All mod downloads
 				
 				if(downloadt.exists())
 				{
@@ -427,7 +427,7 @@ public class Start extends JFrame
 	    	try
 	    	{
 	    		File mcversions = new File(sport, "mcversions.json"); 
-	    		new Downloader("http://www.minecraft-installer.de/api/mcversions.php", mcversions).run(); //MC versions + number of mods
+	    		new Downloader("https://www.minecraft-installer.de/api/mcversions.php", mcversions).run(); //MC versions + number of mods
 	    		if(mcversions.exists())
 	        	{
 	    			Gson gson = new Gson();
@@ -458,7 +458,7 @@ public class Start extends JFrame
 	    	try
 	    	{
 	    		File backgr = new File(sport, "modinstallerbg.png"); //Background picture
-	    		new Downloader("http://www.minecraft-installer.de/Dateien/modinstallerbg.png", backgr).run();	    		
+	    		new Downloader("https://www.minecraft-installer.de/Dateien/modinstallerbg.png", backgr).run();	    		
 	    	}
 	    	catch (Exception e)
 	    	{

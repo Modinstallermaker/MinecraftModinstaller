@@ -3,10 +3,10 @@
 		"name":"Minecraft Modinstaller",
 		"desc":"... makes modding easier!",
 		"lang":"de",
-		"version":"5.0.8",
+		"version":"5.1.0",
 		"zusatz": "",
-		"webplace":"http://files.minecraft-mods.de/installer/",
-		"website": "http://www.minecraft-installer.de/"
+		"webplace":"https://files.minecraft-mods.de/installer/",
+		"website": "https://www.minecraft-installer.de/"
 	},
 	"Start": {
 		"update1":"Update auf Version ",

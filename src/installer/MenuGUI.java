@@ -17,7 +17,6 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -145,7 +144,7 @@ public class MenuGUI extends JFrame implements MouseListener, ChangeListener, Ke
 		int uber = (int)(hoehe*0.09);
 		int listeya = rand*2+36;
 		int listenb = (int)(breite/2-picturex+4*rand);
-		int listenh = hoehe-listeya-rand-60;
+		int listenh = hoehe-listeya-rand;
 		int mittexa= rand+listenb+20;
 		int modtexty = rand+uber;	
 		int infol = modtexty+2*rand;
@@ -153,24 +152,6 @@ public class MenuGUI extends JFrame implements MouseListener, ChangeListener, Ke
 		int textya = picturey+pictureya+20;		
 		int texth = listeya+listenh-textya;
 		int liste2h= (int)(listenh*0.6);
-
-		if(Start.online)
-		{
-			try
-			{
-				banner.setIcon(new ImageIcon(ImageIO.read(new URL("http://www.minecraft-installer.de/api/ads/gewinnspiel.jpg"))));
-				banner.setBounds(rand, listeya+listenh+10, 612, 60); //Search field
-				banner.setVerticalAlignment(SwingConstants.BOTTOM);
-				banner.setCursor(c);
-				banner.setHorizontalAlignment(SwingConstants.LEFT);
-				banner.addMouseListener(this);
-				cp.add(banner);
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
 	
 		headerLabel.setBounds(250, rand-12, (int)(breite)-500, 60); //Label: Minecraft Modinstaller
 		headerLabel.setText(Read.getTextwith("installer", "name"));
