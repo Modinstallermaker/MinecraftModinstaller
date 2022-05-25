@@ -28,17 +28,31 @@ public class MCLauncher
 		String str = System.getProperty("os.name").toLowerCase(); 
 		File speicherort;
 		String downloadort = Start.webplace + "Launcher2.jar";
+		String path = "";
+		
+		 //Map<String, String> map = System.getenv();
+	     //map.entrySet().forEach(System.out::println);
 		
 		 if (str.contains("win"))	
 		 {
-			File spo = new File(System.getenv("programfiles(x86)")+"/Minecraft/MinecraftLauncher.exe");			
+			path = System.getenv("ProgramFiles(x86)")+"\\Minecraft Launcher\\MinecraftLauncher.exe";
+			System.out.println(path);
+			File spo = new File(path);			
 			if(spo.exists())
+			{
+				System.out.println("1");
 				runExe(spo);
+			}
 			else
 			{
-				File spo2 = new File(System.getenv("programfiles")+"/Minecraft/MinecraftLauncher.exe");
+				path = System.getenv("ProgramFiles")+"\\Minecraft Launcher\\MinecraftLauncher.exe";
+				System.out.println(path);
+				File spo2 = new File(path);
 				if(spo2.exists())
+				{
+					System.out.println("2");
 					runExe(spo);
+				}
 			}
 			speicherort = new File(Start.sport, "MCLauncher.exe");
 		 	downloadort = Start.webplace + "Launcher2.exe";
